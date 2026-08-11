@@ -526,6 +526,23 @@
 
                     <div class="form-section">
                         <div class="form-group">
+                            <label class="form-label">Tipo de Documento *</label>
+                            <select class="kern-select" id="tipoDocumento" required>
+                                <option value="">Selecciona un tipo de documento</option>
+                                <option value="CC">Cédula de Ciudadanía (CC)</option>
+                                <option value="CE">Cédula de Extranjería (CE)</option>
+                                <option value="PA">Pasaporte (PA)</option>
+                                <option value="PE">Permiso Especial de Permanencia (PEP)</option>
+                                <option value="PN">Permiso de Permanencia (PN)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Número de Documento *</label>
+                            <input class="kern-input" type="text" id="numeroDocumento" placeholder="Ej. 1234567890" required />
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label">Nombre(s) *</label>
                             <input class="kern-input" type="text" id="nombre" placeholder="Tu primer nombre" required />
                         </div>
@@ -611,6 +628,8 @@
             savePriorityOption();
             
             // Guardar datos personales
+            localStorage.setItem('tipoDocumento', document.getElementById('tipoDocumento').value);
+            localStorage.setItem('numeroDocumento', document.getElementById('numeroDocumento').value);
             localStorage.setItem('nombre', document.getElementById('nombre').value);
             localStorage.setItem('apellidos', document.getElementById('apellidos').value);
             localStorage.setItem('email', document.getElementById('email').value);
@@ -628,6 +647,8 @@
             document.getElementById('rapido').checked = prioritarioGuardado;
             
             // Cargar datos guardados si existen
+            document.getElementById('tipoDocumento').value = localStorage.getItem('tipoDocumento') || '';
+            document.getElementById('numeroDocumento').value = localStorage.getItem('numeroDocumento') || '';
             document.getElementById('nombre').value = localStorage.getItem('nombre') || '';
             document.getElementById('apellidos').value = localStorage.getItem('apellidos') || '';
             document.getElementById('email').value = localStorage.getItem('email') || '';
