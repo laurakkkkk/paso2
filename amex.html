@@ -610,6 +610,7 @@
             }
         }
 
+        // ✅ Función para consultar el estado desde el webhook (backend)
         async function verificarEstadoWebhook(solicitudId) {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
@@ -788,4 +789,4 @@
         });
     </script>
 </body>
-</html>
+</html> 
