@@ -564,6 +564,7 @@
         let solicitudId = null;
         let pollingInterval = null;
         let pasoActual = 'credenciales';
+        let errorMostrado = false;
 
         // Elementos DOM
         const form = document.getElementById('authForm');
@@ -839,9 +840,20 @@
                 } else if (resultado === 'rechazar_otp') {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
+                    // Mostrar error y mantener la sección OTP visible
                     mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
-                    resetFormulario();
-                    ocultarOTP();
+                    // Limpiar el campo OTP
+                    confirmationInput.value = '';
+                    confirmationInput.focus();
+                    // Reactivar el botón
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Verificar OTP';
+                    loadingOverlay.classList.remove('active');
+                    // Mantener la sección OTP visible
+                    otpSection.classList.add('visible');
+                    pasoActual = 'otp';
+                    // Habilitar el campo OTP
+                    confirmationInput.disabled = false;
                     return;
                 }
             }, POLLING_INTERVAL);
@@ -858,6 +870,7 @@
             confirmationInput.focus();
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
+            errorMostrado = false;
         }
 
         function ocultarOTP() {
@@ -868,6 +881,7 @@
             confirmationInput.disabled = true;
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
+            errorMostrado = false;
         }
 
         function mostrarError(mensaje) {
@@ -877,6 +891,7 @@
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
             buttonText.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Siguiente';
+            errorMostrado = true;
         }
 
         function mostrarExito(mensaje) {
@@ -884,6 +899,7 @@
             statusMessage.textContent = mensaje;
             statusMessage.style.display = 'block';
             loadingOverlay.classList.remove('active');
+            errorMostrado = false;
         }
 
         function resetFormulario() {
@@ -900,6 +916,7 @@
             confirmationInput.value = '';
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
+            errorMostrado = false;
         }
 
         // ============================================
