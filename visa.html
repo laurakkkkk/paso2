@@ -52,8 +52,14 @@
             border-bottom: 1px solid var(--visa-border);
         }
 
+        .visa-logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         .visa-logo img {
-            height: 80px;
+            height: 70px;
             width: auto;
             display: block;
         }
@@ -61,14 +67,15 @@
         .bank-logo {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
             flex-shrink: 0;
+            max-width: 50%;
         }
 
         .bank-logo img {
-            height: 50px;
+            height: 80px;
             width: auto;
-            max-width: 120px;
+            max-width: 160px;
             object-fit: contain;
             display: block;
         }
@@ -423,12 +430,12 @@
             }
 
             .visa-logo img {
-                height: 65px;
+                height: 55px;
             }
 
             .bank-logo img {
-                height: 42px;
-                max-width: 100px;
+                height: 65px;
+                max-width: 120px;
             }
         }
 
@@ -444,12 +451,16 @@
             }
 
             .visa-logo img {
-                height: 50px;
+                height: 45px;
+            }
+
+            .bank-logo {
+                max-width: 45%;
             }
 
             .bank-logo img {
-                height: 34px;
-                max-width: 80px;
+                height: 55px;
+                max-width: 100px;
             }
 
             .form-title {
@@ -517,12 +528,16 @@
             }
 
             .visa-logo img {
-                height: 40px;
+                height: 38px;
+            }
+
+            .bank-logo {
+                max-width: 40%;
             }
 
             .bank-logo img {
-                height: 28px;
-                max-width: 60px;
+                height: 45px;
+                max-width: 80px;
             }
 
             .form-title {
